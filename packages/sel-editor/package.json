@@ -35,13 +35,13 @@
 	},
 	"dependencies": {
 		"@codemirror/autocomplete": "^6.20.1",
-		"@codemirror/commands": "^6.0.0",
-		"@codemirror/language": "^6.0.0",
+		"@codemirror/commands": "^6.10.3",
+		"@codemirror/language": "^6.12.2",
 		"@codemirror/lint": "^6.9.5",
-		"@codemirror/state": "^6.0.0",
-		"@codemirror/view": "^6.0.0",
+		"@codemirror/state": "^6.6.0",
+		"@codemirror/view": "^6.40.0",
 		"@lezer/common": "^1.5.1",
-		"@lezer/highlight": "^1.0.0",
+		"@lezer/highlight": "^1.2.3",
 		"@seljs/cel-lezer": "workspace:*",
 		"@seljs/checker": "workspace:*",
 		"@seljs/schema": "workspace:*"

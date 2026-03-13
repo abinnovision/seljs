@@ -43,7 +43,7 @@
 		]
 	},
 	"dependencies": {
-		"@marcbachmann/cel-js": "^7.5.2",
+		"@marcbachmann/cel-js": "^7.5.3",
 		"@seljs/common": "workspace:*",
 		"@seljs/schema": "workspace:*",
 		"@seljs/types": "workspace:*",
