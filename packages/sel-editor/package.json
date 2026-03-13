@@ -39,7 +39,7 @@
 		"@codemirror/language": "^6.0.0",
 		"@codemirror/lint": "^6.9.5",
 		"@codemirror/state": "^6.6.0",
-		"@codemirror/view": "^6.0.0",
+		"@codemirror/view": "^6.40.0",
 		"@lezer/common": "^1.5.1",
 		"@lezer/highlight": "^1.0.0",
 		"@seljs/cel-lezer": "workspace:*",

@@ -363,7 +363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0":
+"@codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0":
   version: 6.39.15
   resolution: "@codemirror/view@npm:6.39.15"
   dependencies:
@@ -372,6 +372,18 @@ __metadata:
     style-mod: "npm:^4.1.0"
     w3c-keyname: "npm:^2.2.4"
   checksum: 10/098889e36997cfca0699fff637f87c698ee324786d231a13973bd3ccd15c8d4efdb9b85acc509ea76aaba2f0e1f67868fabb40625ca86684e9d8c8f1abe65d9b
+  languageName: node
+  linkType: hard
+
+"@codemirror/view@npm:^6.40.0":
+  version: 6.40.0
+  resolution: "@codemirror/view@npm:6.40.0"
+  dependencies:
+    "@codemirror/state": "npm:^6.6.0"
+    crelt: "npm:^1.0.6"
+    style-mod: "npm:^4.1.0"
+    w3c-keyname: "npm:^2.2.4"
+  checksum: 10/b5d94319d308da14abd4686753418acb0d0ce8cf817b3ee7db0a57c6f35457918c07365c7e5ca03a660b63ed3f615f149120f6c19b41cb93c9a21d40e7a7489b
   languageName: node
   linkType: hard
 
@@ -1661,7 +1673,7 @@ __metadata:
     "@codemirror/language": "npm:^6.0.0"
     "@codemirror/lint": "npm:^6.9.5"
     "@codemirror/state": "npm:^6.6.0"
-    "@codemirror/view": "npm:^6.0.0"
+    "@codemirror/view": "npm:^6.40.0"
     "@lezer/common": "npm:^1.5.1"
     "@lezer/highlight": "npm:^1.0.0"
     "@seljs-internal/tsconfig": "workspace:^"
