@@ -308,15 +308,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/commands@npm:^6.0.0":
-  version: 6.10.2
-  resolution: "@codemirror/commands@npm:6.10.2"
+"@codemirror/commands@npm:^6.10.3":
+  version: 6.10.3
+  resolution: "@codemirror/commands@npm:6.10.3"
   dependencies:
     "@codemirror/language": "npm:^6.0.0"
-    "@codemirror/state": "npm:^6.4.0"
+    "@codemirror/state": "npm:^6.6.0"
     "@codemirror/view": "npm:^6.27.0"
     "@lezer/common": "npm:^1.1.0"
-  checksum: 10/cf5cfee8db49911fd190e55dc6f2a15d5c27c875a2d422185ec11c6cdf1eeb2b66ed16d7f8023f1ec0de99b5e43f903629cb6dc1a7cdd64215e804c6d4576a6e
+  checksum: 10/2740c95cc7165c445cce530f1ad2677e0a80af11b2dd94a20729a198c2342783c04fbfda1364be9ab9cee3042a6906bb11619821dfc7bae154436c82d37e1b24
   languageName: node
   linkType: hard
 
@@ -345,12 +345,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/state@npm:^6.0.0, @codemirror/state@npm:^6.4.0, @codemirror/state@npm:^6.5.0":
+"@codemirror/state@npm:^6.0.0, @codemirror/state@npm:^6.5.0":
   version: 6.5.4
   resolution: "@codemirror/state@npm:6.5.4"
   dependencies:
     "@marijn/find-cluster-break": "npm:^1.0.0"
   checksum: 10/0e1b073282f2ba246692ad0238def660d201a886fcdb8de28360db8d7c9ec34fe904b9187709d70ede4fe4e7cf9a2e1700d26fccf22ce8d8bca68e6cdf456b08
+  languageName: node
+  linkType: hard
+
+"@codemirror/state@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "@codemirror/state@npm:6.6.0"
+  dependencies:
+    "@marijn/find-cluster-break": "npm:^1.0.0"
+  checksum: 10/5d624f3c8832b287d76ebb5f57c01327641875c12c58ada2a97f958dc4df8c3bb0a1ad08ed370300a4a929ee8d5c7f14a397449a0d075ac3129d60d85f077441
   languageName: node
   linkType: hard
 
@@ -1469,7 +1478,7 @@ __metadata:
     "@abinnovision/eslint-config-base": "npm:^3.2.0"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@codemirror/autocomplete": "npm:^6.20.1"
-    "@codemirror/commands": "npm:^6.0.0"
+    "@codemirror/commands": "npm:^6.10.3"
     "@codemirror/language": "npm:^6.0.0"
     "@codemirror/lint": "npm:^6.9.5"
     "@codemirror/state": "npm:^6.0.0"
