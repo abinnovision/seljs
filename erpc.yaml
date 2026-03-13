@@ -1,0 +1,17 @@
+logLevel: warn
+server:
+  httpHostV4: 0.0.0.0
+  httpPortV4: 4000
+projects:
+  - id: main
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedMethods:
+        - "GET"
+        - "POST"
+        - "OPTIONS"
+      allowedHeaders:
+        - "*"
+      allowCredentials: false
+      maxAge: 86400

@@ -1,0 +1,423 @@
+import { createRuntimeEnvironment } from "@seljs/checker";
+
+import { normalizeContextForEvaluation } from "./context.js";
+import {
+	CallCounter,
+	buildContractInfoMap,
+	executeContractCall,
+	resolveExecutionBlockNumber,
+} from "./contract-caller.js";
+import { wrapError } from "./error-wrapper.js";
+import { buildExecutionReplayCache } from "./replay-cache.js";
+import { collectCalls } from "../analysis/call-collector.js";
+import { analyzeDependencies } from "../analysis/dependency-analyzer.js";
+import { planRounds } from "../analysis/round-planner.js";
+import { createLogger } from "../debug.js";
+import {
+	MulticallBatchError,
+	SELContractError,
+	SELTypeError,
+} from "../errors/index.js";
+import { MultiRoundExecutor } from "../execution/multi-round-executor.js";
+
+import type { MulticallOptions, SELRuntimeConfig } from "./types.js";
+import type { CollectedCall } from "../analysis/types.js";
+import type {
+	EvaluateOptions,
+	EvaluateResult,
+	ExecutionMeta,
+} from "../execution/types.js";
+import type { Environment, TypeCheckResult } from "@marcbachmann/cel-js";
+import type { CelCodecRegistry } from "@seljs/checker";
+import type { ContractSchema, SELSchema } from "@seljs/schema";
+import type { PublicClient } from "viem";
+
+/**
+ * Core SEL runtime that bridges CEL expression evaluation with EVM contract reads.
+ *
+ * Manages a CEL runtime extended with Solidity primitive types (uint256, address, bool, etc.),
+ * registered smart contracts whose view functions become callable in expressions, and typed
+ * variables that are supplied at evaluation time. Contract calls are automatically batched
+ * via multicall3 and executed in dependency-ordered rounds.
+ */
+const debug = createLogger("environment");
+
+export class SELRuntime {
+	private readonly env: Environment;
+	private readonly client?: PublicClient;
+	private readonly schema: SELSchema;
+	private readonly variableTypes = new Map<string, string>();
+	private readonly maxRounds: number;
+	private readonly maxCalls: number;
+	private readonly multicallOptions?: MulticallOptions;
+	private readonly contractBindings: Record<string, unknown>;
+	private readonly codecRegistry: CelCodecRegistry;
+
+	/**
+	 * Per-evaluation mutable state.
+	 *
+	 * These fields are set before CEL evaluation and cleared in `finally`.
+	 * They exist because the contract call handler closure (created in the
+	 * constructor) needs access to per-evaluation context, but CEL's
+	 * `Environment.parse()` returns a function that doesn't accept extra
+	 * parameters beyond the variable bindings.
+	 *
+	 * Thread safety: The `mutex` field serializes concurrent `evaluate()`
+	 * calls, ensuring these fields are never accessed concurrently.
+	 *
+	 * TODO: Consider refactoring to pass an EvaluationContext object through
+	 * the handler closure instead of mutating instance state. This would
+	 * eliminate the need for the mutex and make the code more testable.
+	 * See .omc/drafts/context-object-spike.md for preliminary analysis.
+	 */
+	private currentCache?: Map<string, unknown>;
+	private currentClient?: PublicClient;
+	private currentCallCounter?: CallCounter;
+
+	/** Mutex to serialize concurrent evaluate() calls (protects current* fields) */
+	private mutex = Promise.resolve();
+
+	/**
+	 * Creates a new immutable SEL runtime with Solidity types pre-registered.
+	 *
+	 * Initializes the underlying CEL runtime, registers all Solidity primitive types,
+	 * and processes any contracts and variables from the schema. After construction,
+	 * the environment is fully configured and immutable.
+	 *
+	 * @param config - Configuration containing the SEL schema, optional viem client,
+	 *   multicall settings, and CEL/execution limits (maxRounds defaults to 10, maxCalls to 100)
+	 */
+	public constructor(config: SELRuntimeConfig) {
+		const limits = config.limits;
+		const celLimits = limits
+			? {
+					maxAstNodes: limits.maxAstNodes,
+					maxDepth: limits.maxDepth,
+					maxListElements: limits.maxListElements,
+					maxMapEntries: limits.maxMapEntries,
+					maxCallArguments: limits.maxCallArguments,
+				}
+			: undefined;
+
+		this.maxRounds = limits?.maxRounds ?? 10;
+		this.maxCalls = limits?.maxCalls ?? 100;
+		this.multicallOptions = config.multicall;
+		this.client = config.client;
+		this.schema = config.schema;
+
+		// Build handler closure that captures `this` for contract execution
+		const handler = (
+			contractName: string,
+			methodName: string,
+			args: unknown[],
+		): unknown => {
+			const contract = this.findContract(contractName);
+			if (!contract) {
+				throw new SELContractError(`Unknown contract "${contractName}"`, {
+					contractName,
+				});
+			}
+
+			const method = contract.methods.find((m) => m.name === methodName);
+			if (!method) {
+				throw new SELContractError(
+					`Unknown method "${contractName}.${methodName}"`,
+					{ contractName, methodName },
+				);
+			}
+
+			return executeContractCall(contract, method, args, {
+				executionCache: this.currentCache,
+				client: this.currentClient ?? this.client,
+				codecRegistry: this.codecRegistry,
+				callCounter: this.currentCallCounter,
+			});
+		};
+
+		// Create environment via unified hydration
+		const { env, contractBindings, codecRegistry } = createRuntimeEnvironment(
+			this.schema,
+			handler,
+			{ limits: celLimits, unlistedVariablesAreDyn: true },
+		);
+
+		this.env = env;
+		this.contractBindings = contractBindings;
+		this.codecRegistry = codecRegistry;
+
+		// Populate variableTypes from schema for normalizeContextForEvaluation
+		for (const v of this.schema.variables) {
+			this.variableTypes.set(v.name, v.type);
+		}
+	}
+
+	/**
+	 * Type-checks an expression against registered variables and contract methods.
+	 *
+	 * @param expression - A CEL expression string to type-check
+	 * @returns The type-check result containing validity, inferred type, and any errors
+	 * @throws {@link SELTypeError} If the expression contains unrecoverable type errors
+	 */
+	public check(expression: string): TypeCheckResult {
+		try {
+			return this.env.check(expression);
+		} catch (error) {
+			throw wrapError(error);
+		}
+	}
+
+	/**
+	 * Evaluates a SEL expression, executing any embedded contract calls on-chain.
+	 *
+	 * When contract calls are present, the full pipeline runs:
+	 * 1. Parse the expression and collect contract calls from the AST
+	 * 2. Type-check against registered variables and contract methods
+	 * 3. Build a dependency graph and plan execution rounds
+	 * 4. Execute contract calls via multicall3 batching at a pinned block number
+	 * 5. Evaluate the CEL expression with resolved contract results and context values
+	 * 6. Unwrap Solidity wrapper types back to native JS values (BigInt, string, etc.)
+	 *
+	 * @param expression A CEL expression string
+	 * @param context Variable bindings for evaluation
+	 * @param options Optional client override
+	 * @returns An {@link EvaluateResult} containing the value and optional execution metadata
+	 * @throws {@link SELParseError} If the expression has invalid syntax
+	 * @throws {@link SELTypeError} If type-checking fails
+	 * @throws {@link SELContractError} If a contract call fails or no client is available
+	 * @throws {@link SELEvaluationError} If CEL evaluation fails
+	 */
+	public async evaluate<T = unknown>(
+		expression: string,
+		context?: Record<string, unknown>,
+		options?: EvaluateOptions,
+	): Promise<EvaluateResult<T>> {
+		let release: () => void;
+		const prev = this.mutex;
+		this.mutex = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+
+		await prev;
+
+		try {
+			return await this.doEvaluate<T>(expression, context, options);
+		} finally {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			release!();
+		}
+	}
+
+	private planExecution(
+		expression: string,
+		evaluationContext: Record<string, unknown>,
+	): {
+		parseResult: ReturnType<Environment["parse"]>;
+		collectedCalls: CollectedCall[];
+		normalizedContext: Record<string, unknown> | undefined;
+		executionVariables: Record<string, unknown>;
+		typeCheckResult: TypeCheckResult;
+	} {
+		const parseResult = this.env.parse(expression);
+
+		const collectedCalls = collectCalls(parseResult.ast, {
+			get: (name: string) => this.findContract(name),
+		});
+
+		debug("evaluate: collected %d calls", collectedCalls.length);
+
+		const normalizedContext = Object.keys(evaluationContext).length
+			? normalizeContextForEvaluation(
+					evaluationContext,
+					this.variableTypes,
+					this.codecRegistry,
+				)
+			: undefined;
+
+		const executionVariables = Object.keys(evaluationContext).length
+			? evaluationContext
+			: {};
+
+		const typeCheckResult = parseResult.check();
+		if (!typeCheckResult.valid) {
+			throw new SELTypeError(
+				typeCheckResult.error?.message ?? "Type check failed",
+				{ cause: typeCheckResult.error },
+			);
+		}
+
+		return {
+			parseResult,
+			collectedCalls,
+			normalizedContext,
+			executionVariables,
+			typeCheckResult,
+		};
+	}
+
+	private async executeContractCalls(
+		collectedCalls: CollectedCall[],
+		executionVariables: Record<string, unknown>,
+		resolvedClient: PublicClient,
+	): Promise<{
+		executionMeta: ExecutionMeta;
+		executionCache: Map<string, unknown>;
+	}> {
+		debug(
+			"evaluate: calls to execute — %o",
+			collectedCalls.map((c) => `${c.contract}.${c.method}`),
+		);
+
+		const graph = analyzeDependencies(collectedCalls);
+		const plan = planRounds(graph, {
+			maxRounds: this.maxRounds,
+			maxCalls: this.maxCalls,
+		});
+
+		const executor = new MultiRoundExecutor(
+			resolvedClient,
+			buildContractInfoMap(this.schema.contracts),
+			this.multicallOptions,
+		);
+
+		let executionResult: {
+			results: Map<string, unknown>;
+			meta: ExecutionMeta;
+		};
+		try {
+			executionResult = await executor.execute(
+				plan,
+				executionVariables,
+				await resolveExecutionBlockNumber(resolvedClient),
+			);
+		} catch (error) {
+			let failedCall = collectedCalls[0];
+			if (error instanceof MulticallBatchError) {
+				if (error.contractName && error.methodName) {
+					const contractName: string = error.contractName;
+					const methodName: string = error.methodName;
+					const base = failedCall ?? {
+						id: "",
+						contract: contractName,
+						method: methodName,
+						args: [],
+						astNode: undefined,
+					};
+
+					failedCall = {
+						...base,
+						contract: contractName,
+						method: methodName,
+					};
+				} else if (typeof error.failedCallIndex === "number") {
+					failedCall = collectedCalls[error.failedCallIndex] ?? failedCall;
+				}
+			}
+
+			if (!failedCall) {
+				throw error;
+			}
+
+			throw new SELContractError(
+				`Contract call failed: ${failedCall.contract}.${failedCall.method}`,
+				{
+					cause: error,
+					contractName: failedCall.contract,
+					methodName: failedCall.method,
+				},
+			);
+		}
+
+		const executionMeta = executionResult.meta;
+		const executionCache = buildExecutionReplayCache(
+			collectedCalls,
+			executionResult.results,
+			executionVariables,
+			this.codecRegistry,
+			(contract, method) => {
+				const c = this.findContract(contract);
+				const m = c?.methods.find((m) => m.name === method);
+
+				return m?.params.map((p) => p.type) ?? [];
+			},
+		);
+
+		return { executionMeta, executionCache };
+	}
+
+	private async doEvaluate<T = unknown>(
+		expression: string,
+		context?: Record<string, unknown>,
+		options?: EvaluateOptions,
+	): Promise<EvaluateResult<T>> {
+		debug("evaluate: %s", expression);
+
+		const resolvedClient = options?.client ?? this.client;
+
+		try {
+			const {
+				parseResult,
+				collectedCalls,
+				normalizedContext,
+				executionVariables,
+				typeCheckResult,
+			} = this.planExecution(expression, context ?? {});
+
+			let executionMeta: ExecutionMeta | undefined;
+			let executionCache: Map<string, unknown> | undefined;
+
+			if (collectedCalls.length > 0) {
+				if (!resolvedClient) {
+					throw new SELContractError(
+						"No client provided for contract call. Provide a client in SELRuntime config or evaluate() options.",
+						{
+							contractName: collectedCalls[0]?.contract,
+							methodName: collectedCalls[0]?.method,
+						},
+					);
+				}
+
+				({ executionMeta, executionCache } = await this.executeContractCalls(
+					collectedCalls,
+					executionVariables,
+					resolvedClient,
+				));
+			}
+
+			// Set per-evaluation state for the handler closure
+			this.currentCache = executionCache;
+			this.currentClient = resolvedClient;
+			this.currentCallCounter = new CallCounter(
+				this.maxCalls,
+				executionMeta?.totalCalls ?? 0,
+			);
+
+			let result: unknown;
+			try {
+				result = await (parseResult({
+					...normalizedContext,
+					...this.contractBindings,
+				}) as Promise<unknown>);
+			} finally {
+				this.currentCache = undefined;
+				this.currentClient = undefined;
+				this.currentCallCounter = undefined;
+			}
+
+			const value = (
+				typeCheckResult.type
+					? this.codecRegistry.encode(typeCheckResult.type, result)
+					: result
+			) as T;
+
+			debug("evaluate: result type=%s", typeof value);
+
+			return executionMeta ? { value, meta: executionMeta } : { value };
+		} catch (error) {
+			throw wrapError(error);
+		}
+	}
+
+	private findContract(name: string): ContractSchema | undefined {
+		return this.schema.contracts.find((c) => c.name === name);
+	}
+}

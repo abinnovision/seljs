@@ -1,0 +1,145 @@
+@top Expression { expression? }
+
+@skip { spaces | LineComment }
+
+// -------------------------------------------------------------------------
+// Precedence levels (higher number = tighter binding)
+// -------------------------------------------------------------------------
+
+@precedence {
+  unary @right,
+  member @left,
+  call @left,
+  index @left,
+  mul @left,
+  add @left,
+  compare @left,
+  logic @left,
+  ternary @right
+}
+
+// -------------------------------------------------------------------------
+// Expression hierarchy
+// -------------------------------------------------------------------------
+
+expression {
+  // Ternary (lowest precedence, right-assoc)
+  ConditionalExpression {
+    expression !ternary "?" expression ":" expression
+  } |
+
+  // Logical
+  BinaryExpression {
+    expression !logic LogicOp expression
+  } |
+
+  // Relational / equality
+  BinaryExpression {
+    expression !compare CompareOp expression
+  } |
+
+  // in operator (keyword)
+  BinaryExpression {
+    expression !compare @specialize[@name="in"]<Identifier, "in"> expression
+  } |
+
+  // Additive
+  BinaryExpression {
+    expression !add AddOp expression
+  } |
+
+  // Multiplicative
+  BinaryExpression {
+    expression !mul MulOp expression
+  } |
+
+  // Unary
+  BinaryExpression { !unary "!" expression } |
+  BinaryExpression { !unary "-" expression } |
+
+  // Postfix: index
+  IndexExpression { expression !index "[" expression "]" } |
+
+  // Postfix: call (expression followed by ArgList)
+  CallExpression { expression !call ArgList } |
+
+  // Postfix: optional member access  .?
+  OptionalExpression { expression !member dotOptional Identifier } |
+
+  // Postfix: member access  .
+  MemberExpression { expression !member "." Identifier } |
+
+  // Primaries
+  "(" expression ")" |
+  Identifier |
+  Number |
+  String |
+  BooleanLiteral |
+  NullLiteral |
+  ListLiteral |
+  MapLiteral
+}
+
+ArgList { "(" commaSep<expression> ")" }
+
+ListLiteral { "[" commaSep<expression> "]" }
+
+MapLiteral { "{" commaSep<mapEntry> "}" }
+
+mapEntry { expression ":" expression }
+
+commaSep<content> { "" | content ("," content)* }
+
+// -------------------------------------------------------------------------
+// Tokens
+// -------------------------------------------------------------------------
+
+@tokens {
+  spaces { @whitespace+ }
+
+  LineComment { "//" ![\n]* }
+
+  identStart { @asciiLetter | "_" }
+
+  Identifier { identStart (identStart | @digit)* }
+
+  hex { @digit | $[a-fA-F] }
+
+  Number {
+    // Float: digits.digits with optional exponent and optional u suffix
+    @digit+ "." @digit+ ($[eE] ($[+\-])? @digit+)? $[uU]? |
+    // Exponent-only float
+    @digit+ $[eE] ($[+\-])? @digit+ $[uU]? |
+    // Hex integer
+    "0" $[xX] hex+ $[uU]? |
+    // Decimal integer (with optional u suffix)
+    @digit+ $[uU]?
+  }
+
+  String {
+    '"' (!["\\] | "\\" _)* '"' |
+    "'" (!['\\] | "\\" _)* "'"
+  }
+
+  BooleanLiteral { "true" | "false" }
+  NullLiteral { "null" }
+
+  LogicOp { "&&" | "||" }
+  CompareOp { "==" | "!=" | "<=" | ">=" | "<" | ">" }
+  AddOp { "+" | "-" }
+  MulOp { "*" | "/" | "%" }
+
+  // ".?" is the CEL optional access operator (a.?b)
+  // It must be a single token so "." is not consumed by MemberExpression first
+  dotOptional { ".?" }
+
+  // Ensure "//" is lexed as LineComment, not "/" then "/"
+  @precedence { LineComment, MulOp }
+  // Ensure float "3.14" is not split at "." for member access
+  @precedence { Number, "." }
+  // Keywords before Identifier
+  @precedence { BooleanLiteral, Identifier }
+  @precedence { NullLiteral, Identifier }
+  // ".?" must win over standalone "."
+  @precedence { dotOptional, "." }
+}

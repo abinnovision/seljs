@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Run lint-staged
+./node_modules/.bin/lint-staged
+
+# Check boundaries
+./node_modules/.bin/turbo boundaries
+
+# Check dep duplicates.
+yarn dedupe --check

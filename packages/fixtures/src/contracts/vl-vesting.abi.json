@@ -1,0 +1,443 @@
+[
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "owner_", "type": "address" },
+			{ "internalType": "address", "name": "tokenOwner_", "type": "address" },
+			{ "internalType": "contract IERC20", "name": "token_", "type": "address" }
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "beneficiary",
+				"type": "address"
+			}
+		],
+		"name": "BeneficiaryAdded",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "beneficiary",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "Released",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "UNIT",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "newBeneficiariesAddresses",
+				"type": "address[]"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "amountRedeemed",
+						"type": "uint256"
+					},
+					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+					{ "internalType": "bool", "name": "revoked", "type": "bool" }
+				],
+				"internalType": "struct IVestingERC20.Beneficiary[]",
+				"name": "newBeneficiaries",
+				"type": "tuple[]"
+			}
+		],
+		"name": "addBeneficiaries",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "releaseTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "percentageReleased",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IVestingERC20.VestingReleaseTimeline[]",
+				"name": "newVestingTimeline",
+				"type": "tuple[]"
+			}
+		],
+		"name": "addToVestingTimeline",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+		"name": "beneficiaries",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amountRedeemed",
+				"type": "uint256"
+			},
+			{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+			{ "internalType": "bool", "name": "revoked", "type": "bool" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "bridgeVTO",
+		"outputs": [
+			{ "internalType": "contract IBridgeVTO", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "beneficiaryAddress",
+				"type": "address"
+			}
+		],
+		"name": "getBeneficiaryInfo",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "amountRedeemed",
+						"type": "uint256"
+					},
+					{ "internalType": "uint256", "name": "amount", "type": "uint256" },
+					{ "internalType": "bool", "name": "revoked", "type": "bool" }
+				],
+				"internalType": "struct IVestingERC20.Beneficiary",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getVestingReleaseTimeline",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "releaseTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "percentageReleased",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IVestingERC20.VestingReleaseTimeline[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getVestingSchedule",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "vestingStartTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lockupEndDateTimestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "percentageReleasedAfterLockup",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "percentageReleasedOnTGE",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IVestingERC20.VestingSchedule",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+		"name": "lastClaim",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "beneficiary", "type": "address" }
+		],
+		"name": "releasableAmount",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "release",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"name": "releaseTimeline",
+		"outputs": [
+			{ "internalType": "uint256", "name": "releaseTime", "type": "uint256" },
+			{
+				"internalType": "uint256",
+				"name": "percentageReleased",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "beneficiary", "type": "address" }
+		],
+		"name": "revoke",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "revokedBeneficiaryTokens",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "contract IBridgeVTO",
+				"name": "newBridgeVTO",
+				"type": "address"
+			}
+		],
+		"name": "setBridgeVTO",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "vestingStartTime",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lockupEndDateTimestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "percentageReleasedAfterLockup",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "percentageReleasedOnTGE",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct IVestingERC20.VestingSchedule",
+				"name": "newVestingSchedule",
+				"type": "tuple"
+			}
+		],
+		"name": "setVestingSchedule",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "token",
+		"outputs": [
+			{ "internalType": "contract IERC20", "name": "", "type": "address" }
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "tokenOwner",
+		"outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalPercentageReleased",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalTokensVesting",
+		"outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{ "internalType": "address", "name": "newOwner", "type": "address" }
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "vestingSchedule",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "vestingStartTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lockupEndDateTimestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "percentageReleasedAfterLockup",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "percentageReleasedOnTGE",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawAllTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawRevokedBeneficiaryTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawTokensEmergency",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawUnusedTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]

@@ -1,0 +1,46 @@
+[
+	{
+		"type": "function",
+		"name": "slot0",
+		"stateMutability": "view",
+		"inputs": [],
+		"outputs": [
+			{ "name": "sqrtPriceX96", "type": "uint160" },
+			{ "name": "tick", "type": "int24" },
+			{ "name": "observationIndex", "type": "uint16" },
+			{ "name": "observationCardinality", "type": "uint16" },
+			{ "name": "observationCardinalityNext", "type": "uint16" },
+			{ "name": "feeProtocol", "type": "uint8" },
+			{ "name": "unlocked", "type": "bool" }
+		]
+	},
+	{
+		"type": "function",
+		"name": "positions",
+		"stateMutability": "view",
+		"inputs": [{ "name": "", "type": "bytes32" }],
+		"outputs": [
+			{ "name": "liquidity", "type": "uint128" },
+			{ "name": "feeGrowthInside0LastX128", "type": "uint256" },
+			{ "name": "feeGrowthInside1LastX128", "type": "uint256" },
+			{ "name": "tokensOwed0", "type": "uint128" },
+			{ "name": "tokensOwed1", "type": "uint128" }
+		]
+	},
+	{
+		"type": "function",
+		"name": "ticks",
+		"stateMutability": "view",
+		"inputs": [{ "name": "", "type": "int24" }],
+		"outputs": [
+			{ "name": "liquidityGross", "type": "uint128" },
+			{ "name": "liquidityNet", "type": "int128" },
+			{ "name": "feeGrowthOutside0X128", "type": "uint256" },
+			{ "name": "feeGrowthOutside1X128", "type": "uint256" },
+			{ "name": "tickCumulativeOutside", "type": "int56" },
+			{ "name": "secondsPerLiquidityOutsideX128", "type": "uint160" },
+			{ "name": "secondsOutside", "type": "uint32" },
+			{ "name": "initialized", "type": "bool" }
+		]
+	}
+]

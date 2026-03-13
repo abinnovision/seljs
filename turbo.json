@@ -1,0 +1,35 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"tasks": {
+		"generate": {
+			"inputs": ["src/**/*.grammar"],
+			"outputs": ["src/parser.ts", "src/parser.terms.ts"],
+			"dependsOn": ["^build"]
+		},
+		"build": {
+			"dependsOn": ["^build", "generate"],
+			"outputs": ["dist/**"],
+			"inputs": ["src/**"]
+		},
+		"test-unit": {
+			"dependsOn": ["generate"]
+		},
+		"test-integration": {},
+		"fix": {
+			"dependsOn": ["format:fix", "lint:fix"]
+		},
+		"check": {
+			"dependsOn": ["format:check", "lint:check"]
+		},
+		"format:fix": {},
+		"format:check": {},
+		"lint:fix": {},
+		"lint:check": {},
+		"typecheck": {},
+		"start:dev": {
+			"dependsOn": ["^build"],
+			"persistent": true,
+			"cache": false
+		}
+	}
+}

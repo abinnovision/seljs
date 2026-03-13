@@ -1,0 +1,6 @@
+{
+	"extends": ["@seljs-internal/tsconfig/tsconfig.base.json"],
+	"compilerOptions": {},
+	"include": ["src/**/*", "test/**/*", "*.ts"],
+	"exclude": ["node_modules"]
+}

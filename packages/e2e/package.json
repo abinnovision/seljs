@@ -1,0 +1,44 @@
+{
+	"name": "@seljs/e2e",
+	"license": "Apache-2.0",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"format:check": "prettier --check '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
+		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
+		"lint:check": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}'",
+		"lint:fix": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}' --fix",
+		"test-unit": "vitest run --config vitest.config.ts",
+		"test-unit:watch": "vitest watch --config vitest.config.ts",
+		"test-e2e": "vitest run --config test/e2e/vitest.config.ts",
+		"test-e2e:watch": "vitest watch --config test/e2e/vitest.config.ts"
+	},
+	"lint-staged": {
+		"{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}": [
+			"prettier --write"
+		],
+		"{{src,test}/**/*,*}.{t,j}s{,x}": [
+			"eslint --fix"
+		]
+	},
+	"dependencies": {
+		"@seljs-internal/fixtures": "workspace:*",
+		"@seljs/checker": "workspace:*",
+		"@seljs/env": "workspace:*",
+		"@seljs/runtime": "workspace:*",
+		"@seljs/schema": "workspace:*",
+		"@seljs/types": "workspace:*",
+		"viem": "^2.47.2"
+	},
+	"devDependencies": {
+		"@abinnovision/eslint-config-base": "^3.2.0",
+		"@abinnovision/prettier-config": "^2.1.5",
+		"@seljs-internal/tsconfig": "workspace:^",
+		"eslint": "^9.39.4",
+		"prettier": "^3.8.1",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18",
+		"zod": "^4.3.6"
+	}
+}
