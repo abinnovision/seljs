@@ -35,7 +35,7 @@
 		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
-		"@marcbachmann/cel-js": "^7.5.2",
+		"@marcbachmann/cel-js": "^7.5.3",
 		"@seljs/checker": "workspace:*",
 		"@seljs/common": "workspace:*",
 		"@seljs/env": "workspace:*",
