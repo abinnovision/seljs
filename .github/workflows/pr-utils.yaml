@@ -1,0 +1,108 @@
+# Contains different utility checks for Pull Requests.
+name: PR Utils
+
+# Only apply to PRs which target 'main' branch.
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  lint-commits:
+    name: Lint commits
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+    steps:
+      - name: Run linter
+        uses: abinnovision/actions@run-commitlint-v1
+  dependabot:
+    name: "Dependabot automations"
+    # Only run for Dependabot PRs.
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      repository-projects: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - id: status
+        name: Resolve current status
+        run: |
+          echo "HAS_REVIEWS=$(if [[ $(gh pr status --json reviews | jq '.currentBranch.reviews | length') -eq '0' ]];then echo 'false'; else echo 'true'; fi)" >> $GITHUB_OUTPUT
+          echo "LAST_REVIEW_DISMISSED=$(if [[ $(gh pr status --json reviews | jq '.currentBranch.reviews[-1].state' | sed 's/"//g') -eq 'DISMISSED' ]];then echo 'true'; else echo 'false'; fi)" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2.5.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: Enable auto-rebase
+        id: enable-auto-rebase
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: "Approve (minor & patch)"
+        id: approve
+        if: (steps.status.outputs.HAS_REVIEWS == 'false' || steps.status.outputs.LAST_REVIEW_DISMISSED == 'true') && steps.metadata.outputs.update-type == 'version-update:semver-minor' || steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  dependabot-dedupe:
+    name: "Dependabot / Yarn deduplication"
+    runs-on: ubuntu-latest
+    # Only run for Dependabot PRs.
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    permissions:
+      id-token: write
+    steps:
+      - name: Setup GCP Authentication
+        uses: abinnovision/actions@setup-gcp-v1
+        with:
+          auth: ${{ vars.GCP_AUTH }}
+      - id: token
+        name: Generate GitHub App token
+        uses: abinnovision/actions@get-github-app-token-dev
+        with:
+          identification: ${{ secrets.GH_APP_IDENTIFICATION_RELEASER }}
+
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ steps.token.outputs.token }}
+      - name: Setup Node
+        uses: abinnovision/actions@setup-node-v1
+      - name: Dedupe
+        id: dedupe
+        run: |
+          yarn install --immutable
+          yarn dedupe
+
+          # If there are changes, commit them.
+          if [[ $(git status --porcelain yarn.lock | wc -l) -ne "0" ]]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changes
+        if: steps.dedupe.outputs.has-changes == 'true'
+        run: |
+          git config --global user.name '${{ steps.token.outputs.app-commiter-name }}'
+          git config --global user.email '${{ steps.token.outputs.app-commiter-email }}'
+          git commit --no-verify -am "build: deduplicate dependencies"
+      - name: Push changes to GitHub
+        if: steps.dedupe.outputs.has-changes == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ steps.token.outputs.token }}
+          branch: ${{ github.head_ref }}
+          force: true

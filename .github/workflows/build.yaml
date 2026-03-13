@@ -1,0 +1,21 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  polyglot-monorepo-stack:
+    name: CI/CD
+    uses: abinnovision/actions/.github/workflows/workflow.yaml@polyglot-monorepo-stack-v1
+    secrets: inherit
+    with:
+      enable-package-publishing: true
+      enable-packages-registry-npm: true
+      prerelease-channel: "beta"
+      run-build-before-check: true
+      test-types: "unit,integration,e2e"

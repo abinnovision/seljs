@@ -1,0 +1,35 @@
+[
+	{
+		"type": "function",
+		"name": "ilks",
+		"stateMutability": "view",
+		"inputs": [{ "name": "", "type": "bytes32" }],
+		"outputs": [
+			{ "name": "Art", "type": "uint256" },
+			{ "name": "rate", "type": "uint256" },
+			{ "name": "spot", "type": "uint256" },
+			{ "name": "line", "type": "uint256" },
+			{ "name": "dust", "type": "uint256" }
+		]
+	},
+	{
+		"type": "function",
+		"name": "urns",
+		"stateMutability": "view",
+		"inputs": [
+			{ "name": "", "type": "bytes32" },
+			{ "name": "", "type": "address" }
+		],
+		"outputs": [
+			{ "name": "ink", "type": "uint256" },
+			{ "name": "art", "type": "uint256" }
+		]
+	},
+	{
+		"type": "function",
+		"name": "dai",
+		"stateMutability": "view",
+		"inputs": [{ "name": "", "type": "address" }],
+		"outputs": [{ "name": "", "type": "uint256" }]
+	}
+]

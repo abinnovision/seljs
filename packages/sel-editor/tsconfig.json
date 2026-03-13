@@ -1,0 +1,10 @@
+{
+	"extends": ["@seljs-internal/tsconfig/tsconfig.base.json"],
+	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2024", "DOM", "DOM.Iterable"]
+	},
+	"include": ["src/**/*", "*.ts"],
+	"exclude": ["node_modules"]
+}

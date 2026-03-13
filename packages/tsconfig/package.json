@@ -1,0 +1,25 @@
+{
+	"name": "@seljs-internal/tsconfig",
+	"license": "Apache-2.0",
+	"version": "0.0.0",
+	"private": true,
+	"author": {
+		"name": "abi group GmbH",
+		"email": "info@abigroup.io",
+		"url": "https://abigroup.io"
+	},
+	"scripts": {
+		"format:check": "prettier --check '*.{json{,5},md,y{,a}ml}'",
+		"format:fix": "prettier --write '*.{json{,5},md,y{,a}ml}'"
+	},
+	"lint-staged": {
+		"*.{json{,5},md,y{,a}ml}": [
+			"prettier --write"
+		]
+	},
+	"prettier": "@abinnovision/prettier-config",
+	"devDependencies": {
+		"prettier": "^3.8.1",
+		"typescript": "^5.9.3"
+	}
+}

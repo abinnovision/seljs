@@ -1,0 +1,69 @@
+import type { SELSchema } from "@seljs/schema";
+import type { Address, PublicClient } from "viem";
+
+/**
+ * Options for multicall3 batching of contract calls.
+ *
+ * When multiple independent contract calls are executed in the same round,
+ * they are batched into a single multicall3 RPC request for efficiency.
+ */
+export interface MulticallOptions {
+	/** Maximum number of calls per multicall3 batch. Unbounded if omitted. */
+	batchSize?: number;
+
+	/** Custom multicall3 contract address. Defaults to the canonical deployment. */
+	address?: Address;
+}
+
+/**
+ * Limits for expression parsing and contract call execution.
+ *
+ * AST limits (`maxAstNodes`, `maxDepth`, `maxListElements`, `maxMapEntries`,
+ * `maxCallArguments`) are forwarded to the underlying CEL parser to constrain
+ * expression complexity.
+ *
+ * Execution limits (`maxRounds`, `maxCalls`) bound the multi-round contract
+ * execution engine. An {@link ExecutionLimitError} is thrown when exceeded.
+ */
+export interface SELLimits {
+	/** Maximum number of AST nodes allowed in a parsed expression */
+	maxAstNodes?: number;
+
+	/** Maximum nesting depth of the AST */
+	maxDepth?: number;
+
+	/** Maximum number of elements in a list literal */
+	maxListElements?: number;
+
+	/** Maximum number of entries in a map literal */
+	maxMapEntries?: number;
+
+	/** Maximum number of arguments in a single function call */
+	maxCallArguments?: number;
+
+	/** Maximum number of dependency-ordered execution rounds (default: 10) */
+	maxRounds?: number;
+
+	/** Maximum total number of contract calls across all rounds (default: 100) */
+	maxCalls?: number;
+}
+
+/**
+ * Configuration for creating an immutable {@link SELRuntime}.
+ *
+ * All contracts and context must be declared here — the environment
+ * cannot be mutated after construction.
+ */
+export interface SELRuntimeConfig {
+	/** SEL schema describing contracts, variables, types, functions, and macros */
+	schema: SELSchema;
+
+	/** Viem public client for executing on-chain contract reads */
+	client?: PublicClient;
+
+	/** Multicall3 batching options for contract call execution */
+	multicall?: MulticallOptions;
+
+	/** AST parsing and execution limits */
+	limits?: SELLimits;
+}

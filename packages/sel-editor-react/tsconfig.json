@@ -1,0 +1,11 @@
+{
+	"extends": ["@seljs-internal/tsconfig/tsconfig.base.json"],
+	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"jsx": "react-jsx",
+		"lib": ["ES2024", "DOM", "DOM.Iterable"]
+	},
+	"include": ["src/**/*", "*.ts", ".storybook/**/*"],
+	"exclude": ["node_modules"]
+}

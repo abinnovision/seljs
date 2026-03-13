@@ -1,0 +1,61 @@
+{
+	"name": "@seljs/types",
+	"version": "0.1.0",
+	"license": "Apache-2.0",
+	"author": {
+		"name": "abi group GmbH",
+		"email": "info@abigroup.io",
+		"url": "https://abigroup.io/"
+	},
+	"repository": {
+		"url": "https://github.com/abinnovision/seljs"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"LICENSE.md"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"format:check": "prettier --check '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
+		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
+		"lint:check": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}'",
+		"lint:fix": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}' --fix",
+		"test-unit": "vitest run",
+		"test-unit:watch": "vitest watch",
+		"typecheck": "tsc --noEmit"
+	},
+	"lint-staged": {
+		"{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}": [
+			"prettier --write"
+		],
+		"{{src,test}/**/*,*}.{t,j}s{,x}": [
+			"eslint --fix"
+		]
+	},
+	"dependencies": {
+		"@seljs/common": "workspace:*"
+	},
+	"devDependencies": {
+		"@abinnovision/eslint-config-base": "^3.2.0",
+		"@abinnovision/prettier-config": "^2.1.5",
+		"@seljs-internal/tsconfig": "workspace:^",
+		"abitype": "^1.2.3",
+		"eslint": "^9.39.4",
+		"prettier": "^3.8.1",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18"
+	},
+	"publishConfig": {
+		"npm": true,
+		"npmAccess": "public"
+	}
+}

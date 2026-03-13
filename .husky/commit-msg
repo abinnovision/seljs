@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Run commitlint with the message.
+./node_modules/.bin/commitlint --edit "$1"

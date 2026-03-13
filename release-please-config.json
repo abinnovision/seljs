@@ -1,0 +1,34 @@
+{
+	"$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+	"changelog-path": "CHANGELOG.md",
+	"include-component-in-tag": true,
+	"release-type": "node",
+	"packages": {
+		"packages/sel-cel-lezer": {},
+		"packages/sel-common": {},
+		"packages/sel-types": {},
+		"packages/sel-env": {},
+		"packages/sel-checker": {},
+		"packages/sel-runtime": {},
+		"packages/sel-schema": {},
+		"packages/sel-editor": {},
+		"packages/sel-editor-react": {}
+	},
+	"plugins": [
+		{
+			"type": "linked-versions",
+			"groupName": "sel",
+			"components": [
+				"cel-lezer",
+				"common",
+				"types",
+				"env",
+				"checker",
+				"runtime",
+				"schema",
+				"editor",
+				"editor-react"
+			]
+		}
+	]
+}

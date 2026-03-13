@@ -1,0 +1,40 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "13:00"
+      timezone: Europe/Berlin
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+    groups:
+      eslint-related:
+        patterns:
+          - "eslint"
+          - "eslint-plugin-*"
+          - "eslint-config-*"
+          - "@typescript-eslint/*"
+          - "@types/eslint"
+      vitest-related:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: saturday
+      time: "13:00"
+      timezone: Europe/Berlin
+    commit-message:
+      prefix: "build(deps/gha)"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies

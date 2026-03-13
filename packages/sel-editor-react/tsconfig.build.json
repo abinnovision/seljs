@@ -1,0 +1,14 @@
+{
+	"extends": [
+		"@seljs-internal/tsconfig/tsconfig.build.json",
+		"./tsconfig.json"
+	],
+	"compilerOptions": {
+		"noEmit": false,
+		"declaration": true,
+		"declarationMap": true,
+		"outDir": "./dist"
+	},
+	"include": ["src/**/*"],
+	"exclude": ["src/**/*.spec.ts", "src/**/*.spec.tsx", "src/**/*.stories.tsx"]
+}
