@@ -5,12 +5,12 @@ __metadata:
   version: 8
   cacheKey: 10
 
-"@abinnovision/commitlint-config@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "@abinnovision/commitlint-config@npm:2.2.3"
+"@abinnovision/commitlint-config@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "@abinnovision/commitlint-config@npm:2.2.4"
   dependencies:
-    "@commitlint/config-conventional": "npm:^20.0.0"
-  checksum: 10/106eece66482bd334d438d700f7905d2c8aebba9276c2774efb036516427178d1c95780a1dfa22b49c324150ca9d593b9674b3b78fd6356b1e8686f68d2b5832
+    "@commitlint/config-conventional": "npm:^20.4.1"
+  checksum: 10/e777b4a08240eb98fa7f7822e37e2479c9bfeed98a0e49b0373e2e2a94047999b69d8cf5ba8cb1ff90d1d512b089966c1e14d61fa2f2e5b656db7caea462816c
   languageName: node
   linkType: hard
 
@@ -392,13 +392,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/config-conventional@npm:^20.0.0":
-  version: 20.4.2
-  resolution: "@commitlint/config-conventional@npm:20.4.2"
+"@commitlint/config-conventional@npm:^20.4.1":
+  version: 20.4.4
+  resolution: "@commitlint/config-conventional@npm:20.4.4"
   dependencies:
-    "@commitlint/types": "npm:^20.4.0"
-    conventional-changelog-conventionalcommits: "npm:^9.1.0"
-  checksum: 10/60d2f25db3bf1e1ecb6d13a7420e707bb121d19de27fc6579ea251786cbfacccb8a67a6a3c5eb65a5ff107c8c32e5670a16cdfe3608d519b005d4be87fbfabc5
+    "@commitlint/types": "npm:^20.4.4"
+    conventional-changelog-conventionalcommits: "npm:^9.2.0"
+  checksum: 10/6623ff702361c42b2ef817cef299b653ba3618dcd3ac7edbdec7268be2e3662ba74afda4f58ca8e21add9134204367d21d9241e98ab5ff69e2675da1ff6d9c9c
   languageName: node
   linkType: hard
 
@@ -552,16 +552,6 @@ __metadata:
   dependencies:
     escalade: "npm:^3.2.0"
   checksum: 10/52ab64f6ae2b5b456aff7ae8816d9fa4fc92b33740b6fc0128ced8cd4ef3f2e5860369e6b78af0c18569ac20c20cf3b899cc9dc61b205e093bf0d32a9f77cb69
-  languageName: node
-  linkType: hard
-
-"@commitlint/types@npm:^20.4.0":
-  version: 20.4.0
-  resolution: "@commitlint/types@npm:20.4.0"
-  dependencies:
-    conventional-commits-parser: "npm:^6.2.1"
-    picocolors: "npm:^1.1.1"
-  checksum: 10/aff0e6d33eb3191fad3c20d7d46e282ae3dacca52a24f372ac880f0231c859a26726d25565246ea34b67aa9ac1db55f12ef3d635bd6fe9e68cb34fa0a7c5fe47
   languageName: node
   linkType: hard
 
@@ -1699,7 +1689,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/monorepo@workspace:."
   dependencies:
-    "@abinnovision/commitlint-config": "npm:^2.2.3"
+    "@abinnovision/commitlint-config": "npm:^2.2.4"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@commitlint/cli": "npm:^20.4.4"
     "@vitest/coverage-v8": "npm:^4.1.0"
@@ -3017,23 +3007,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"conventional-changelog-conventionalcommits@npm:^9.1.0":
-  version: 9.1.0
-  resolution: "conventional-changelog-conventionalcommits@npm:9.1.0"
+"conventional-changelog-conventionalcommits@npm:^9.2.0":
+  version: 9.3.0
+  resolution: "conventional-changelog-conventionalcommits@npm:9.3.0"
   dependencies:
     compare-func: "npm:^2.0.0"
-  checksum: 10/932522a9eb2f19f8b6efc05f1de0b8d4775842e2156c2c58358d25069bfc43ca1a6198fb07666d7abc83695a10591787c23b7ff2e1e2d73ac484cfb2f57f5f7f
-  languageName: node
-  linkType: hard
-
-"conventional-commits-parser@npm:^6.2.1":
-  version: 6.2.1
-  resolution: "conventional-commits-parser@npm:6.2.1"
-  dependencies:
-    meow: "npm:^13.0.0"
-  bin:
-    conventional-commits-parser: dist/cli/index.js
-  checksum: 10/342764ac7c8114e3030d9d86968eafa3023ed887bc66412f89891fb55f09179d151a02342142a4039ca3375a7e39553d29789e022afd08edddbd995a1d5d9c24
+  checksum: 10/678785cf8189b563d89f3e3dc070d36d74a0b0c4ec24e67ca2892e8c030be993e6da446885352c6240ac2146baf4431df1ba01cc35617bed986feae7d73adc6f
   languageName: node
   linkType: hard
 
