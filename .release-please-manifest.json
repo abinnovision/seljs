@@ -1,11 +1,11 @@
 {
-	"packages/sel-cel-lezer": "0.0.0",
-	"packages/sel-common": "0.0.0",
-	"packages/sel-types": "0.0.0",
-	"packages/sel-env": "0.0.0",
-	"packages/sel-checker": "0.0.0",
-	"packages/sel-runtime": "0.0.0",
-	"packages/sel-editor": "0.0.0",
-	"packages/sel-editor-react": "0.0.0",
-	"packages/sel-schema": "0.0.0"
+	"packages/sel-cel-lezer": "1.0.0",
+	"packages/sel-common": "1.0.0",
+	"packages/sel-types": "1.0.0",
+	"packages/sel-env": "1.0.0",
+	"packages/sel-checker": "1.0.0",
+	"packages/sel-runtime": "1.0.0",
+	"packages/sel-editor": "1.0.0",
+	"packages/sel-editor-react": "1.0.0",
+	"packages/sel-schema": "1.0.0"
 }
