@@ -1609,7 +1609,7 @@ __metadata:
     prettier: "npm:^3.8.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    storybook: "npm:^10.2.16"
+    storybook: "npm:^10.2.18"
     typescript: "npm:^5.9.3"
     viem: "npm:^2.47.2"
     vite: "npm:^7.3.1"
@@ -6476,9 +6476,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^10.2.16":
-  version: 10.2.16
-  resolution: "storybook@npm:10.2.16"
+"storybook@npm:^10.2.18":
+  version: 10.2.18
+  resolution: "storybook@npm:10.2.18"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@storybook/icons": "npm:^2.0.1"
@@ -6499,7 +6499,7 @@ __metadata:
       optional: true
   bin:
     storybook: ./dist/bin/dispatcher.js
-  checksum: 10/a14c90636661b1d6364209150f0ec7c603ebc87cd049668a3a92d2ad1b25b9bf1996b8506889f0a9a098204a6727b7c60c74254b0e5e21292e22c08249daa38f
+  checksum: 10/a7ac4b79e9af7a039e0224e01637b397dc9504d135bebc42f611d34b9288fccbf311ad044c76488aea12b6113c973d10d2bc5ced3a2437dd172e16b15ed4ed76
   languageName: node
   linkType: hard
 
