@@ -59,7 +59,7 @@
 		"@seljs-internal/tsconfig": "workspace:^",
 		"@types/debug": "^4.1.12",
 		"concurrently": "^9.2.1",
-		"eslint": "^9.39.4",
+		"eslint": "^10.0.3",
 		"prettier": "^3.8.1",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18",
