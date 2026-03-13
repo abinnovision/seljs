@@ -47,7 +47,7 @@
 		"@abinnovision/eslint-config-base": "^3.2.0",
 		"@abinnovision/prettier-config": "^2.1.5",
 		"@seljs-internal/tsconfig": "workspace:^",
-		"@types/node": "^25.3.5",
+		"@types/node": "^25.5.0",
 		"eslint": "^10.0.3",
 		"prettier": "^3.8.1",
 		"ts-json-schema-generator": "^2.9.0",
