@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/abinnovision/seljs/compare/types-v1.0.0...types-v1.0.1) (2026-03-16)
+
+
+### Bug Fixes
+
+* export esm and cjs ([#23](https://github.com/abinnovision/seljs/issues/23)) ([23d525d](https://github.com/abinnovision/seljs/commit/23d525d9084d18a370d4c6307b983a857a865f59))
+
 ## 1.0.0 (2026-03-13)
 
 
