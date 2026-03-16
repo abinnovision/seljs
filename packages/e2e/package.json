@@ -1,18 +1,18 @@
 {
 	"name": "@seljs/e2e",
-	"license": "Apache-2.0",
 	"version": "0.0.0",
 	"private": true,
+	"license": "Apache-2.0",
 	"type": "module",
 	"scripts": {
 		"format:check": "prettier --check '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
 		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
 		"lint:check": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}'",
 		"lint:fix": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}' --fix",
-		"test-unit": "vitest run --config vitest.config.ts",
-		"test-unit:watch": "vitest watch --config vitest.config.ts",
 		"test-e2e": "vitest run --config test/e2e/vitest.config.ts",
-		"test-e2e:watch": "vitest watch --config test/e2e/vitest.config.ts"
+		"test-e2e:watch": "vitest watch --config test/e2e/vitest.config.ts",
+		"test-unit": "vitest run --config vitest.config.ts",
+		"test-unit:watch": "vitest watch --config vitest.config.ts"
 	},
 	"lint-staged": {
 		"{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}": [

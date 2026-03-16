@@ -8,7 +8,7 @@ const outputPath = resolve(__dirname, "../dist/sel-schema.json");
 
 const generator = createGenerator({
 	path: resolve(__dirname, "../src/types.ts"),
-	tsconfig: resolve(__dirname, "../tsconfig.build.json"),
+	tsconfig: resolve(__dirname, "../tsconfig.json"),
 	type: "SELSchema",
 });
 
