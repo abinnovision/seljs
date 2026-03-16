@@ -60,7 +60,7 @@
 		"@seljs/env": "workspace:^",
 		"@seljs/runtime": "workspace:^",
 		"@shazow/whatsabi": "^0.26.0",
-		"@storybook/react": "^10.2.16",
+		"@storybook/react": "^10.2.19",
 		"@storybook/react-vite": "^10.2.16",
 		"@testing-library/dom": "^10.0.0",
 		"@testing-library/react": "^16.0.0",
