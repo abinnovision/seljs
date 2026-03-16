@@ -1,31 +1,37 @@
 {
 	"name": "@seljs/schema",
 	"version": "1.0.0",
+	"repository": {
+		"url": "https://github.com/abinnovision/seljs"
+	},
 	"license": "Apache-2.0",
 	"author": {
 		"name": "abi group GmbH",
 		"email": "info@abigroup.io",
 		"url": "https://abigroup.io/"
 	},
-	"repository": {
-		"url": "https://github.com/abinnovision/seljs"
-	},
 	"type": "module",
 	"exports": {
 		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
 		},
 		"./schema.json": "./dist/sel-schema.json"
 	},
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"main": "./dist/index.cjs",
+	"types": "./dist/index.d.cts",
 	"files": [
 		"dist",
 		"LICENSE.md"
 	],
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json && tsx scripts/generate-json-schema.ts",
+		"build": "tsdown && tsx scripts/generate-json-schema.ts",
 		"format:check": "prettier --check '{{src,scripts}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
 		"format:fix": "prettier --write '{{src,scripts}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
 		"lint:check": "eslint '{{src,scripts}/**/*,*}.{t,j}s{,x}'",
@@ -51,6 +57,7 @@
 		"eslint": "^9.39.4",
 		"prettier": "^3.8.1",
 		"ts-json-schema-generator": "^2.9.0",
+		"tsdown": "^0.21.3",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"

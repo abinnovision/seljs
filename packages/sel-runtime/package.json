@@ -1,30 +1,36 @@
 {
 	"name": "@seljs/runtime",
 	"version": "1.0.0",
+	"repository": {
+		"url": "https://github.com/abinnovision/seljs"
+	},
 	"license": "Apache-2.0",
 	"author": {
 		"name": "abi group GmbH",
 		"email": "info@abigroup.io",
 		"url": "https://abigroup.io/"
 	},
-	"repository": {
-		"url": "https://github.com/abinnovision/seljs"
-	},
 	"type": "module",
 	"exports": {
 		".": {
-			"import": "./dist/index.js",
-			"types": "./dist/index.d.ts"
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
 		}
 	},
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
+	"main": "./dist/index.cjs",
+	"types": "./dist/index.d.cts",
 	"files": [
 		"dist",
 		"LICENSE.md"
 	],
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json",
+		"build": "tsdown",
 		"format:check": "prettier --check '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
 		"format:fix": "prettier --write '{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}'",
 		"lint:check": "eslint '{{src,test}/**/*,*}.{t,j}s{,x}'",
@@ -33,6 +39,14 @@
 		"test-unit": "vitest run",
 		"test-unit:watch": "vitest watch",
 		"typecheck": "tsc --noEmit"
+	},
+	"lint-staged": {
+		"{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}": [
+			"prettier --write"
+		],
+		"{{src,test}/**/*,*}.{t,j}s{,x}": [
+			"eslint --fix"
+		]
 	},
 	"dependencies": {
 		"@marcbachmann/cel-js": "^7.5.3",
@@ -44,14 +58,6 @@
 		"debug": "^4.4.3",
 		"viem": "^2.47.2"
 	},
-	"lint-staged": {
-		"{{src,test}/**/*,*}.{{t,j}s{,x},json{,5},md,y{,a}ml}": [
-			"prettier --write"
-		],
-		"{{src,test}/**/*,*}.{t,j}s{,x}": [
-			"eslint --fix"
-		]
-	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.0",
 		"@abinnovision/prettier-config": "^2.1.5",
@@ -61,6 +67,7 @@
 		"concurrently": "^9.2.1",
 		"eslint": "^9.39.4",
 		"prettier": "^3.8.1",
+		"tsdown": "^0.21.3",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18",
 		"zod": "^4.3.6"

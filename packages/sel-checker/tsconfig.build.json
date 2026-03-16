@@ -1,9 +1,0 @@
-{
-	"extends": "@seljs-internal/tsconfig/tsconfig.build.json",
-	"compilerOptions": {
-		"rootDir": "src",
-		"outDir": "dist"
-	},
-	"include": ["src"],
-	"exclude": ["src/**/*.spec.ts"]
-}
