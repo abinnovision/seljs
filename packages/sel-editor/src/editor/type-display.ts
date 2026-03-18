@@ -18,8 +18,9 @@ const typeField = StateField.define<string | null>({
 	},
 });
 
-function createTypePanel(dark: boolean): (view: EditorView) => Panel {
-	return (view: EditorView) => {
+const createTypePanel =
+	(dark: boolean): ((view: EditorView) => Panel) =>
+	(view: EditorView) => {
 		const dom = document.createElement("div");
 		dom.className = "sel-type-display";
 		dom.style.cssText = [
@@ -60,16 +61,18 @@ function createTypePanel(dark: boolean): (view: EditorView) => Panel {
 			},
 		};
 	};
-}
 
-export function createTypeDisplay(
+export const createTypeDisplay = (
 	checker: SELChecker,
 	dark: boolean,
-): Extension {
+): Extension => {
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const plugin = EditorView.updateListener.of((update) => {
-		if (!update.docChanged && !update.startState.field(typeField, false)) {
+		if (
+			!update.docChanged &&
+			update.startState.field(typeField, false) !== null
+		) {
 			return;
 		}
 
@@ -93,4 +96,4 @@ export function createTypeDisplay(
 	});
 
 	return [typeField, plugin, showPanel.of(createTypePanel(dark))];
-}
+};

@@ -5,7 +5,7 @@ import { buildExtensions } from "./editor-config";
 
 import type { SELEditorConfig } from "./types";
 
-export function createSELEditor(config: SELEditorConfig): EditorView {
+export const createSELEditor = (config: SELEditorConfig): EditorView => {
 	const extensions = buildExtensions(config);
 
 	const state = EditorState.create({
@@ -17,4 +17,4 @@ export function createSELEditor(config: SELEditorConfig): EditorView {
 		state,
 		parent: config.parent,
 	});
-}
+};

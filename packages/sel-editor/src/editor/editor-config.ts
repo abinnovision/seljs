@@ -4,19 +4,27 @@ import { bracketMatching } from "@codemirror/language";
 import { EditorState, type Extension } from "@codemirror/state";
 import { EditorView, keymap, placeholder } from "@codemirror/view";
 import { celLanguageSupport } from "@seljs/cel-lezer";
-import { SELChecker, rules } from "@seljs/checker";
+import { SELChecker } from "@seljs/checker";
 
 import { selDarkTheme, selLightTheme } from "./theme";
 import { createTypeDisplay } from "./type-display";
-import { createSchemaCompletion } from "../completion/schema-completion";
+import { createSchemaCompletion } from "../completion";
+import { createTokenizerConfig } from "../language";
 import { createSemanticHighlighter } from "../language/semantic-highlighter";
-import { createTokenizerConfig } from "../language/tokenizer-config";
-import { createSELLinter } from "../linting/sel-linter";
+import { createSELLinter } from "../linting";
 
-import type { SELEditorConfig } from "./types";
+import type { SELEditorConfig, SELEditorFeatures } from "./types";
+
+const resolveFeatures = (features?: SELEditorFeatures) => ({
+	linting: features?.linting ?? true,
+	autocomplete: features?.autocomplete ?? true,
+	semanticHighlighting: features?.semanticHighlighting ?? true,
+	typeDisplay: features?.typeDisplay ?? false,
+});
 
 export const buildExtensions = (config: SELEditorConfig): Extension[] => {
-	const checker = new SELChecker(config.schema, { rules: [...rules.builtIn] });
+	const checker = new SELChecker(config.schema, config.checkerOptions);
+	const resolved = resolveFeatures(config.features);
 	const extensions: Extension[] = [];
 
 	// Language support (includes syntax highlighting)
@@ -24,12 +32,16 @@ export const buildExtensions = (config: SELEditorConfig): Extension[] => {
 	extensions.push(bracketMatching());
 
 	// Semantic highlighting (schema-aware identifier coloring)
-	const tokenizerConfig = createTokenizerConfig(config.schema);
-	extensions.push(createSemanticHighlighter(tokenizerConfig, config.dark));
+	if (resolved.semanticHighlighting) {
+		const tokenizerConfig = createTokenizerConfig(config.schema);
+		extensions.push(createSemanticHighlighter(tokenizerConfig, config.dark));
+	}
 
 	// Autocomplete (type-aware via checker)
-	extensions.push(createSchemaCompletion(config.schema, checker));
-	extensions.push(closeBrackets());
+	if (resolved.autocomplete) {
+		extensions.push(createSchemaCompletion(config.schema, checker));
+		extensions.push(closeBrackets());
+	}
 
 	// Keybindings
 	extensions.push(
@@ -40,24 +52,24 @@ export const buildExtensions = (config: SELEditorConfig): Extension[] => {
 	// Theme
 	extensions.push(config.dark ? selDarkTheme : selLightTheme);
 
-	// Validation / linting (built-in checker used when no validate callback provided)
-	const validate =
-		config.validate ??
-		((expression: string) => checker.check(expression).diagnostics);
-	extensions.push(
-		createSELLinter({
-			validate,
-			delay: config.validateDelay,
-		}),
-	);
+	// Validation / linting
+	if (resolved.linting) {
+		extensions.push(
+			createSELLinter({
+				validate: (expression: string) => checker.check(expression).diagnostics,
+			}),
+		);
+	}
 
-	// onChange listener
+	// onChange listener with validity
 	if (config.onChange) {
 		const onChange = config.onChange;
 		extensions.push(
 			EditorView.updateListener.of((update) => {
 				if (update.docChanged) {
-					onChange(update.state.doc.toString());
+					const value = update.state.doc.toString();
+					const result = checker.check(value);
+					onChange(value, result.valid);
 				}
 			}),
 		);
@@ -74,13 +86,8 @@ export const buildExtensions = (config: SELEditorConfig): Extension[] => {
 	}
 
 	// Type display panel
-	if (config.showType) {
+	if (resolved.typeDisplay) {
 		extensions.push(createTypeDisplay(checker, config.dark ?? false));
-	}
-
-	// User-provided extensions (last, so they can override)
-	if (config.extensions) {
-		extensions.push(...config.extensions);
 	}
 
 	return extensions;

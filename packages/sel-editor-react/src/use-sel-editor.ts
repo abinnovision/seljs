@@ -11,6 +11,7 @@ export interface UseSELEditorResult {
 	ref: (node: HTMLElement | null) => void;
 	view: EditorView | null;
 	value: string;
+	valid: boolean;
 }
 
 export function useSELEditor(
@@ -19,6 +20,7 @@ export function useSELEditor(
 	const viewRef = useRef<EditorView | null>(null);
 	const [view, setView] = useState<EditorView | null>(null);
 	const [value, setValue] = useState(config.value ?? "");
+	const [valid, setValid] = useState(true);
 	const configRef = useRef(config);
 	configRef.current = config;
 
@@ -38,9 +40,10 @@ export function useSELEditor(
 			const editor = createSELEditor({
 				...currentConfig,
 				parent: node,
-				onChange: (newValue) => {
+				onChange: (newValue, isValid) => {
 					setValue(newValue);
-					currentConfig.onChange?.(newValue);
+					setValid(isValid);
+					currentConfig.onChange?.(newValue, isValid);
 				},
 			});
 			viewRef.current = editor;
@@ -56,5 +59,5 @@ export function useSELEditor(
 		};
 	}, []);
 
-	return { ref, view, value };
+	return { ref, view, value, valid };
 }

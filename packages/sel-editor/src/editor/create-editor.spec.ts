@@ -89,7 +89,7 @@ describe("src/editor/create-editor.ts", () => {
 			view.destroy();
 		});
 
-		it("onChange fires with current value on document changes", () => {
+		it("onChange fires with current value and validity on document changes", () => {
 			const onChange = vi.fn();
 			const parent = createParent();
 			const view = createSELEditor({
@@ -103,7 +103,7 @@ describe("src/editor/create-editor.ts", () => {
 				changes: { from: 0, insert: "test" },
 			});
 
-			expect(onChange).toHaveBeenCalledWith("test");
+			expect(onChange).toHaveBeenCalledWith("test", expect.any(Boolean));
 			view.destroy();
 		});
 
@@ -123,17 +123,15 @@ describe("src/editor/create-editor.ts", () => {
 			view.destroy();
 		});
 
-		it("passing validate enables the lint extension", () => {
-			const validate = vi.fn().mockReturnValue([]);
+		it("passing checkerOptions configures the internal checker", () => {
 			const parent = createParent();
 			const view = createSELEditor({
 				parent,
 				schema: testSchema,
 				value: "test",
-				validate,
+				checkerOptions: { rules: [] },
 			});
 
-			// Linter extension should be present (no errors thrown)
 			expect(view.state).toBeDefined();
 			view.destroy();
 		});
@@ -195,14 +193,25 @@ describe("src/editor/create-editor.ts", () => {
 			view2.destroy();
 		});
 
-		it("accepts additional extensions", () => {
+		it("features can disable linting", () => {
 			const parent = createParent();
-
-			// Pass an empty array of extensions (no-op but shouldn't break)
 			const view = createSELEditor({
 				parent,
 				schema: testSchema,
-				extensions: [],
+				features: { linting: false },
+			});
+
+			expect(view).toBeDefined();
+			view.destroy();
+		});
+
+		it("features can enable type display", () => {
+			const parent = createParent();
+			const view = createSELEditor({
+				parent,
+				schema: testSchema,
+				value: "erc20.balanceOf(user)",
+				features: { typeDisplay: true },
 			});
 
 			expect(view).toBeDefined();

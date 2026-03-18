@@ -334,8 +334,10 @@ function WhatsAbiExplorer({
 						schema={status.schema}
 						value={expression}
 						placeholder={`Try ${contractName.trim() || "contract"}.<method>(...)`}
-						onChange={setExpression}
-						showType
+						onChange={(value) => {
+							setExpression(value);
+						}}
+						features={{ typeDisplay: true }}
 					/>
 
 					<div style={{ marginTop: 12 }}>
