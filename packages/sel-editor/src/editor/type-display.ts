@@ -18,6 +18,8 @@ const typeField = StateField.define<string | null>({
 	},
 });
 
+const UNKNOWN_LABEL = "(unknown)";
+
 const createTypePanel =
 	(dark: boolean): ((view: EditorView) => Panel) =>
 	(view: EditorView) => {
@@ -35,21 +37,25 @@ const createTypePanel =
 			`border-top: 1px solid ${dark ? "#374151" : "#e5e7eb"}`,
 		].join("; ");
 
+		const label = document.createElement("span");
+		label.style.color = dark ? "#6b7280" : "#9ca3af";
+		label.textContent = "output";
+
+		const typeSpan = document.createElement("span");
+		typeSpan.style.fontWeight = "500";
+
+		dom.append(label, " ", typeSpan);
+
 		const update = () => {
 			const type = view.state.field(typeField);
-			dom.textContent = "";
-			if (type) {
-				const label = document.createElement("span");
-				label.style.color = dark ? "#6b7280" : "#9ca3af";
-				label.textContent = "output";
-
-				const typeSpan = document.createElement("span");
-				typeSpan.style.color = dark ? "#93c5fd" : "#2563eb";
-				typeSpan.style.fontWeight = "500";
-				typeSpan.textContent = type;
-
-				dom.append(label, " ", typeSpan);
-			}
+			typeSpan.textContent = type ?? UNKNOWN_LABEL;
+			typeSpan.style.color = type
+				? dark
+					? "#93c5fd"
+					: "#2563eb"
+				: dark
+					? "#6b7280"
+					: "#9ca3af";
 		};
 
 		update();
