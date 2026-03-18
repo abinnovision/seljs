@@ -31,6 +31,18 @@ export interface SELEditorFeatures {
 	typeDisplay?: boolean;
 
 	/**
+	 * Editor view configuration (always enabled)
+	 */
+	view?: {
+		/**
+		 * Minimum number of visible lines
+		 *
+		 * @default 1
+		 */
+		minLines?: number;
+	};
+
+	/**
 	 * Tooltip rendering configuration (always enabled)
 	 */
 	tooltip?: {
