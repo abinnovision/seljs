@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/abinnovision/seljs/compare/editor-react-v1.0.1...editor-react-v1.1.0) (2026-03-18)
+
+
+### Features
+
+* allow to configure min lines ([#34](https://github.com/abinnovision/seljs/issues/34)) ([a0eca8b](https://github.com/abinnovision/seljs/commit/a0eca8bdd3d59d513f6e95a765d0cf5a84e9e717))
+* simplify editor config API ([#31](https://github.com/abinnovision/seljs/issues/31)) ([9a6ee3b](https://github.com/abinnovision/seljs/commit/9a6ee3b4aa65d2474b21155538ab16a793a814f7))
+
 ## [1.0.1](https://github.com/abinnovision/seljs/compare/editor-react-v1.0.0...editor-react-v1.0.1) (2026-03-16)
 
 
