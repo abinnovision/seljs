@@ -24,7 +24,7 @@ interface CheckResult {
  * };
  * ```
  */
-const mapCheckResult = (
+export const mapCheckResult = (
 	resultOrError: CheckResult | Error,
 	docLength: number,
 ): SELDiagnostic[] => {
@@ -56,6 +56,3 @@ const mapCheckResult = (
 		},
 	];
 };
-
-export { mapCheckResult };
-export type { SELDiagnostic };

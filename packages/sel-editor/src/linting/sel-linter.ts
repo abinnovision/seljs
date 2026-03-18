@@ -1,15 +1,7 @@
 import { linter, type Diagnostic } from "@codemirror/lint";
 
-import type { SELDiagnostic } from "./diagnostic-mapper";
 import type { Extension } from "@codemirror/state";
-
-interface SELLinterOptions {
-	/** Validate an expression, return diagnostics */
-	validate: (expression: string) => SELDiagnostic[] | Promise<SELDiagnostic[]>;
-
-	/** Debounce delay in ms (default: 300) */
-	delay?: number;
-}
+import type { SELDiagnostic } from "@seljs/checker";
 
 const SEVERITY_MAP: Record<SELDiagnostic["severity"], Diagnostic["severity"]> =
 	{
@@ -18,7 +10,10 @@ const SEVERITY_MAP: Record<SELDiagnostic["severity"], Diagnostic["severity"]> =
 		info: "info",
 	};
 
-function mapToCMDiagnostic(diag: SELDiagnostic, docLength: number): Diagnostic {
+const mapToCMDiagnostic = (
+	diag: SELDiagnostic,
+	docLength: number,
+): Diagnostic => {
 	const from = diag.from ?? 0;
 	const to = diag.to ?? docLength;
 
@@ -28,10 +23,22 @@ function mapToCMDiagnostic(diag: SELDiagnostic, docLength: number): Diagnostic {
 		severity: SEVERITY_MAP[diag.severity],
 		message: diag.message,
 	};
+};
+
+export interface SELLinterOptions {
+	/**
+	 * Validate an expression, return diagnostics
+	 */
+	validate: (expression: string) => SELDiagnostic[] | Promise<SELDiagnostic[]>;
+
+	/**
+	 * Debounce delay in ms (default: 300)
+	 */
+	delay?: number;
 }
 
-function createSELLinter(options: SELLinterOptions): Extension {
-	return linter(
+export const createSELLinter = (options: SELLinterOptions): Extension =>
+	linter(
 		async (view) => {
 			const doc = view.state.doc.toString();
 			if (!doc) {
@@ -45,7 +52,3 @@ function createSELLinter(options: SELLinterOptions): Extension {
 		},
 		{ delay: options.delay ?? 300 },
 	);
-}
-
-export { createSELLinter };
-export type { SELLinterOptions };

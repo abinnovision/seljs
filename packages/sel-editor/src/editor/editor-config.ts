@@ -8,10 +8,10 @@ import { SELChecker, rules } from "@seljs/checker";
 
 import { selDarkTheme, selLightTheme } from "./theme";
 import { createTypeDisplay } from "./type-display";
-import { createSchemaCompletion } from "../completion/schema-completion";
+import { createSchemaCompletion } from "../completion";
+import { createTokenizerConfig } from "../language";
 import { createSemanticHighlighter } from "../language/semantic-highlighter";
-import { createTokenizerConfig } from "../language/tokenizer-config";
-import { createSELLinter } from "../linting/sel-linter";
+import { createSELLinter } from "../linting";
 
 import type { SELEditorConfig } from "./types";
 

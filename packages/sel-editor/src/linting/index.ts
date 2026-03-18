@@ -1,2 +1,2 @@
-export { createSELLinter, type SELLinterOptions } from "./sel-linter";
-export { mapCheckResult, type SELDiagnostic } from "./diagnostic-mapper";
+export * from "./sel-linter";
+export * from "./diagnostic-mapper";
