@@ -17,6 +17,7 @@ import type { SELDiagnostic } from "./checker.js";
  */
 const extractPositionFromMessage = (
 	message: string,
+	expression: string,
 ): { from: number; to: number } | undefined => {
 	const lines = message.split("\n");
 	const caretLine = lines.find((line) => /^\s*\^+\s*$/.test(line));
@@ -40,14 +41,40 @@ const extractPositionFromMessage = (
 	const caretStart = caretLine.indexOf("^");
 	const caretEnd = caretLine.lastIndexOf("^");
 
-	const from = caretStart - prefixLength;
-	const to = caretEnd - prefixLength + 1;
+	const column = caretStart - prefixLength;
+	const columnEnd = caretEnd - prefixLength + 1;
 
-	if (from < 0) {
+	if (column < 0) {
 		return undefined;
 	}
 
-	return { from, to };
+	/*
+	 * Parse the 1-based line number from the ">    N | " prefix to compute
+	 * absolute offsets for multi-line expressions. cel-js reports caret
+	 * positions relative to the error line; we need document-absolute offsets.
+	 */
+	const lineMatch = codeLine.match(/^>\s+(\d+)\s*\|/);
+	const lineNumber = lineMatch ? Number(lineMatch[1]) : 1;
+
+	// Compute the byte offset where this line starts in the expression
+	const expressionLines = expression.split("\n");
+
+	// If line number exceeds actual lines, fall back to full-expression span
+	if (lineNumber > expressionLines.length) {
+		return undefined;
+	}
+
+	let baseOffset = 0;
+	for (let i = 0; i < lineNumber - 1; i++) {
+		const line = expressionLines[i];
+		if (line === undefined) {
+			return undefined;
+		}
+
+		baseOffset += line.length + 1;
+	}
+
+	return { from: baseOffset + column, to: baseOffset + columnEnd };
 };
 
 /**
@@ -88,7 +115,7 @@ export const extractDiagnostics = (
 		];
 	}
 
-	const position = extractPositionFromMessage(error.message);
+	const position = extractPositionFromMessage(error.message, expression);
 	const message = extractPlainMessage(error.message);
 
 	return [
