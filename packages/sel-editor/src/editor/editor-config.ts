@@ -90,6 +90,18 @@ export const buildExtensions = (config: SELEditorConfig): Extension[] => {
 		extensions.push(createTypeDisplay(checker, config.dark ?? false));
 	}
 
+	// View configuration
+	const minLines = config.features?.view?.minLines;
+	if (minLines && minLines > 1) {
+		const minHeight = `${String(Math.max(1, minLines) * 1.4)}em`;
+		extensions.push(
+			EditorView.theme({
+				"&": { minHeight },
+				".cm-content": { minHeight },
+			}),
+		);
+	}
+
 	// Tooltip configuration
 	if (config.features?.tooltip) {
 		extensions.push(tooltips(config.features.tooltip));

@@ -4,6 +4,7 @@ import { parseAbi } from "viem";
 
 import { SELEditor } from "./sel-editor";
 
+import type { SELEditorProps } from "./sel-editor";
 import type { SELSchema } from "@seljs/schema";
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -51,181 +52,137 @@ const emptySchema: SELSchema = {
 	macros: [],
 };
 
-const meta: Meta<typeof SELEditor> = {
+interface PlaygroundArgs extends SELEditorProps {
+	linting: boolean;
+	autocomplete: boolean;
+	semanticHighlighting: boolean;
+	typeDisplay: boolean;
+	minLines: number;
+}
+
+function renderPlayground({
+	linting,
+	autocomplete,
+	semanticHighlighting,
+	typeDisplay,
+	minLines,
+	...props
+}: PlaygroundArgs) {
+	return (
+		<SELEditor
+			{...props}
+			features={{
+				linting,
+				autocomplete,
+				semanticHighlighting,
+				typeDisplay,
+				view: { minLines },
+			}}
+		/>
+	);
+}
+
+const meta: Meta<PlaygroundArgs> = {
 	title: "SELEditor",
-	component: SELEditor,
 	parameters: {
 		layout: "padded",
 	},
 	decorators: [
-		(Story) => (
-			<div style={{ maxWidth: 700, margin: "0 auto" }}>
+		(Story, context) => (
+			<div
+				style={{
+					maxWidth: 700,
+					margin: "0 auto",
+					...(context.args.dark
+						? { background: "#1e1e1e", padding: 24, borderRadius: 8 }
+						: {}),
+				}}
+			>
 				<Story />
 			</div>
 		),
 	],
 	args: {
 		schema: erc20Schema,
+		value: "erc20.balanceOf(user) > 0",
+		dark: false,
+		readOnly: false,
+		placeholder: "",
+		linting: true,
+		autocomplete: true,
+		semanticHighlighting: true,
+		typeDisplay: false,
+		minLines: 1,
 	},
+	argTypes: {
+		value: { control: "text" },
+		dark: { control: "boolean" },
+		readOnly: { control: "boolean" },
+		placeholder: { control: "text" },
+		linting: { control: "boolean" },
+		autocomplete: { control: "boolean" },
+		semanticHighlighting: { control: "boolean" },
+		typeDisplay: { control: "boolean" },
+		minLines: { control: { type: "number", min: 1, max: 20 } },
+		schema: { control: false },
+		onChange: { control: false },
+		checkerOptions: { control: false },
+		className: { control: false },
+	},
+	render: renderPlayground,
 };
 
-type Story = StoryObj<typeof SELEditor>;
+type Story = StoryObj<PlaygroundArgs>;
 
-const Default: Story = {};
-
-const WithExpression: Story = {
-	args: {
-		value: "erc20.balanceOf(user) > 1000",
-	},
+const Playground: Story = {
+	name: "Playground",
 };
 
 const ComplexExpression: Story = {
+	name: "Complex Expression",
 	args: {
 		value:
 			'erc20.balanceOf(user) > 0 && erc20.allowance(user, vault.getUserDeposit(user)) >= int(1000) ? "eligible" : "not eligible"',
 	},
 };
 
-const WithValidation: Story = {
+const Validation: Story = {
 	name: "Built-in Validation",
 	args: {
 		value: "erc20.unknownMethod(user)",
 	},
 };
 
-const WithLintRules: Story = {
-	name: "Lint Rules (Redundant Bool)",
+const LintRules: Story = {
+	name: "Lint Rules",
 	args: {
 		value: "erc20.balanceOf(user) > 0 == true",
 		checkerOptions: { rules: rules.builtIn },
 	},
 };
 
-const WithLintSelfComparison: Story = {
-	name: "Lint Rules (Self Comparison)",
-	args: {
-		value: "erc20.totalSupply() == erc20.totalSupply()",
-		checkerOptions: { rules: rules.builtIn },
-	},
-};
-
-const WithLintConstantCondition: Story = {
-	name: "Lint Rules (Constant Condition)",
-	args: {
-		value: "true && erc20.balanceOf(user) > 0",
-		checkerOptions: { rules: rules.builtIn },
-	},
-};
-
-const RequireTypeBoolPass: Story = {
-	name: "Require Type Bool (Pass)",
-	args: {
-		value: "erc20.balanceOf(user) > 0",
-		checkerOptions: { rules: [rules.requireType("bool"), ...rules.builtIn] },
-	},
-};
-
-const RequireTypeBoolFail: Story = {
-	name: "Require Type Bool (Fail)",
+const RequireTypeBool: Story = {
+	name: "Require Type Bool",
 	args: {
 		value: "erc20.balanceOf(user)",
 		checkerOptions: { rules: [rules.requireType("bool"), ...rules.builtIn] },
 	},
 };
 
-const ReadOnly: Story = {
-	args: {
-		value: "erc20.balanceOf(user) > 0",
-		readOnly: true,
-	},
-};
-
-const WithPlaceholder: Story = {
-	args: {
-		placeholder: "Enter a CEL expression, e.g. erc20.balanceOf(user) > 0",
-	},
-};
-
-const DarkMode: Story = {
-	args: {
-		value: "erc20.balanceOf(user) > 1000",
-		dark: true,
-	},
-	decorators: [
-		(Story) => (
-			<div
-				style={{
-					background: "#1e1e1e",
-					padding: 24,
-					borderRadius: 8,
-				}}
-			>
-				<Story />
-			</div>
-		),
-	],
-};
-
 const EmptySchema: Story = {
+	name: "Empty Schema",
 	args: {
 		schema: emptySchema,
 		value: "some_expression > 0",
 	},
 };
 
-const LiveEditing: Story = {
-	name: "Live Editing (try autocomplete)",
-	args: {
-		placeholder: "Start typing... try 'erc' or 'user' and press Ctrl+Space",
-	},
-};
-
-const WithTypeDisplay: Story = {
-	name: "Type Display",
-	args: {
-		value: "erc20.balanceOf(user) > 0",
-		features: { typeDisplay: true },
-	},
-};
-
-const TypeDisplayDark: Story = {
-	name: "Type Display (Dark)",
-	args: {
-		value: "erc20.balanceOf(user)",
-		features: { typeDisplay: true },
-		dark: true,
-	},
-	decorators: [
-		(Story) => (
-			<div
-				style={{
-					background: "#1e1e1e",
-					padding: 24,
-					borderRadius: 8,
-				}}
-			>
-				<Story />
-			</div>
-		),
-	],
-};
-
 export default meta;
 export {
-	Default,
-	WithExpression,
+	Playground,
 	ComplexExpression,
-	WithValidation,
-	WithLintRules,
-	WithLintSelfComparison,
-	WithLintConstantCondition,
-	RequireTypeBoolPass,
-	RequireTypeBoolFail,
-	ReadOnly,
-	WithPlaceholder,
-	DarkMode,
+	Validation,
+	LintRules,
+	RequireTypeBool,
 	EmptySchema,
-	LiveEditing,
-	WithTypeDisplay,
-	TypeDisplayDark,
 };

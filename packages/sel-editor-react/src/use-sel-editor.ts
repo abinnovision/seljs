@@ -18,46 +18,66 @@ export function useSELEditor(
 	config: Omit<SELEditorConfig, "parent">,
 ): UseSELEditorResult {
 	const viewRef = useRef<EditorView | null>(null);
+	const [parent, setParent] = useState<HTMLElement | null>(null);
 	const [view, setView] = useState<EditorView | null>(null);
 	const [value, setValue] = useState(config.value ?? "");
 	const [valid, setValid] = useState(true);
 	const configRef = useRef(config);
 	configRef.current = config;
 
-	const ref = useCallback<RefCallback<HTMLElement>>(
-		(node) => {
+	const ref = useCallback<RefCallback<HTMLElement>>((node) => {
+		setParent(node);
+	}, []);
+
+	useEffect(() => {
+		if (!parent) {
 			if (viewRef.current) {
 				viewRef.current.destroy();
 				viewRef.current = null;
 				setView(null);
 			}
 
-			if (!node) {
-				return;
-			}
+			return;
+		}
 
-			const currentConfig = configRef.current;
-			const editor = createSELEditor({
-				...currentConfig,
-				parent: node,
-				onChange: (newValue, isValid) => {
-					setValue(newValue);
-					setValid(isValid);
-					currentConfig.onChange?.(newValue, isValid);
-				},
-			});
-			viewRef.current = editor;
-			setView(editor);
-		},
-		[config.schema],
-	);
-
-	useEffect(() => {
-		return () => {
-			viewRef.current?.destroy();
+		if (viewRef.current) {
+			viewRef.current.destroy();
 			viewRef.current = null;
+		}
+
+		const currentConfig = configRef.current;
+		const editor = createSELEditor({
+			...currentConfig,
+			parent,
+			onChange: (newValue, isValid) => {
+				setValue(newValue);
+				setValid(isValid);
+				currentConfig.onChange?.(newValue, isValid);
+			},
+		});
+		viewRef.current = editor;
+		setView(editor);
+
+		return () => {
+			editor.destroy();
+			viewRef.current = null;
+			setView(null);
 		};
-	}, []);
+	}, [
+		parent,
+		config.schema,
+		config.dark,
+		config.readOnly,
+		config.placeholder,
+		config.checkerOptions,
+		config.features?.linting,
+		config.features?.autocomplete,
+		config.features?.semanticHighlighting,
+		config.features?.typeDisplay,
+		config.features?.view?.minLines,
+		config.features?.tooltip?.parent,
+		config.features?.tooltip?.position,
+	]);
 
 	return { ref, view, value, valid };
 }
