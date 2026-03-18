@@ -104,7 +104,7 @@ describe("src/use-sel-editor.ts", () => {
 			});
 		});
 
-		expect(onChange).toHaveBeenCalledWith("hello");
+		expect(onChange).toHaveBeenCalledWith("hello", expect.any(Boolean));
 
 		document.body.removeChild(container);
 	});

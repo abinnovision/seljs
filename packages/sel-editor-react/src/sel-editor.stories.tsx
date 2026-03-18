@@ -1,4 +1,4 @@
-import { SELChecker, rules } from "@seljs/checker";
+import { rules } from "@seljs/checker";
 import { buildSchema } from "@seljs/env";
 import { parseAbi } from "viem";
 
@@ -93,20 +93,11 @@ const WithValidation: Story = {
 	},
 };
 
-const checkerWithRules = new SELChecker(erc20Schema, {
-	rules: rules.builtIn,
-});
-
-const conditionChecker = new SELChecker(erc20Schema, {
-	rules: [rules.requireType("bool"), ...rules.builtIn],
-});
-
 const WithLintRules: Story = {
 	name: "Lint Rules (Redundant Bool)",
 	args: {
 		value: "erc20.balanceOf(user) > 0 == true",
-		validate: (expression: string) =>
-			checkerWithRules.check(expression).diagnostics,
+		checkerOptions: { rules: rules.builtIn },
 	},
 };
 
@@ -114,8 +105,7 @@ const WithLintSelfComparison: Story = {
 	name: "Lint Rules (Self Comparison)",
 	args: {
 		value: "erc20.totalSupply() == erc20.totalSupply()",
-		validate: (expression: string) =>
-			checkerWithRules.check(expression).diagnostics,
+		checkerOptions: { rules: rules.builtIn },
 	},
 };
 
@@ -123,8 +113,7 @@ const WithLintConstantCondition: Story = {
 	name: "Lint Rules (Constant Condition)",
 	args: {
 		value: "true && erc20.balanceOf(user) > 0",
-		validate: (expression: string) =>
-			checkerWithRules.check(expression).diagnostics,
+		checkerOptions: { rules: rules.builtIn },
 	},
 };
 
@@ -132,8 +121,7 @@ const RequireTypeBoolPass: Story = {
 	name: "Require Type Bool (Pass)",
 	args: {
 		value: "erc20.balanceOf(user) > 0",
-		validate: (expression: string) =>
-			conditionChecker.check(expression).diagnostics,
+		checkerOptions: { rules: [rules.requireType("bool"), ...rules.builtIn] },
 	},
 };
 
@@ -141,8 +129,7 @@ const RequireTypeBoolFail: Story = {
 	name: "Require Type Bool (Fail)",
 	args: {
 		value: "erc20.balanceOf(user)",
-		validate: (expression: string) =>
-			conditionChecker.check(expression).diagnostics,
+		checkerOptions: { rules: [rules.requireType("bool"), ...rules.builtIn] },
 	},
 };
 
@@ -197,7 +184,7 @@ const WithTypeDisplay: Story = {
 	name: "Type Display",
 	args: {
 		value: "erc20.balanceOf(user) > 0",
-		showType: true,
+		features: { typeDisplay: true },
 	},
 };
 
@@ -205,7 +192,7 @@ const TypeDisplayDark: Story = {
 	name: "Type Display (Dark)",
 	args: {
 		value: "erc20.balanceOf(user)",
-		showType: true,
+		features: { typeDisplay: true },
 		dark: true,
 	},
 	decorators: [

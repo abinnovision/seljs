@@ -1,6 +1,35 @@
-import type { Extension } from "@codemirror/state";
-import type { SELDiagnostic } from "@seljs/checker";
+import type { SELCheckerOptions } from "@seljs/checker";
 import type { SELSchema } from "@seljs/schema";
+
+export interface SELEditorFeatures {
+	/**
+	 * Enable linting/validation
+	 *
+	 * @default true
+	 */
+	linting?: boolean;
+
+	/**
+	 * Enable schema-aware autocomplete
+	 *
+	 * @default true
+	 */
+	autocomplete?: boolean;
+
+	/**
+	 * Enable schema-aware identifier coloring
+	 *
+	 * @default true
+	 */
+	semanticHighlighting?: boolean;
+
+	/**
+	 * Show inferred output type panel below editor
+	 *
+	 * @default false
+	 */
+	typeDisplay?: boolean;
+}
 
 export interface SELEditorConfig {
 	/**
@@ -19,42 +48,35 @@ export interface SELEditorConfig {
 	value?: string;
 
 	/**
-	 *  Called on every expression change
+	 * Called on every expression change with the current value and validity
 	 */
-	onChange?: (value: string) => void;
+	onChange?: (value: string, valid: boolean) => void;
 
 	/**
-	 *  Validation function for error highlighting
+	 * Options for the internal SELChecker instance
 	 */
-	validate?: (expression: string) => SELDiagnostic[] | Promise<SELDiagnostic[]>;
+	checkerOptions?: SELCheckerOptions;
 
 	/**
-	 *  Debounce delay for validation (default: 300ms)
-	 */
-	validateDelay?: number;
-
-	/**
-	 *  Dark mode
+	 * Dark mode
+	 *
+	 * @default false
 	 */
 	dark?: boolean;
 
 	/**
-	 *  Whether the editor is read-only
+	 * Whether the editor is read-only
+	 * @default false
 	 */
 	readOnly?: boolean;
 
 	/**
-	 *  Placeholder text
+	 * Placeholder text
 	 */
 	placeholder?: string;
 
 	/**
-	 *  Show inferred output type below the editor
+	 * Optional feature toggles
 	 */
-	showType?: boolean;
-
-	/**
-	 *  Additional CodeMirror extensions
-	 */
-	extensions?: Extension[];
+	features?: SELEditorFeatures;
 }

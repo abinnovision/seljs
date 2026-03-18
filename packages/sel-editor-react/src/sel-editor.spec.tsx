@@ -57,10 +57,13 @@ describe("src/sel-editor.tsx", () => {
 		expect(container.querySelector(".cm-editor")).toBeTruthy();
 	});
 
-	it("accepts validate prop for error highlighting", () => {
-		const validate = vi.fn().mockReturnValue([]);
+	it("accepts checkerOptions prop", () => {
 		const { container } = render(
-			<SELEditor schema={testSchema} value="test" validate={validate} />,
+			<SELEditor
+				schema={testSchema}
+				value="test"
+				checkerOptions={{ rules: [] }}
+			/>,
 		);
 		expect(container.querySelector(".cm-editor")).toBeTruthy();
 	});
