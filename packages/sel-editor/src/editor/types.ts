@@ -29,6 +29,24 @@ export interface SELEditorFeatures {
 	 * @default false
 	 */
 	typeDisplay?: boolean;
+
+	/**
+	 * Tooltip rendering configuration (always enabled)
+	 */
+	tooltip?: {
+		/**
+		 * CSS positioning strategy for tooltips
+		 *
+		 * @default "fixed"
+		 */
+		position?: "fixed" | "absolute";
+
+		/**
+		 * Custom parent element for tooltip rendering.
+		 * Useful when the editor is inside a modal or overflow container.
+		 */
+		parent?: HTMLElement;
+	};
 }
 
 export interface SELEditorConfig {

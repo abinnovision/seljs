@@ -2,7 +2,7 @@ import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { bracketMatching } from "@codemirror/language";
 import { EditorState, type Extension } from "@codemirror/state";
-import { EditorView, keymap, placeholder } from "@codemirror/view";
+import { EditorView, keymap, placeholder, tooltips } from "@codemirror/view";
 import { celLanguageSupport } from "@seljs/cel-lezer";
 import { SELChecker } from "@seljs/checker";
 
@@ -88,6 +88,11 @@ export const buildExtensions = (config: SELEditorConfig): Extension[] => {
 	// Type display panel
 	if (resolved.typeDisplay) {
 		extensions.push(createTypeDisplay(checker, config.dark ?? false));
+	}
+
+	// Tooltip configuration
+	if (config.features?.tooltip) {
+		extensions.push(tooltips(config.features.tooltip));
 	}
 
 	return extensions;
