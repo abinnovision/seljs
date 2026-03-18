@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createSELLinter } from "./sel-linter";
 
-import type { SELDiagnostic } from "./diagnostic-mapper";
+import type { SELDiagnostic } from "@seljs/checker";
 
 function createView(
 	doc: string,

@@ -69,7 +69,10 @@ export const createTypeDisplay = (
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 
 	const plugin = EditorView.updateListener.of((update) => {
-		if (!update.docChanged && !update.startState.field(typeField, false)) {
+		if (
+			!update.docChanged &&
+			update.startState.field(typeField, false) !== null
+		) {
 			return;
 		}
 
