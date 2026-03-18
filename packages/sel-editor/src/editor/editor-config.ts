@@ -93,7 +93,7 @@ export const buildExtensions = (config: SELEditorConfig): Extension[] => {
 	// View configuration
 	const minLines = config.features?.view?.minLines;
 	if (minLines && minLines > 1) {
-		const minHeight = `${String(minLines * 1.4)}em`;
+		const minHeight = `${String(Math.max(1, minLines) * 1.4)}em`;
 		extensions.push(
 			EditorView.theme({
 				"&": { minHeight },
