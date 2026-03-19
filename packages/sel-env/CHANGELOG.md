@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/abinnovision/seljs/compare/env-v1.0.1...env-v1.1.0) (2026-03-18)
+
+
+### Miscellaneous Chores
+
+* **env:** Synchronize sel versions
+
 ## [1.0.1](https://github.com/abinnovision/seljs/compare/env-v1.0.0...env-v1.0.1) (2026-03-16)
 
 
