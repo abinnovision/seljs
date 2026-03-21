@@ -217,13 +217,13 @@ try {
 
 The `expressionComplexity` rule measures five AST metrics. Each can be configured independently — set to `Infinity` to disable a metric:
 
-| Metric         | What it measures                                 | Default |
-| -------------- | ------------------------------------------------ | ------- | ------------ | --- |
-| `maxAstNodes`  | Total AST node count                             | 50      |
-| `maxDepth`     | Maximum nesting depth                            | 8       |
-| `maxCalls`     | Contract method call nodes in the AST            | 10      |
-| `maxOperators` | Arithmetic, comparison, and membership operators | 15      |
-| `maxBranches`  | Ternary (`?:`) and logical (`&&`, `              |         | `) branching | 6   |
+| Metric         | What it measures                                     | Default |
+| -------------- | ---------------------------------------------------- | ------- |
+| `maxAstNodes`  | Total AST node count                                 | 50      |
+| `maxDepth`     | Maximum nesting depth                                | 8       |
+| `maxCalls`     | Contract method call nodes in the AST                | 10      |
+| `maxOperators` | Arithmetic, comparison, and membership operators     | 15      |
+| `maxBranches`  | Ternary (`?:`) and logical (`&&`, `\|\| `) branching | 6       |
 
 `maxOperators` and `maxBranches` are distinct — `&&`/`||` count as branches only, not operators.
 
