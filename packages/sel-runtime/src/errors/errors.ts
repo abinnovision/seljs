@@ -1,5 +1,7 @@
 import { SELError, SELParseError, SELTypeError } from "@seljs/common";
 
+import type { SELDiagnostic } from "@seljs/checker";
+
 // Re-export shared errors from @seljs/common
 export { SELError, SELParseError, SELTypeError };
 
@@ -90,5 +92,22 @@ export class MulticallBatchError extends SELError {
 		this.failedCallIndex = options?.failedCallIndex;
 		this.contractName = options?.contractName;
 		this.methodName = options?.methodName;
+	}
+}
+
+/**
+ * Thrown when lint rules with error severity detect violations.
+ * Contains the diagnostics that caused the failure.
+ */
+export class SELLintError extends SELError {
+	public readonly diagnostics: SELDiagnostic[];
+
+	public constructor(
+		diagnostics: SELDiagnostic[],
+		options?: { cause?: unknown },
+	) {
+		const messages = diagnostics.map((d) => d.message).join("; ");
+		super(`Expression lint failed: ${messages}`, options);
+		this.diagnostics = diagnostics;
 	}
 }

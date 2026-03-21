@@ -177,6 +177,66 @@ const schema = buildSchema({
 
 Context keys are mapped directly to CEL types for type-checking and runtime evaluation.
 
+### Lint Rules
+
+Lint rules analyze the expression AST **before** any on-chain calls happen. They are passed via the `rules` option and come in two severities:
+
+- **Error** — enforcement rules that cause the runtime to throw `SELLintError` before execution
+- **Warning / Info** — advisory rules that surface in `result.diagnostics` without blocking execution
+
+```typescript
+import { createSEL } from "@seljs/runtime";
+import { expressionComplexity, requireType, rules } from "@seljs/checker";
+
+const env = createSEL({
+  schema,
+  client,
+  rules: [
+    // Enforcement — throws SELLintError if violated
+    requireType("bool"),
+    expressionComplexity({ maxAstNodes: 50, maxDepth: 8 }),
+
+    // Advisory — warnings/info in result.diagnostics
+    ...rules.builtIn,
+  ],
+});
+
+try {
+  const result = await env.evaluate("token.balanceOf(user) > solInt(0)", {
+    user: "0x...",
+  });
+  console.log(result.diagnostics); // advisory warnings, if any
+} catch (error) {
+  if (error instanceof SELLintError) {
+    console.log(error.diagnostics); // which rules were violated
+  }
+}
+```
+
+#### Expression Complexity
+
+The `expressionComplexity` rule measures five AST metrics. Each can be configured independently — set to `Infinity` to disable a metric:
+
+| Metric         | What it measures                                 | Default |
+| -------------- | ------------------------------------------------ | ------- | ------------ | --- |
+| `maxAstNodes`  | Total AST node count                             | 50      |
+| `maxDepth`     | Maximum nesting depth                            | 8       |
+| `maxCalls`     | Contract method call nodes in the AST            | 10      |
+| `maxOperators` | Arithmetic, comparison, and membership operators | 15      |
+| `maxBranches`  | Ternary (`?:`) and logical (`&&`, `              |         | `) branching | 6   |
+
+`maxOperators` and `maxBranches` are distinct — `&&`/`||` count as branches only, not operators.
+
+#### Built-in Advisory Rules
+
+| Rule                    | Severity | What it catches                              |
+| ----------------------- | -------- | -------------------------------------------- |
+| `no-redundant-bool`     | warning  | `x == true` — simplify to `x`                |
+| `no-constant-condition` | warning  | `true && x` — likely a mistake               |
+| `no-self-comparison`    | warning  | `x == x` — always true                       |
+| `no-mixed-operators`    | info     | `a && b \|\| c` — add parens for clarity     |
+| `deferred-call`         | info     | Contract call can't be batched via multicall |
+
 ### Automatic Multicall Batching
 
 Independent contract calls within the same expression are batched into a single Multicall3 RPC call:
@@ -270,6 +330,55 @@ const { value } = await env.evaluate(
 );
 ```
 
+## Execution Limits
+
+`SELLimits` controls how many resources the runtime can consume during contract call execution:
+
+```typescript
+const env = createSEL({
+  schema,
+  client,
+  limits: {
+    maxRounds: 10, // max dependency-ordered execution rounds (default: 10)
+    maxCalls: 100, // max total contract calls across all rounds (default: 100)
+  },
+});
+```
+
+These are hard limits — exceeding them throws `ExecutionLimitError`. They protect against runaway execution when expressions contain deeply chained or recursive contract calls.
+
+For static complexity analysis (AST node count, nesting depth, etc.), use the [`expressionComplexity` lint rule](#expression-complexity) instead — it rejects overly complex expressions before any on-chain calls happen.
+
+### Recommended Defaults for Untrusted Input
+
+When evaluating user-authored expressions (e.g., from a frontend editor), use both layers together:
+
+```typescript
+import { expressionComplexity, requireType, rules } from "@seljs/checker";
+
+const env = createSEL({
+  schema,
+  client,
+  limits: {
+    maxRounds: 5, // tighter than default — limits chained RPC calls
+    maxCalls: 20, // limits total on-chain calls
+  },
+  rules: [
+    requireType("bool"), // expressions must resolve to a boolean
+    expressionComplexity({
+      maxAstNodes: 40, // reject overly large expressions
+      maxDepth: 6, // prevent deeply nested logic
+      maxCalls: 8, // limit contract call complexity
+      maxOperators: 12, // cap arithmetic/comparison density
+      maxBranches: 4, // limit branching complexity
+    }),
+    ...rules.builtIn, // no-redundant-bool, no-constant-condition, etc.
+  ],
+});
+```
+
+**Execution limits** are a safety net that catches runaway execution at the RPC level. **Lint rules** reject bad expressions early with actionable error messages — before any gas is spent.
+
 ## Error Handling
 
 All errors extend `SELError`. Catch specific types for granular handling:
@@ -279,6 +388,7 @@ All errors extend `SELError`. Catch specific types for granular handling:
 | `SELParseError`           | Invalid CEL expression syntax                                 |
 | `SELEvaluationError`      | Expression evaluation fails (undefined variables, etc.)       |
 | `SELTypeError`            | Type checking fails                                           |
+| `SELLintError`            | Lint rule with error severity violated (`.diagnostics`)       |
 | `SELContractError`        | Contract call fails (includes `.contractName`, `.methodName`) |
 | `CircularDependencyError` | Circular dependency in call graph                             |
 | `ExecutionLimitError`     | `maxRounds` or `maxCalls` exceeded                            |

@@ -1,3 +1,4 @@
+import type { SELCheckerOptions } from "@seljs/checker";
 import type { SELSchema } from "@seljs/schema";
 import type { Address, PublicClient } from "viem";
 
@@ -16,31 +17,12 @@ export interface MulticallOptions {
 }
 
 /**
- * Limits for expression parsing and contract call execution.
- *
- * AST limits (`maxAstNodes`, `maxDepth`, `maxListElements`, `maxMapEntries`,
- * `maxCallArguments`) are forwarded to the underlying CEL parser to constrain
- * expression complexity.
+ * Limits for contract call execution.
  *
  * Execution limits (`maxRounds`, `maxCalls`) bound the multi-round contract
  * execution engine. An {@link ExecutionLimitError} is thrown when exceeded.
  */
 export interface SELLimits {
-	/** Maximum number of AST nodes allowed in a parsed expression */
-	maxAstNodes?: number;
-
-	/** Maximum nesting depth of the AST */
-	maxDepth?: number;
-
-	/** Maximum number of elements in a list literal */
-	maxListElements?: number;
-
-	/** Maximum number of entries in a map literal */
-	maxMapEntries?: number;
-
-	/** Maximum number of arguments in a single function call */
-	maxCallArguments?: number;
-
 	/** Maximum number of dependency-ordered execution rounds (default: 10) */
 	maxRounds?: number;
 
@@ -54,7 +36,7 @@ export interface SELLimits {
  * All contracts and context must be declared here — the environment
  * cannot be mutated after construction.
  */
-export interface SELRuntimeConfig {
+export interface SELRuntimeConfig extends SELCheckerOptions {
 	/** SEL schema describing contracts, variables, types, functions, and macros */
 	schema: SELSchema;
 
@@ -64,6 +46,6 @@ export interface SELRuntimeConfig {
 	/** Multicall3 batching options for contract call execution */
 	multicall?: MulticallOptions;
 
-	/** AST parsing and execution limits */
+	/** Execution limits for contract call rounds and total calls */
 	limits?: SELLimits;
 }

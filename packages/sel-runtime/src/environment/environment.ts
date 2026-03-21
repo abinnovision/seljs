@@ -1,4 +1,4 @@
-import { createRuntimeEnvironment } from "@seljs/checker";
+import { SELChecker, createRuntimeEnvironment } from "@seljs/checker";
 
 import { normalizeContextForEvaluation } from "./context.js";
 import {
@@ -16,6 +16,7 @@ import { createLogger } from "../debug.js";
 import {
 	MulticallBatchError,
 	SELContractError,
+	SELLintError,
 	SELTypeError,
 } from "../errors/index.js";
 import { MultiRoundExecutor } from "../execution/multi-round-executor.js";
@@ -28,7 +29,7 @@ import type {
 	ExecutionMeta,
 } from "../execution/types.js";
 import type { Environment, TypeCheckResult } from "@marcbachmann/cel-js";
-import type { CelCodecRegistry } from "@seljs/checker";
+import type { CelCodecRegistry, SELDiagnostic } from "@seljs/checker";
 import type { ContractSchema, SELSchema } from "@seljs/schema";
 import type { PublicClient } from "viem";
 
@@ -44,6 +45,7 @@ const debug = createLogger("environment");
 
 export class SELRuntime {
 	private readonly env: Environment;
+	private readonly checker: SELChecker;
 	private readonly client?: PublicClient;
 	private readonly schema: SELSchema;
 	private readonly variableTypes = new Map<string, string>();
@@ -89,16 +91,6 @@ export class SELRuntime {
 	 */
 	public constructor(config: SELRuntimeConfig) {
 		const limits = config.limits;
-		const celLimits = limits
-			? {
-					maxAstNodes: limits.maxAstNodes,
-					maxDepth: limits.maxDepth,
-					maxListElements: limits.maxListElements,
-					maxMapEntries: limits.maxMapEntries,
-					maxCallArguments: limits.maxCallArguments,
-				}
-			: undefined;
-
 		this.maxRounds = limits?.maxRounds ?? 10;
 		this.maxCalls = limits?.maxCalls ?? 100;
 		this.multicallOptions = config.multicall;
@@ -138,12 +130,15 @@ export class SELRuntime {
 		const { env, contractBindings, codecRegistry } = createRuntimeEnvironment(
 			this.schema,
 			handler,
-			{ limits: celLimits, unlistedVariablesAreDyn: true },
 		);
 
 		this.env = env;
 		this.contractBindings = contractBindings;
 		this.codecRegistry = codecRegistry;
+
+		this.checker = new SELChecker(config.schema, {
+			rules: config.rules,
+		});
 
 		// Populate variableTypes from schema for normalizeContextForEvaluation
 		for (const v of this.schema.variables) {
@@ -216,6 +211,7 @@ export class SELRuntime {
 		normalizedContext: Record<string, unknown> | undefined;
 		executionVariables: Record<string, unknown>;
 		typeCheckResult: TypeCheckResult;
+		diagnostics: SELDiagnostic[];
 	} {
 		const parseResult = this.env.parse(expression);
 
@@ -245,12 +241,29 @@ export class SELRuntime {
 			);
 		}
 
+		// Run lint rules via checker
+		const lintResult = this.checker.check(expression);
+
+		// Enforcement: error-severity diagnostics cause throw
+		const lintErrors = lintResult.diagnostics.filter(
+			(d) => d.severity === "error",
+		);
+		if (lintErrors.length > 0) {
+			throw new SELLintError(lintErrors);
+		}
+
+		// Advisory: warning/info diagnostics pass through to result
+		const diagnostics = lintResult.diagnostics.filter(
+			(d) => d.severity !== "error",
+		);
+
 		return {
 			parseResult,
 			collectedCalls,
 			normalizedContext,
 			executionVariables,
 			typeCheckResult,
+			diagnostics,
 		};
 	}
 
@@ -360,6 +373,7 @@ export class SELRuntime {
 				normalizedContext,
 				executionVariables,
 				typeCheckResult,
+				diagnostics,
 			} = this.planExecution(expression, context ?? {});
 
 			let executionMeta: ExecutionMeta | undefined;
@@ -411,7 +425,14 @@ export class SELRuntime {
 
 			debug("evaluate: result type=%s", typeof value);
 
-			return executionMeta ? { value, meta: executionMeta } : { value };
+			const evalResult: EvaluateResult<T> = executionMeta
+				? { value, meta: executionMeta }
+				: { value };
+			if (diagnostics.length > 0) {
+				evalResult.diagnostics = diagnostics;
+			}
+
+			return evalResult;
 		} catch (error) {
 			throw wrapError(error);
 		}

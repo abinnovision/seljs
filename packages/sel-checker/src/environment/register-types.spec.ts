@@ -9,7 +9,7 @@ import { describe, expect, it, vi } from "vitest";
 import { registerSolidityTypes } from "./register-types.js";
 
 function createCheckerEnv() {
-	const env = new Environment({ unlistedVariablesAreDyn: true });
+	const env = new Environment();
 	registerSolidityTypes(env);
 
 	return env;

@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import { SELRuntime } from "./environment.js";
 import {
 	SELContractError,
-	SELEvaluationError,
 	SELParseError,
+	SELTypeError,
 } from "../errors/index.js";
 
 describe("src/environment/environment.ts", () => {
@@ -17,7 +17,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("evaluates with context variables", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { x: "sol_int", y: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("x + y", { x: 10n, y: 20n });
 			expect(result.value).toBe(30n);
 		});
@@ -38,7 +40,9 @@ describe("src/environment/environment.ts", () => {
 
 	describe("uint256 type", () => {
 		it("evaluates BigInt arithmetic natively", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("a + b", {
 				a: 10n ** 18n,
 				b: 10n ** 18n,
@@ -46,8 +50,10 @@ describe("src/environment/environment.ts", () => {
 			expect(result.value).toBe(2n * 10n ** 18n);
 		});
 
-		it("avoids 64-bit overflow for unregistered bigint variables", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+		it("avoids 64-bit overflow for bigint variables", async () => {
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("a + b", {
 				a: 10n ** 21n,
 				b: 10n ** 21n,
@@ -57,7 +63,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("supports multiplication well beyond 64-bit", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("a * b", {
 				a: 10n ** 20n,
 				b: 10n ** 20n,
@@ -75,15 +83,19 @@ describe("src/environment/environment.ts", () => {
 			expect(checked.type).toBe("sol_int");
 
 			const large = 2n ** 64n + 1n;
-			const envUntyped = new SELRuntime({ schema: buildSchema({}) });
+			const envTyped = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			expect(
-				(await envUntyped.evaluate<boolean>("a == b", { a: large, b: large }))
+				(await envTyped.evaluate<boolean>("a == b", { a: large, b: large }))
 					.value,
 			).toBe(true);
 		});
 
 		it("supports BigInt comparison operators", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			expect(
 				(await env.evaluate<boolean>("a > b", { a: 100n, b: 50n })).value,
 			).toBe(true);
@@ -125,7 +137,11 @@ describe("src/environment/environment.ts", () => {
 
 	describe("address type", () => {
 		it("compares checksummed addresses", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({
+					context: { sender: "sol_address", owner: "sol_address" },
+				}),
+			});
 			expect(
 				(
 					await env.evaluate<boolean>("sender == owner", {
@@ -183,10 +199,10 @@ describe("src/environment/environment.ts", () => {
 			);
 		});
 
-		it("wraps evaluation errors as SELEvaluationError", async () => {
+		it("wraps type errors for unknown variables as SELTypeError", async () => {
 			const env = new SELRuntime({ schema: buildSchema({}) });
 			await expect(env.evaluate("nonexistent_var")).rejects.toSatisfy(
-				(e) => e instanceof SELEvaluationError && e.cause !== undefined,
+				(e) => e instanceof SELTypeError && e.cause !== undefined,
 			);
 		});
 	});
@@ -260,7 +276,7 @@ describe("src/environment/environment.ts", () => {
 		it("accepts limits configuration", async () => {
 			const env = new SELRuntime({
 				schema: buildSchema({}),
-				limits: { maxAstNodes: 500, maxDepth: 20 },
+				limits: { maxRounds: 5, maxCalls: 50 },
 			});
 			expect((await env.evaluate<bigint>("1 + 2")).value).toBe(3n);
 		});
@@ -301,7 +317,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("parseUnits compares correctly with contract-like values", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { balance: "sol_int" } }),
+			});
 			const result = await env.evaluate<boolean>(
 				"balance >= parseUnits(500, 6)",
 				{ balance: 1000000000n },
@@ -310,7 +328,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("formatUnits scales down to double", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { balance: "sol_int" } }),
+			});
 			const result = await env.evaluate<number>("formatUnits(balance, 6)", {
 				balance: 1000000000n,
 			});
@@ -318,7 +338,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("formatUnits enables readable threshold checks", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { balance: "sol_int" } }),
+			});
 			const result = await env.evaluate<boolean>(
 				"formatUnits(balance, 6) >= 1000.0",
 				{ balance: 1000000000n },
@@ -327,7 +349,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("formatUnits with fractional result", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { balance: "sol_int" } }),
+			});
 			const result = await env.evaluate<number>("formatUnits(balance, 18)", {
 				balance: 1500000000000000000n,
 			});
@@ -359,7 +383,9 @@ describe("src/environment/environment.ts", () => {
 
 	describe("min, max, abs, and isZeroAddress", () => {
 		it("min returns the smaller value", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("min(a, b)", {
 				a: 100n,
 				b: 50n,
@@ -368,7 +394,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("max returns the larger value", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int", b: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("max(a, b)", {
 				a: 100n,
 				b: 50n,
@@ -377,13 +405,17 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("abs returns absolute value of negative", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { a: "sol_int" } }),
+			});
 			const result = await env.evaluate<bigint>("abs(a)", { a: -42n });
 			expect(result.value).toBe(42n);
 		});
 
 		it("isZeroAddress detects zero address", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { addr: "sol_address" } }),
+			});
 			const result = await env.evaluate<boolean>("isZeroAddress(addr)", {
 				addr: "0x0000000000000000000000000000000000000000",
 			});
@@ -391,7 +423,9 @@ describe("src/environment/environment.ts", () => {
 		});
 
 		it("isZeroAddress returns false for non-zero", async () => {
-			const env = new SELRuntime({ schema: buildSchema({}) });
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { addr: "sol_address" } }),
+			});
 			const result = await env.evaluate<boolean>("isZeroAddress(addr)", {
 				addr: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
 			});
