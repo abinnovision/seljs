@@ -95,13 +95,7 @@ describe("environment Alignment", () => {
 	});
 
 	describe("invalid expressions are rejected by both", () => {
-		/*
-		 * Note: only expressions rejected by BOTH environments belong here.
-		 * `unknown_var` is NOT included because core uses unlistedVariablesAreDyn: true
-		 * (unknown variables become dyn) while checker uses false (unknown variables fail).
-		 * This is an intentional divergence in error strictness, not a naming alignment issue.
-		 */
-		const invalidExpressions = ["token.nonExistent()"];
+		const invalidExpressions = ["token.nonExistent()", "unknown_var"];
 
 		for (const expr of invalidExpressions) {
 			it(`both reject: ${expr}`, () => {

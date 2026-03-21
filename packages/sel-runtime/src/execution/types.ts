@@ -1,3 +1,4 @@
+import type { SELDiagnostic } from "@seljs/checker";
 import type { PublicClient } from "viem";
 
 /**
@@ -62,4 +63,7 @@ export interface EvaluateResult<T = unknown> {
 
 	/** Execution metadata, present when contract calls were executed */
 	meta?: ExecutionMeta;
+
+	/** Advisory diagnostics (warnings/info) from lint rules, when non-empty */
+	diagnostics?: SELDiagnostic[];
 }

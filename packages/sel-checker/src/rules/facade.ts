@@ -1,5 +1,6 @@
 import {
 	deferredCall,
+	expressionComplexity,
 	noConstantCondition,
 	noMixedOperators,
 	noRedundantBool,
@@ -40,4 +41,7 @@ export const rules = {
 
 	/** Rule factory that enforces an expression evaluates to the expected CEL type. */
 	requireType,
+
+	/** Factory that enforces expression complexity thresholds. */
+	expressionComplexity,
 } as const;
