@@ -59,12 +59,12 @@
 		"@abinnovision/eslint-config-base": "^3.2.0",
 		"@abinnovision/prettier-config": "^2.1.5",
 		"@seljs-internal/tsconfig": "workspace:^",
-		"@types/debug": "^4.1.12",
+		"@types/debug": "^4.1.13",
 		"eslint": "^9.39.4",
 		"prettier": "^3.8.1",
-		"tsdown": "^0.21.3",
+		"tsdown": "^0.21.4",
 		"typescript": "^5.9.3",
-		"vitest": "^4.0.18",
+		"vitest": "^4.1.0",
 		"zod": "^4.3.6"
 	},
 	"peerDependencies": {

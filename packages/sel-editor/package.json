@@ -65,11 +65,11 @@
 		"@abinnovision/prettier-config": "^2.1.5",
 		"@seljs-internal/tsconfig": "workspace:^",
 		"eslint": "^9.39.4",
-		"jsdom": "^28.1.0",
+		"jsdom": "^29.0.1",
 		"prettier": "^3.8.1",
-		"tsdown": "^0.21.3",
+		"tsdown": "^0.21.4",
 		"typescript": "^5.9.3",
-		"vitest": "^4.0.18"
+		"vitest": "^4.1.0"
 	},
 	"publishConfig": {
 		"npm": true,
