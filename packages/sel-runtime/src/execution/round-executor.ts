@@ -1,9 +1,4 @@
-import {
-	type Abi,
-	type Address,
-	decodeFunctionResult,
-	encodeFunctionData,
-} from "viem";
+import { type Abi, AbiFunction } from "ox";
 
 import { createLogger } from "../debug.js";
 import { MulticallBatchError } from "../errors/index.js";
@@ -17,8 +12,8 @@ import type { CallArgument, ExecutionRound } from "../analysis/types.js";
 const debug = createLogger("execute:round");
 
 export interface ContractInfo {
-	abi: Abi;
-	address: Address;
+	abi: Abi.Abi;
+	address: `0x${string}`;
 }
 
 export class RoundExecutor {
@@ -52,11 +47,11 @@ export class RoundExecutor {
 				encodedCalls.push({
 					target: contract.address,
 					allowFailure: false,
-					callData: encodeFunctionData({
-						abi: contract.abi,
-						functionName: call.method,
-						args: resolvedArgs as readonly unknown[],
-					}),
+					callData: AbiFunction.encodeData(
+						contract.abi,
+						call.method,
+						resolvedArgs as readonly unknown[],
+					),
 				});
 			}
 		} catch (error) {
@@ -96,11 +91,11 @@ export class RoundExecutor {
 				);
 			}
 
-			const decoded = decodeFunctionResult({
-				abi: contract.abi,
-				functionName: call.method,
-				data: result.returnData,
-			});
+			const decoded = AbiFunction.decodeResult(
+				contract.abi,
+				call.method,
+				result.returnData,
+			);
 			debug("decoded %s.%s -> %o", call.contract, call.method, decoded);
 			this.cache.set(call.id, decoded);
 		}

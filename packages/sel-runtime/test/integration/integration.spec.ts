@@ -4,7 +4,7 @@ import {
 	buildRoutes,
 	routeFor,
 } from "@seljs-internal/fixtures";
-import { type Abi, type PublicClient, parseAbi } from "viem";
+import { Abi } from "ox";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -15,22 +15,22 @@ import {
 	SELContractError,
 } from "../../src/index.js";
 
-const ERC20_ABI = parseAbi([
+const ERC20_ABI = Abi.from([
 	"function balanceOf(address account) view returns (uint256)",
 	"function totalSupply() view returns (uint256)",
 ]);
 
-const STAKING_ABI = parseAbi([
+const STAKING_ABI = Abi.from([
 	"function balanceOf(address account) view returns (uint256)",
 	"function rewardRate() view returns (uint256)",
 ]);
 
-const NFT_ABI = parseAbi([
+const NFT_ABI = Abi.from([
 	"function ownerOf(uint256 tokenId) view returns (address)",
 	"function balanceOf(address owner) view returns (uint256)",
 ]);
 
-const STAKING_V2_ABI = parseAbi([
+const STAKING_V2_ABI = Abi.from([
 	"function stakedTokenId(address user) view returns (uint256)",
 ]);
 
@@ -132,7 +132,7 @@ describe("integration", () => {
 		});
 
 		it("accepts solInt() cast for uint256 contract arguments", () => {
-			const abi = parseAbi([
+			const abi = Abi.from([
 				"function balanceOf(address account, uint256 id) view returns (uint256)",
 			]);
 
@@ -391,10 +391,10 @@ describe("integration", () => {
 			const FEED_C_ADDRESS =
 				"0xcccccccccccccccccccccccccccccccccccccccc" as const;
 
-			const AGG_ABI = parseAbi([
+			const AGG_ABI = Abi.from([
 				"function scale(uint256 value) view returns (uint256)",
 			]);
-			const FEED_ABI = parseAbi(["function getPrice() view returns (uint256)"]);
+			const FEED_ABI = Abi.from(["function getPrice() view returns (uint256)"]);
 
 			const routes = buildRoutes(
 				routeFor({
@@ -584,7 +584,8 @@ describe("integration", () => {
 			it("wraps MulticallBatchError in SELContractError on batch failure", async () => {
 				const failingClient = {
 					call: () => Promise.reject(new Error("RPC timeout")),
-				} as unknown as PublicClient;
+					getBlockNumber: () => Promise.resolve(100n),
+				};
 
 				const sel = createSEL({
 					client: failingClient,
@@ -651,7 +652,7 @@ describe("integration", () => {
 		const createPoolRoutes = () =>
 			buildRoutes(
 				routeFor({
-					abi: STRUCT_POOL_ABI as unknown as Abi,
+					abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
 					functionName: "getPool",
 					address: POOL_ADDRESS,
 					result: { token: TOKEN_ADDR, balance: 500n },
@@ -661,7 +662,7 @@ describe("integration", () => {
 		const createPairRoutes = () =>
 			buildRoutes(
 				routeFor({
-					abi: MULTI_RETURN_PAIR_ABI as unknown as Abi,
+					abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
 					functionName: "getReserves",
 					address: PAIR_ADDRESS,
 					result: [112n, 224n, 1000],
@@ -677,7 +678,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi,
+							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
 						},
 					},
 				}),
@@ -698,7 +699,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi,
+							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
 						},
 					},
 				}),
@@ -719,7 +720,7 @@ describe("integration", () => {
 					contracts: {
 						pair: {
 							address: PAIR_ADDRESS,
-							abi: MULTI_RETURN_PAIR_ABI as unknown as Abi,
+							abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
 						},
 					},
 				}),
@@ -738,7 +739,7 @@ describe("integration", () => {
 					contracts: {
 						pair: {
 							address: PAIR_ADDRESS,
-							abi: MULTI_RETURN_PAIR_ABI as unknown as Abi,
+							abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
 						},
 					},
 				}),
@@ -754,7 +755,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi,
+							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
 						},
 					},
 				}),
@@ -776,7 +777,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi,
+							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
 						},
 					},
 				}),
@@ -793,11 +794,11 @@ describe("integration", () => {
 				contracts: {
 					pool: {
 						address: POOL_ADDRESS,
-						abi: STRUCT_POOL_ABI as unknown as Abi,
+						abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
 					},
 					pair: {
 						address: PAIR_ADDRESS,
-						abi: MULTI_RETURN_PAIR_ABI as unknown as Abi,
+						abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
 					},
 				},
 			});

@@ -1,6 +1,6 @@
 import { createCheckerEnvironment, SELChecker } from "@seljs/checker";
 import { buildSchema } from "@seljs/env";
-import { parseAbi } from "viem";
+import { Abi } from "ox";
 import { describe, expect, it } from "vitest";
 
 import { createSEL } from "../../src/index.js";
@@ -15,12 +15,12 @@ import type { SELSchema } from "@seljs/schema";
  * type-checking results for the same set of contracts and variables.
  */
 
-const ERC20_ABI = parseAbi([
+const ERC20_ABI = Abi.from([
 	"function balanceOf(address account) view returns (uint256)",
 	"function totalSupply() view returns (uint256)",
 ]);
 
-const STAKING_ABI = parseAbi([
+const STAKING_ABI = Abi.from([
 	"function balanceOf(address account) view returns (uint256)",
 	"function rewardRate() view returns (uint256)",
 ]);

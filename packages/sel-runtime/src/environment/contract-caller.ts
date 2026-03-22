@@ -1,12 +1,12 @@
-import { readContract } from "viem/actions";
+import { type Abi, AbiFunction } from "ox";
 
 import { createReplayCallId } from "./replay-cache.js";
 import { createLogger } from "../debug.js";
 import { ExecutionLimitError, SELContractError } from "../errors/index.js";
 
+import type { SELClient } from "./client.js";
 import type { CelCodecRegistry } from "@seljs/checker";
 import type { ContractSchema, MethodSchema } from "@seljs/schema";
-import type { Abi, Address, PublicClient } from "viem";
 
 const debug = createLogger("contract-caller");
 
@@ -52,7 +52,7 @@ export const executeContractCall = async (
 	args: unknown[],
 	options: {
 		executionCache?: Map<string, unknown>;
-		client?: PublicClient;
+		client?: SELClient;
 		codecRegistry?: CelCodecRegistry;
 		callCounter?: CallCounter;
 	},
@@ -93,12 +93,28 @@ export const executeContractCall = async (
 	options.callCounter?.increment(contract.name, method.name);
 
 	try {
-		return await readContract(options.client, {
-			address: contract.address,
-			abi: [method.abi] as unknown as Abi,
-			functionName: method.name,
-			args: normalizedArgs as readonly unknown[],
+		const data = AbiFunction.encodeData(
+			[method.abi],
+			method.name,
+			normalizedArgs as readonly unknown[],
+		);
+
+		const result = await options.client.call({
+			to: contract.address,
+			data,
 		});
+
+		if (!result.data) {
+			throw new SELContractError(
+				`Contract call returned no data: ${contract.name}.${method.name}`,
+				{
+					contractName: contract.name,
+					methodName: method.name,
+				},
+			);
+		}
+
+		return AbiFunction.decodeResult([method.abi], method.name, result.data);
 	} catch (error) {
 		if (error instanceof SELContractError) {
 			throw error;
@@ -116,30 +132,17 @@ export const executeContractCall = async (
 };
 
 export const resolveExecutionBlockNumber = async (
-	client: PublicClient,
-): Promise<bigint | undefined> => {
-	const clientWithGetBlockNumber = client as PublicClient & {
-		getBlockNumber?: () => Promise<bigint>;
-		request?: unknown;
-	};
-
-	if (typeof clientWithGetBlockNumber.getBlockNumber === "function") {
-		return await clientWithGetBlockNumber.getBlockNumber();
-	}
-
-	if (typeof clientWithGetBlockNumber.request === "function") {
-		return undefined;
-	}
-
-	return 0n;
+	client: SELClient,
+): Promise<bigint> => {
+	return await client.getBlockNumber();
 };
 
 export const buildContractInfoMap = (
 	contracts: ContractSchema[],
-): Map<string, { abi: Abi; address: Address }> => {
-	const map = new Map<string, { abi: Abi; address: Address }>();
+): Map<string, { abi: Abi.Abi; address: `0x${string}` }> => {
+	const map = new Map<string, { abi: Abi.Abi; address: `0x${string}` }>();
 	for (const contract of contracts) {
-		const abi = contract.methods.map((m) => m.abi) as unknown as Abi;
+		const abi = contract.methods.map((m) => m.abi) as unknown as Abi.Abi;
 		map.set(contract.name, { abi, address: contract.address });
 	}
 

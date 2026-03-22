@@ -1,31 +1,18 @@
-import {
-	type Abi,
-	type Address,
-	encodeFunctionData,
-	encodeFunctionResult,
-	type PublicClient,
-} from "viem";
+import { type Abi, AbiFunction } from "ox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { multicall3Function } from "./multicall.js";
 
 import type {
 	CollectedCall,
 	ExecutionPlan,
 	ExecutionRound,
 } from "../analysis/types.js";
-
-const mockReadContract = vi.fn((..._args: unknown[]) =>
-	Promise.resolve([] as { success: boolean; returnData: `0x${string}` }[]),
-);
-const mockGetBlockNumber = vi.fn(() => Promise.resolve(999n));
-
-vi.mock("viem/actions", () => ({
-	readContract: mockReadContract,
-	getBlockNumber: mockGetBlockNumber,
-}));
+import type { SELClient } from "../environment/client.js";
 
 const { MultiRoundExecutor } = await import("./multi-round-executor.js");
 
-const TEST_ABI: Abi = [
+const TEST_ABI: Abi.Abi = [
 	{
 		type: "function",
 		name: "readOne",
@@ -49,17 +36,22 @@ const TEST_ABI: Abi = [
 	},
 ];
 
-const TEST_ADDRESS: Address = "0x1111111111111111111111111111111111111111";
+const TEST_ADDRESS: `0x${string}` =
+	"0x1111111111111111111111111111111111111111";
 
-function makeAggregateResult(value: bigint) {
-	return {
+function makeEncodedCallResponse(value: bigint, functionName = "readOne") {
+	return AbiFunction.encodeResult(TEST_ABI, functionName, [value]);
+}
+
+function makeClientCallResponse(
+	results: { value: bigint; functionName?: string }[],
+) {
+	const encoded = results.map(({ value, functionName = "readOne" }) => ({
 		success: true,
-		returnData: encodeFunctionResult({
-			abi: TEST_ABI,
-			functionName: "readOne",
-			result: value,
-		}),
-	};
+		returnData: makeEncodedCallResponse(value, functionName),
+	}));
+
+	return { data: AbiFunction.encodeResult(multicall3Function, encoded as any) };
 }
 
 function makeCall(overrides: Partial<CollectedCall> = {}): CollectedCall {
@@ -90,20 +82,16 @@ function makePlan(rounds: ExecutionRound[]): ExecutionPlan {
 
 describe("src/execution/multi-round-executor.ts", () => {
 	let executor: InstanceType<typeof MultiRoundExecutor>;
+	let mockClient: SELClient;
 
 	beforeEach(() => {
-		mockReadContract.mockClear();
-		mockGetBlockNumber.mockClear();
-		mockGetBlockNumber.mockResolvedValue(999n);
-		mockReadContract.mockImplementation((...args: unknown[]) => {
-			const params = args[1] as { args?: readonly [readonly unknown[]] };
-			const batchCalls = params.args?.[0] ?? [];
-
-			return Promise.resolve(batchCalls.map(() => makeAggregateResult(42n)));
-		});
+		mockClient = {
+			call: vi.fn().mockResolvedValue(makeClientCallResponse([{ value: 42n }])),
+			getBlockNumber: vi.fn().mockResolvedValue(999n),
+		};
 
 		executor = new MultiRoundExecutor(
-			{} as unknown as PublicClient,
+			mockClient,
 			new Map([["token", { abi: TEST_ABI, address: TEST_ADDRESS }]]),
 		);
 	});
@@ -114,9 +102,8 @@ describe("src/execution/multi-round-executor.ts", () => {
 
 		const result = await executor.execute(plan, {}, 123n);
 
-		expect(mockReadContract).toHaveBeenCalledTimes(1);
-		expect((mockReadContract.mock.calls[0] as unknown[])[1]).toMatchObject({
-			functionName: "aggregate3",
+		expect(mockClient.call).toHaveBeenCalledTimes(1);
+		expect(vi.mocked(mockClient.call).mock.calls[0]![0]).toMatchObject({
 			blockNumber: 123n,
 		});
 		expect(result.results.get(call.id)).toBe(42n);
@@ -130,26 +117,26 @@ describe("src/execution/multi-round-executor.ts", () => {
 			args: [{ type: "call_result", dependsOnCallId: callA.id }],
 		});
 
-		mockReadContract
-			.mockResolvedValueOnce([makeAggregateResult(5n)])
-			.mockResolvedValueOnce([makeAggregateResult(8n)]);
+		vi.mocked(mockClient.call)
+			.mockResolvedValueOnce(makeClientCallResponse([{ value: 5n }]))
+			.mockResolvedValueOnce(
+				makeClientCallResponse([{ value: 8n, functionName: "readTwo" }]),
+			);
 
 		const plan = makePlan([makeRound([callA], 0), makeRound([callB], 1)]);
 
 		await executor.execute(plan, {}, 456n);
 
-		expect(mockReadContract).toHaveBeenCalledTimes(2);
-		const secondCallParams = (
-			mockReadContract.mock.calls[1] as unknown[]
-		)[1] as {
-			args: readonly [readonly { callData: string }[]];
-		};
-		expect(secondCallParams.args[0][0]?.callData).toBe(
-			encodeFunctionData({
-				abi: TEST_ABI,
-				functionName: "readTwo",
-				args: [5n],
-			}),
+		expect(mockClient.call).toHaveBeenCalledTimes(2);
+		const secondCallData = (
+			vi.mocked(mockClient.call).mock.calls[1]![0] as { data: `0x${string}` }
+		).data;
+		const decoded = AbiFunction.decodeData(multicall3Function, secondCallData);
+		const batchCalls = (
+			decoded as readonly [readonly { callData: `0x${string}` }[]]
+		)[0];
+		expect(batchCalls[0]?.callData).toBe(
+			AbiFunction.encodeData(TEST_ABI, "readTwo", [5n]),
 		);
 	});
 
@@ -160,15 +147,22 @@ describe("src/execution/multi-round-executor.ts", () => {
 			method: "readTwo",
 			args: [{ type: "literal", value: 2n }],
 		});
+
+		vi.mocked(mockClient.call)
+			.mockResolvedValueOnce(makeClientCallResponse([{ value: 42n }]))
+			.mockResolvedValueOnce(
+				makeClientCallResponse([{ value: 42n, functionName: "readTwo" }]),
+			);
+
 		const plan = makePlan([makeRound([call1], 0), makeRound([call2], 1)]);
 
 		await executor.execute(plan);
 
-		expect(mockGetBlockNumber).toHaveBeenCalledTimes(1);
-		expect((mockReadContract.mock.calls[0] as unknown[])[1]).toMatchObject({
+		expect(mockClient.getBlockNumber).toHaveBeenCalledTimes(1);
+		expect(vi.mocked(mockClient.call).mock.calls[0]![0]).toMatchObject({
 			blockNumber: 999n,
 		});
-		expect((mockReadContract.mock.calls[1] as unknown[])[1]).toMatchObject({
+		expect(vi.mocked(mockClient.call).mock.calls[1]![0]).toMatchObject({
 			blockNumber: 999n,
 		});
 	});
@@ -181,6 +175,18 @@ describe("src/execution/multi-round-executor.ts", () => {
 			args: [{ type: "literal", value: 3n }],
 		});
 		const round2Call = makeCall({ id: "token:readOne:C", method: "readThree" });
+
+		vi.mocked(mockClient.call)
+			.mockResolvedValueOnce(
+				makeClientCallResponse([
+					{ value: 42n },
+					{ value: 42n, functionName: "readTwo" },
+				]),
+			)
+			.mockResolvedValueOnce(
+				makeClientCallResponse([{ value: 42n, functionName: "readThree" }]),
+			);
+
 		const plan = makePlan([
 			makeRound([round1CallA, round1CallB], 0),
 			makeRound([round2Call], 1),
@@ -200,6 +206,14 @@ describe("src/execution/multi-round-executor.ts", () => {
 			method: "readTwo",
 			args: [{ type: "literal", value: 7n }],
 		});
+
+		vi.mocked(mockClient.call).mockResolvedValueOnce(
+			makeClientCallResponse([
+				{ value: 42n },
+				{ value: 42n, functionName: "readTwo" },
+			]),
+		);
+
 		const plan = makePlan([makeRound([call1, call2], 0)]);
 
 		const result = await executor.execute(plan, {}, 777n);

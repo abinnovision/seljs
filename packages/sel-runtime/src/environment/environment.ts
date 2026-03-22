@@ -1,5 +1,6 @@
 import { SELChecker, createRuntimeEnvironment } from "@seljs/checker";
 
+import { validateClient } from "./client.js";
 import { normalizeContextForEvaluation } from "./context.js";
 import {
 	CallCounter,
@@ -21,6 +22,7 @@ import {
 } from "../errors/index.js";
 import { MultiRoundExecutor } from "../execution/multi-round-executor.js";
 
+import type { SELClient } from "./client.js";
 import type { MulticallOptions, SELRuntimeConfig } from "./types.js";
 import type { CollectedCall } from "../analysis/types.js";
 import type {
@@ -31,7 +33,6 @@ import type {
 import type { Environment, TypeCheckResult } from "@marcbachmann/cel-js";
 import type { CelCodecRegistry, SELDiagnostic } from "@seljs/checker";
 import type { ContractSchema, SELSchema } from "@seljs/schema";
-import type { PublicClient } from "viem";
 
 /**
  * Core SEL runtime that bridges CEL expression evaluation with EVM contract reads.
@@ -46,7 +47,7 @@ const debug = createLogger("environment");
 export class SELRuntime {
 	private readonly env: Environment;
 	private readonly checker: SELChecker;
-	private readonly client?: PublicClient;
+	private readonly client?: SELClient;
 	private readonly schema: SELSchema;
 	private readonly variableTypes = new Map<string, string>();
 	private readonly maxRounds: number;
@@ -73,7 +74,7 @@ export class SELRuntime {
 	 * See .omc/drafts/context-object-spike.md for preliminary analysis.
 	 */
 	private currentCache?: Map<string, unknown>;
-	private currentClient?: PublicClient;
+	private currentClient?: SELClient;
 	private currentCallCounter?: CallCounter;
 
 	/** Mutex to serialize concurrent evaluate() calls (protects current* fields) */
@@ -94,6 +95,10 @@ export class SELRuntime {
 		this.maxRounds = limits?.maxRounds ?? 10;
 		this.maxCalls = limits?.maxCalls ?? 100;
 		this.multicallOptions = config.multicall;
+		if (config.client) {
+			validateClient(config.client);
+		}
+
 		this.client = config.client;
 		this.schema = config.schema;
 
@@ -270,7 +275,7 @@ export class SELRuntime {
 	private async executeContractCalls(
 		collectedCalls: CollectedCall[],
 		executionVariables: Record<string, unknown>,
-		resolvedClient: PublicClient,
+		resolvedClient: SELClient,
 	): Promise<{
 		executionMeta: ExecutionMeta;
 		executionCache: Map<string, unknown>;
@@ -365,6 +370,9 @@ export class SELRuntime {
 		debug("evaluate: %s", expression);
 
 		const resolvedClient = options?.client ?? this.client;
+		if (resolvedClient && resolvedClient !== this.client) {
+			validateClient(resolvedClient);
+		}
 
 		try {
 			const {

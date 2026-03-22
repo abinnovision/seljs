@@ -1,11 +1,4 @@
-import {
-	type Abi,
-	type Address,
-	encodeFunctionData,
-	encodeFunctionResult,
-	type Hex,
-	type PublicClient,
-} from "viem";
+import { type Abi, AbiFunction } from "ox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ResultCache } from "./result-cache.js";
@@ -17,7 +10,7 @@ import type { MulticallResult } from "./multicall.js";
 import type { ExecutionContext } from "./types.js";
 import type { CollectedCall, ExecutionRound } from "../analysis/types.js";
 
-const TEST_ABI: Abi = [
+const TEST_ABI: Abi.Abi = [
 	{
 		type: "function",
 		name: "balanceOf",
@@ -27,7 +20,8 @@ const TEST_ABI: Abi = [
 	},
 ];
 
-const TEST_ADDRESS: Address = "0x1111111111111111111111111111111111111111";
+const TEST_ADDRESS: `0x${string}` =
+	"0x1111111111111111111111111111111111111111";
 
 function makeCall(overrides: Partial<CollectedCall> = {}): CollectedCall {
 	return {
@@ -53,19 +47,14 @@ function makeContext(
 	overrides: Partial<ExecutionContext> = {},
 ): ExecutionContext {
 	return {
-		client: {} as unknown as PublicClient,
 		blockNumber: 100n,
 		variables: {},
 		...overrides,
 	};
 }
 
-function makeReturnData(value: bigint): Hex {
-	return encodeFunctionResult({
-		abi: TEST_ABI,
-		functionName: "balanceOf",
-		result: value,
-	});
+function makeReturnData(value: bigint): `0x${string}` {
+	return AbiFunction.encodeResult(TEST_ABI, "balanceOf", [value]);
 }
 
 function makeMockBatcher(results: MulticallResult[]): {
@@ -82,7 +71,7 @@ function makeMockBatcher(results: MulticallResult[]): {
 
 describe("src/execution/round-executor.ts", () => {
 	let cache: ResultCache;
-	let contractMap: Map<string, { abi: Abi; address: Address }>;
+	let contractMap: Map<string, { abi: Abi.Abi; address: `0x${string}` }>;
 	let executor: RoundExecutor;
 	let executeBatch: ReturnType<typeof vi.fn>;
 
@@ -127,11 +116,7 @@ describe("src/execution/round-executor.ts", () => {
 			{
 				target: TEST_ADDRESS,
 				allowFailure: false,
-				callData: encodeFunctionData({
-					abi: TEST_ABI,
-					functionName: "balanceOf",
-					args: [user],
-				}),
+				callData: AbiFunction.encodeData(TEST_ABI, "balanceOf", [user]),
 			},
 		]);
 	});
@@ -146,11 +131,7 @@ describe("src/execution/round-executor.ts", () => {
 			{
 				target: TEST_ADDRESS,
 				allowFailure: false,
-				callData: encodeFunctionData({
-					abi: TEST_ABI,
-					functionName: "balanceOf",
-					args: [owner],
-				}),
+				callData: AbiFunction.encodeData(TEST_ABI, "balanceOf", [owner]),
 			},
 		]);
 	});
@@ -172,11 +153,7 @@ describe("src/execution/round-executor.ts", () => {
 			{
 				target: TEST_ADDRESS,
 				allowFailure: false,
-				callData: encodeFunctionData({
-					abi: TEST_ABI,
-					functionName: "balanceOf",
-					args: [owner],
-				}),
+				callData: AbiFunction.encodeData(TEST_ABI, "balanceOf", [owner]),
 			},
 		]);
 	});
@@ -216,7 +193,9 @@ describe("src/execution/round-executor.ts", () => {
 	});
 
 	it("includes failed call metadata when encoding fails", async () => {
-		const call = makeCall({ args: [] });
+		const call = makeCall({
+			args: [{ type: "literal", value: "not-an-address" }],
+		});
 
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
@@ -234,7 +213,7 @@ describe("src/execution/round-executor.ts", () => {
 	it("throws MulticallBatchError when call fails", async () => {
 		const call = makeCall();
 		executeBatch.mockResolvedValue([
-			{ success: false, returnData: "0x" as Hex },
+			{ success: false, returnData: "0x" as `0x${string}` },
 		]);
 
 		await expect(

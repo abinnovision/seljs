@@ -1,25 +1,25 @@
-import { readContract } from "viem/actions";
+import { AbiFunction } from "ox";
 
 import {
 	MULTICALL3_ADDRESS,
 	type MulticallCall,
 	type MulticallResult,
-	multicall3Abi,
+	multicall3Function,
 } from "./multicall.js";
 import { createLogger } from "../debug.js";
 import { MulticallBatchError } from "../errors/index.js";
 
-import type { Address, Hex, PublicClient } from "viem";
+import type { SELClient } from "../environment/client.js";
 
 const debug = createLogger("execute:multicall");
 
 export class MulticallBatcher {
-	private readonly address: Address;
+	private readonly address: `0x${string}`;
 	private readonly batchSize: number;
 
 	public constructor(
-		private readonly client: PublicClient,
-		options?: { address?: Address; batchSize?: number },
+		private readonly client: SELClient,
+		options?: { address?: `0x${string}`; batchSize?: number },
 	) {
 		this.address = options?.address ?? MULTICALL3_ADDRESS;
 		this.batchSize = options?.batchSize ?? 200;
@@ -64,19 +64,34 @@ export class MulticallBatcher {
 		blockNumber: bigint,
 	): Promise<MulticallResult[]> {
 		try {
-			const result = (await readContract(this.client, {
-				address: this.address,
-				abi: multicall3Abi,
-				functionName: "aggregate3",
-				args: [calls],
-				blockNumber,
-			})) as readonly { success: boolean; returnData: Hex }[];
+			const data = AbiFunction.encodeData(multicall3Function, [calls]);
 
-			return result.map((r) => ({
+			const response = await this.client.call({
+				to: this.address,
+				data,
+				blockNumber,
+			});
+
+			if (!response.data) {
+				throw new MulticallBatchError("Multicall3 aggregate3 returned no data");
+			}
+
+			const decoded = AbiFunction.decodeResult(
+				multicall3Function,
+				response.data,
+			);
+
+			return (
+				decoded as readonly { success: boolean; returnData: `0x${string}` }[]
+			).map((r) => ({
 				success: r.success,
 				returnData: r.returnData,
 			}));
 		} catch (error) {
+			if (error instanceof MulticallBatchError) {
+				throw error;
+			}
+
 			throw new MulticallBatchError("Multicall3 aggregate3 call failed", {
 				cause: error,
 			});

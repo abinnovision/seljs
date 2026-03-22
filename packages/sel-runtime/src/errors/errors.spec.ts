@@ -4,6 +4,7 @@ import {
 	CircularDependencyError,
 	ExecutionLimitError,
 	MulticallBatchError,
+	SELClientError,
 	SELContractError,
 	SELError,
 	SELEvaluationError,
@@ -60,6 +61,11 @@ const errorCases: ErrorCase[] = [
 			contractName: "MyContract",
 			methodName: "transfer",
 		},
+	},
+	{
+		Ctor: SELClientError as AnyErrorCtor,
+		name: "SELClientError",
+		extraProps: {},
 	},
 ];
 

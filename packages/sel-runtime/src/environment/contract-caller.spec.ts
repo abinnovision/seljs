@@ -2,14 +2,26 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ExecutionLimitError, SELContractError } from "../errors/index.js";
 
+import type { SELClient } from "./client.js";
 import type { CelCodecRegistry } from "@seljs/checker";
 import type { ContractSchema, MethodSchema } from "@seljs/schema";
-import type { PublicClient } from "viem";
 
-const mockReadContract = vi.fn((..._args: unknown[]) =>
-	Promise.resolve("mock-result" as unknown),
-);
-vi.mock("viem/actions", () => ({ readContract: mockReadContract }));
+const mockEncodeData = vi.fn().mockReturnValue("0xencoded");
+const mockDecodeResult = vi.fn().mockReturnValue("mock-result");
+
+vi.mock("ox", async (importOriginal) => {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+	const actual = await importOriginal<typeof import("ox")>();
+
+	return {
+		...actual,
+		AbiFunction: {
+			...actual.AbiFunction,
+			encodeData: mockEncodeData,
+			decodeResult: mockDecodeResult,
+		},
+	};
+});
 
 const {
 	CallCounter,
@@ -36,7 +48,10 @@ const makeMethod = (name = "balanceOf", paramType = "address"): MethodSchema =>
 		returns: "uint256",
 	}) as unknown as MethodSchema;
 
-const mockClient: PublicClient = {} as unknown as PublicClient;
+const mockClient: SELClient = {
+	call: vi.fn().mockResolvedValue({ data: "0x00" }),
+	getBlockNumber: vi.fn().mockResolvedValue(100n),
+};
 
 describe("src/environment/contract-caller.ts", () => {
 	describe("callCounter", () => {
@@ -85,7 +100,8 @@ describe("src/environment/contract-caller.ts", () => {
 			const encode = vi.fn((_type: string, val: unknown) => val);
 			const codecRegistry = { encode } as unknown as CelCodecRegistry;
 
-			mockReadContract.mockResolvedValueOnce("result");
+			mockDecodeResult.mockReturnValueOnce("result");
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: "0xresult" });
 
 			await executeContractCall(contract, method, ["0xabc"], {
 				client: mockClient,
@@ -96,22 +112,23 @@ describe("src/environment/contract-caller.ts", () => {
 		});
 
 		it("uses raw args when codecRegistry is absent", async () => {
-			mockReadContract.mockResolvedValueOnce("result");
+			mockEncodeData.mockReturnValueOnce("0xencoded");
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: "0xresult" });
+			mockDecodeResult.mockReturnValueOnce("result");
 
 			await executeContractCall(contract, method, ["0xabc"], {
 				client: mockClient,
 			});
 
-			expect(mockReadContract).toHaveBeenCalledWith(
-				expect.anything(),
-				expect.objectContaining({ args: ["0xabc"] }),
-			);
+			expect(mockEncodeData).toHaveBeenCalledWith([method.abi], method.name, [
+				"0xabc",
+			]);
 		});
 
 		it("returns cached value on cache hit without calling client", async () => {
 			const cacheKey = "erc20:balanceOf:0xabc";
 			const executionCache = new Map<string, unknown>([[cacheKey, "cached"]]);
-			mockReadContract.mockClear();
+			vi.mocked(mockClient.call).mockClear();
 
 			const result = await executeContractCall(contract, method, ["0xabc"], {
 				executionCache,
@@ -119,12 +136,13 @@ describe("src/environment/contract-caller.ts", () => {
 			});
 
 			expect(result).toBe("cached");
-			expect(mockReadContract).not.toHaveBeenCalled();
+			expect(mockClient.call).not.toHaveBeenCalled();
 		});
 
 		it("falls through to live call on cache miss", async () => {
 			const executionCache = new Map<string, unknown>();
-			mockReadContract.mockResolvedValueOnce("live-result");
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: "0xresult" });
+			mockDecodeResult.mockReturnValueOnce("live-result");
 
 			const result = await executeContractCall(contract, method, ["0xabc"], {
 				executionCache,
@@ -132,11 +150,12 @@ describe("src/environment/contract-caller.ts", () => {
 			});
 
 			expect(result).toBe("live-result");
-			expect(mockReadContract).toHaveBeenCalled();
+			expect(mockClient.call).toHaveBeenCalled();
 		});
 
 		it("skips cache entirely when executionCache is absent", async () => {
-			mockReadContract.mockResolvedValueOnce("result");
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: "0xresult" });
+			mockDecodeResult.mockReturnValueOnce("result");
 
 			const result = await executeContractCall(contract, method, ["0xabc"], {
 				client: mockClient,
@@ -154,7 +173,8 @@ describe("src/environment/contract-caller.ts", () => {
 		it("calls callCounter.increment when present", async () => {
 			const callCounter = new CallCounter(100);
 			const incrementSpy = vi.spyOn(callCounter, "increment");
-			mockReadContract.mockResolvedValueOnce("result");
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: "0xresult" });
+			mockDecodeResult.mockReturnValueOnce("result");
 
 			await executeContractCall(contract, method, ["0xabc"], {
 				client: mockClient,
@@ -164,8 +184,9 @@ describe("src/environment/contract-caller.ts", () => {
 			expect(incrementSpy).toHaveBeenCalledWith("erc20", "balanceOf");
 		});
 
-		it("returns result from readContract on success", async () => {
-			mockReadContract.mockResolvedValueOnce(42n);
+		it("returns result from client.call on success", async () => {
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: "0xresult" });
+			mockDecodeResult.mockReturnValueOnce(42n);
 
 			const result = await executeContractCall(contract, method, ["0xabc"], {
 				client: mockClient,
@@ -179,7 +200,7 @@ describe("src/environment/contract-caller.ts", () => {
 				contractName: "erc20",
 				methodName: "balanceOf",
 			});
-			mockReadContract.mockRejectedValueOnce(selError);
+			vi.mocked(mockClient.call).mockRejectedValueOnce(selError);
 
 			await expect(
 				executeContractCall(contract, method, ["0xabc"], {
@@ -189,7 +210,17 @@ describe("src/environment/contract-caller.ts", () => {
 		});
 
 		it("wraps generic error in SELContractError", async () => {
-			mockReadContract.mockRejectedValueOnce(new Error("rpc failed"));
+			vi.mocked(mockClient.call).mockRejectedValueOnce(new Error("rpc failed"));
+
+			await expect(
+				executeContractCall(contract, method, ["0xabc"], {
+					client: mockClient,
+				}),
+			).rejects.toThrow(SELContractError);
+		});
+
+		it("throws SELContractError when call returns no data", async () => {
+			vi.mocked(mockClient.call).mockResolvedValueOnce({ data: undefined });
 
 			await expect(
 				executeContractCall(contract, method, ["0xabc"], {
@@ -200,27 +231,14 @@ describe("src/environment/contract-caller.ts", () => {
 	});
 
 	describe("resolveExecutionBlockNumber", () => {
-		it("returns result from getBlockNumber when available", async () => {
-			const client = {
-				getBlockNumber: vi.fn(() => Promise.resolve(123n)),
-			} as unknown as PublicClient;
+		it("returns block number from client.getBlockNumber()", async () => {
+			const client: SELClient = {
+				call: vi.fn().mockResolvedValue({ data: "0x00" }),
+				getBlockNumber: vi.fn().mockResolvedValue(123n),
+			};
 
 			const result = await resolveExecutionBlockNumber(client);
 			expect(result).toBe(123n);
-		});
-
-		it("returns undefined when client has request but no getBlockNumber", async () => {
-			const client = {
-				request: vi.fn(),
-			} as unknown as PublicClient;
-
-			const result = await resolveExecutionBlockNumber(client);
-			expect(result).toBeUndefined();
-		});
-
-		it("returns 0n when client has neither getBlockNumber nor request", async () => {
-			const result = await resolveExecutionBlockNumber(mockClient);
-			expect(result).toBe(0n);
 		});
 	});
 
