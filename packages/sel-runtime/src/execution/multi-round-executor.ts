@@ -1,5 +1,3 @@
-import { getBlockNumber } from "viem/actions";
-
 import { MulticallBatcher } from "./multicall-batcher.js";
 import { ResultCache } from "./result-cache.js";
 import { type ContractInfo, RoundExecutor } from "./round-executor.js";
@@ -7,7 +5,7 @@ import { createLogger } from "../debug.js";
 
 import type { ExecutionContext, ExecutionResult } from "./types.js";
 import type { ExecutionPlan } from "../analysis/types.js";
-import type { Abi, Address, PublicClient } from "viem";
+import type { SELClient } from "../environment/client.js";
 
 const debug = createLogger("execute");
 
@@ -15,10 +13,10 @@ export class MultiRoundExecutor {
 	private readonly contracts: Map<string, ContractInfo>;
 
 	public constructor(
-		private readonly client: PublicClient,
-		contracts: Map<string, { abi: Abi; address: Address }>,
+		private readonly client: SELClient,
+		contracts: Map<string, ContractInfo>,
 		private readonly multicallOptions?: {
-			address?: Address;
+			address?: `0x${string}`;
 			batchSize?: number;
 		},
 	) {
@@ -31,7 +29,7 @@ export class MultiRoundExecutor {
 		blockNumber?: bigint,
 	): Promise<ExecutionResult> {
 		const lockedBlockNumber =
-			blockNumber ?? (await getBlockNumber(this.client));
+			blockNumber ?? (await this.client.getBlockNumber());
 
 		debug(
 			"start: %d rounds, %d calls, block=%s",
@@ -45,7 +43,6 @@ export class MultiRoundExecutor {
 		const executor = new RoundExecutor(this.contracts, cache, batcher);
 
 		const context: ExecutionContext = {
-			client: this.client,
 			blockNumber: lockedBlockNumber,
 			variables,
 		};

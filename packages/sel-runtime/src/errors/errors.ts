@@ -96,6 +96,13 @@ export class MulticallBatchError extends SELError {
 }
 
 /**
+ * Thrown when the provided client fails validation or is misconfigured.
+ */
+export class SELClientError extends SELError {
+	public override readonly name = "SELClientError";
+}
+
+/**
  * Thrown when lint rules with error severity detect violations.
  * Contains the diagnostics that caused the failure.
  */

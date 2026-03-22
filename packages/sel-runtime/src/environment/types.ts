@@ -1,6 +1,6 @@
+import type { SELClient } from "./client.js";
 import type { SELCheckerOptions } from "@seljs/checker";
 import type { SELSchema } from "@seljs/schema";
-import type { Address, PublicClient } from "viem";
 
 /**
  * Options for multicall3 batching of contract calls.
@@ -13,7 +13,7 @@ export interface MulticallOptions {
 	batchSize?: number;
 
 	/** Custom multicall3 contract address. Defaults to the canonical deployment. */
-	address?: Address;
+	address?: `0x${string}`;
 }
 
 /**
@@ -40,8 +40,8 @@ export interface SELRuntimeConfig extends SELCheckerOptions {
 	/** SEL schema describing contracts, variables, types, functions, and macros */
 	schema: SELSchema;
 
-	/** Viem public client for executing on-chain contract reads */
-	client?: PublicClient;
+	/** Client for on-chain reads. Any viem PublicClient or SELClient-compatible object. */
+	client?: SELClient;
 
 	/** Multicall3 batching options for contract call execution */
 	multicall?: MulticallOptions;

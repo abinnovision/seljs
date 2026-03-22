@@ -1,5 +1,5 @@
+import type { SELClient } from "../environment/client.js";
 import type { SELDiagnostic } from "@seljs/checker";
-import type { PublicClient } from "viem";
 
 /**
  * Metadata about the execution.
@@ -30,12 +30,9 @@ export interface ExecutionResult {
 
 /**
  * Context passed to the executor for running contract calls.
- * Contains the client, block number, and variable bindings.
+ * Contains the block number and variable bindings.
  */
 export interface ExecutionContext {
-	/** Viem public client for making contract calls */
-	client: PublicClient;
-
 	/** Block number for consistent reads across all calls */
 	blockNumber: bigint;
 
@@ -47,8 +44,8 @@ export interface ExecutionContext {
  * Options for the evaluate() call.
  */
 export interface EvaluateOptions {
-	/** Override viem client for this evaluation */
-	client?: PublicClient;
+	/** Override client for this evaluation */
+	client?: SELClient;
 }
 
 /**

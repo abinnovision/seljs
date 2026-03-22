@@ -1,5 +1,5 @@
 import { buildSchema } from "@seljs/env";
-import { parseAbi } from "viem";
+import { Abi } from "ox";
 import { describe, expect, it } from "vitest";
 
 import { SELRuntime } from "./environment.js";
@@ -208,7 +208,7 @@ describe("src/environment/environment.ts", () => {
 	});
 
 	describe("contract errors", () => {
-		const erc20Abi = parseAbi([
+		const erc20Abi = Abi.from([
 			"function balanceOf(address account) view returns (uint256)",
 		]);
 		const holder = "0x0000000000000000000000000000000000000002";

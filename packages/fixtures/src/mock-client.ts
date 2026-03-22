@@ -122,6 +122,7 @@ export const createE2EMockClient = (routes: RouteMap): E2EMockClient => {
 	let rpcCallCount = 0;
 
 	const client = {
+		getBlockNumber: () => Promise.resolve(100n),
 		call: (params: { to: Address; data: `0x${string}` }) => {
 			rpcCallCount++;
 			const { to, data } = params;
