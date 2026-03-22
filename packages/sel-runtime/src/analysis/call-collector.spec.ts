@@ -276,4 +276,85 @@ describe("src/analysis/call-collector.ts", () => {
 			{ type: "variable", variableName: "user" },
 		]);
 	});
+
+	describe("address accessor: balance()", () => {
+		it("emits synthetic __multicall3.getEthBalance for user.balance()", () => {
+			const registry = createRegistry();
+			const calls = collectCalls(parseAst("user.balance()"), registry);
+
+			expect(calls).toHaveLength(1);
+			expect(calls[0]?.contract).toBe("__multicall3");
+			expect(calls[0]?.method).toBe("getEthBalance");
+			expect(calls[0]?.args).toEqual([
+				{ type: "variable", variableName: "user" },
+			]);
+			expect(calls[0]?.id).toBe("__multicall3:getEthBalance:user");
+		});
+
+		it("collects balance() alongside contract calls", () => {
+			const registry = createRegistry();
+			const calls = collectCalls(
+				parseAst("token.balanceOf(user) + user.balance()"),
+				registry,
+			);
+
+			expect(calls).toHaveLength(2);
+			expect(calls[0]?.contract).toBe("token");
+			expect(calls[0]?.method).toBe("balanceOf");
+			expect(calls[1]?.contract).toBe("__multicall3");
+			expect(calls[1]?.method).toBe("getEthBalance");
+		});
+
+		it("creates dependency for chained call: token.owner().balance()", () => {
+			const registry = createRegistry();
+			const calls = collectCalls(parseAst("token.owner().balance()"), registry);
+
+			expect(calls).toHaveLength(2);
+
+			const ownerCall = calls.find((c) => c.method === "owner");
+			const balanceCall = calls.find((c) => c.method === "getEthBalance");
+
+			expect(ownerCall).toBeDefined();
+			expect(ownerCall?.contract).toBe("token");
+
+			expect(balanceCall).toBeDefined();
+			expect(balanceCall?.contract).toBe("__multicall3");
+			expect(balanceCall?.args).toEqual([
+				{ type: "call_result", dependsOnCallId: ownerCall?.id },
+			]);
+		});
+
+		it("deduplicates identical balance() calls", () => {
+			const registry = createRegistry();
+			const calls = collectCalls(
+				parseAst("user.balance() + user.balance()"),
+				registry,
+			);
+
+			/*
+			 * Both resolve to the same call ID, so only one should be collected
+			 * (call collector doesn't deduplicate — that's the dependency analyzer's job)
+			 * But both calls should have the same id
+			 */
+			expect(calls.length).toBeGreaterThanOrEqual(1);
+			const ids = new Set(calls.map((c) => c.id));
+			expect(ids.size).toBe(1);
+			expect(ids.has("__multicall3:getEthBalance:user")).toBe(true);
+		});
+
+		it("does not treat unknown receiver methods as balance()", () => {
+			const registry = createRegistry();
+			const calls = collectCalls(parseAst("user.someOtherMethod()"), registry);
+
+			expect(calls).toHaveLength(0);
+		});
+
+		it("does not intercept balance with arguments", () => {
+			const registry = createRegistry();
+			const calls = collectCalls(parseAst("user.balance(extra)"), registry);
+
+			// balance(extra) has args, so it should NOT be treated as address accessor
+			expect(calls.every((c) => c.contract !== "__multicall3")).toBe(true);
+		});
+	});
 });

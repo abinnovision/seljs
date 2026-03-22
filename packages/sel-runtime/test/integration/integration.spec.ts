@@ -7,6 +7,7 @@ import {
 import { Abi } from "ox";
 import { describe, expect, it } from "vitest";
 
+import { MULTICALL3_ADDRESS } from "../../src/execution/multicall.js";
 import {
 	CircularDependencyError,
 	createSEL,
@@ -1260,6 +1261,131 @@ describe("integration", () => {
 				{ user: USER_ADDRESS },
 			);
 			expect(result.value).toBe(true);
+		});
+	});
+
+	describe("address accessor: balance()", () => {
+		const GET_ETH_BALANCE_ABI = [
+			{
+				name: "getEthBalance",
+				type: "function",
+				stateMutability: "view",
+				inputs: [{ name: "addr", type: "address" }],
+				outputs: [{ name: "balance", type: "uint256" }],
+			},
+		] as const;
+
+		it("evaluates user.balance() via Multicall3 getEthBalance", async () => {
+			const routes = buildRoutes(
+				routeFor({
+					abi: GET_ETH_BALANCE_ABI as unknown as Abi.Abi,
+					functionName: "getEthBalance",
+					address: MULTICALL3_ADDRESS,
+					result: (args: readonly unknown[]) => {
+						const addr = (args[0] as string).toLowerCase();
+						if (addr === USER_ADDRESS.toLowerCase()) {
+							// 2 ETH
+							return 2_000_000_000_000_000_000n;
+						}
+
+						return 0n;
+					},
+				}),
+			);
+			const { client } = createE2EMockClient(routes);
+
+			const sel = createSEL({
+				client,
+				schema: buildSchema({
+					context: { user: "sol_address" },
+				}),
+			});
+
+			const result = await sel.evaluate<boolean>(
+				'user.balance() > parseUnits("1", 18)',
+				{ user: USER_ADDRESS },
+			);
+
+			expect(result.value).toBe(true);
+		});
+
+		it("batches balance() with contract calls in same multicall", async () => {
+			const routes = buildRoutes(
+				routeFor({
+					abi: ERC20_ABI,
+					functionName: "balanceOf",
+					address: TOKEN_ADDRESS,
+					result: 1000n,
+				}),
+				routeFor({
+					abi: GET_ETH_BALANCE_ABI as unknown as Abi.Abi,
+					functionName: "getEthBalance",
+					address: MULTICALL3_ADDRESS,
+
+					// 5 ETH
+					result: 5_000_000_000_000_000_000n,
+				}),
+			);
+			const { client, getRpcCallCount } = createE2EMockClient(routes);
+
+			const sel = createSEL({
+				client,
+				schema: buildSchema({
+					context: { user: "sol_address" },
+					contracts: {
+						token: { address: TOKEN_ADDRESS, abi: ERC20_ABI },
+					},
+				}),
+			});
+
+			const result = await sel.evaluate<boolean>(
+				"token.balanceOf(user) > solInt(0) && user.balance() > solInt(0)",
+				{ user: USER_ADDRESS },
+			);
+
+			expect(result.value).toBe(true);
+
+			// Both calls should be batched in a single multicall RPC call
+			expect(getRpcCallCount()).toBe(1);
+		});
+
+		it("includes balance() in execution metadata", async () => {
+			const routes = buildRoutes(
+				routeFor({
+					abi: GET_ETH_BALANCE_ABI as unknown as Abi.Abi,
+					functionName: "getEthBalance",
+					address: MULTICALL3_ADDRESS,
+					result: 1_000_000_000_000_000_000n,
+				}),
+			);
+			const { client } = createE2EMockClient(routes);
+
+			const sel = createSEL({
+				client,
+				schema: buildSchema({
+					context: { user: "sol_address" },
+				}),
+			});
+
+			const result = await sel.evaluate<bigint>("user.balance()", {
+				user: USER_ADDRESS,
+			});
+
+			expect(result.value).toBe(1_000_000_000_000_000_000n);
+			expect(result.meta).toBeDefined();
+			expect(result.meta!.totalCalls).toBe(1);
+			expect(result.meta!.roundsExecuted).toBe(1);
+		});
+
+		it("type-checks balance() on sol_address", () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { user: "sol_address" },
+				}),
+			});
+
+			const checkResult = sel.check("user.balance()");
+			expect(checkResult.valid).toBe(true);
 		});
 	});
 });

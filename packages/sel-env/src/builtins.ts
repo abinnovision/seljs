@@ -167,6 +167,14 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 		returns: "sol_int",
 	},
 	{
+		name: "balance",
+		signature: "sol_address.balance(): sol_int",
+		description: "Returns the native ETH balance of the address in wei",
+		params: [],
+		returns: "sol_int",
+		receiverType: "sol_address",
+	},
+	{
 		name: "isZeroAddress",
 		signature: "isZeroAddress(sol_address|string): bool",
 		description:
