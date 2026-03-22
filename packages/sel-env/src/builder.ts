@@ -6,10 +6,13 @@ import {
 	CEL_BUILTIN_MACROS,
 	SOLIDITY_PRIMITIVE_TYPES,
 } from "./builtins.js";
+import { getFeatureDefinition } from "./feature-registry.js";
 
 import type {
+	FunctionSchema,
 	MethodSchema,
 	ParamSchema,
+	SELFeatureConfig,
 	SELSchema,
 	TypeSchema,
 	VariableSchema,
@@ -22,12 +25,12 @@ import type {
 import type { AbiParameter } from "abitype";
 import type { Abi, AbiFunction, Address } from "viem";
 
-export interface StructTypeDefinition {
+interface StructTypeDefinition {
 	typeName: string;
 	fields: Record<string, string>;
 }
 
-export interface BuildStructFieldsResult {
+interface BuildStructFieldsResult {
 	fields: Record<string, string>;
 	nestedTypes: StructTypeDefinition[];
 }
@@ -85,7 +88,7 @@ const nestedTypeName = (parentTypeName: string, fieldName: string): string =>
  * @param components Array of ABI parameters representing the components of a tuple type.
  * @param parentTypeName Name to use for the struct type representing the current level of nesting.
  */
-export const buildStructFields = (
+const buildStructFields = (
 	components: readonly AbiParameter[],
 	parentTypeName: string,
 ): BuildStructFieldsResult => {
@@ -326,6 +329,7 @@ export interface ContractInput {
 export interface SchemaBuilderConfig {
 	contracts?: Record<string, ContractInput>;
 	context?: ContextDefinition;
+	features?: SELFeatureConfig;
 }
 
 /**
@@ -341,12 +345,63 @@ export const buildSchema = (config: SchemaBuilderConfig): SELSchema => {
 		([name, input]) => buildContractSchema(name, input, acc),
 	);
 
-	return {
+	const contextVariables = buildVariablesFromContext(config);
+	const contextVariableNames = new Set(contextVariables.map((v) => v.name));
+
+	// Merge enabled feature contributions
+	const featureVariables: VariableSchema[] = [];
+	const featureFunctions: FunctionSchema[] = [];
+	const featureTypes: TypeSchema[] = [];
+	const enabledFeatures: string[] = [];
+
+	if (config.features) {
+		for (const [name, value] of Object.entries(config.features)) {
+			if (!value) {
+				continue;
+			}
+
+			const definition = getFeatureDefinition(name);
+			if (!definition) {
+				continue;
+			}
+
+			enabledFeatures.push(name);
+
+			// Variables: skip if name collides with user-defined context
+			if (definition.variables) {
+				for (const variable of definition.variables) {
+					if (!contextVariableNames.has(variable.name)) {
+						featureVariables.push({ ...variable, feature: name });
+					}
+				}
+			}
+
+			if (definition.functions) {
+				for (const fn of definition.functions) {
+					featureFunctions.push({ ...fn, feature: name });
+				}
+			}
+
+			if (definition.types) {
+				for (const type of definition.types) {
+					featureTypes.push({ ...type, feature: name });
+				}
+			}
+		}
+	}
+
+	const schema: SELSchema = {
 		version: "1.0.0",
 		contracts,
-		variables: buildVariablesFromContext(config),
-		types: [...SOLIDITY_PRIMITIVE_TYPES, ...acc.types],
-		functions: CEL_BUILTIN_FUNCTIONS,
+		variables: [...contextVariables, ...featureVariables],
+		types: [...SOLIDITY_PRIMITIVE_TYPES, ...acc.types, ...featureTypes],
+		functions: [...CEL_BUILTIN_FUNCTIONS, ...featureFunctions],
 		macros: CEL_BUILTIN_MACROS,
 	};
+
+	if (enabledFeatures.length > 0) {
+		schema.enabledFeatures = enabledFeatures;
+	}
+
+	return schema;
 };

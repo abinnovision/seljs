@@ -41,7 +41,50 @@ export interface SELSchema {
 	 * CEL macros (all, exists, map, filter, etc.)
 	 */
 	macros: MacroSchema[];
+
+	/**
+	 * Names of features that are enabled in this schema.
+	 */
+	enabledFeatures?: string[];
 }
+
+/**
+ * Describes what a feature contributes to the schema when enabled.
+ * Feature definitions are library-internal — users only pass feature flags,
+ * not definitions.
+ */
+export interface SELFeatureDefinition {
+	/**
+	 *  Unique feature name (e.g., "addressState", "storage")
+	 */
+	name: string;
+
+	/**
+	 *  Human-readable description
+	 */
+	description: string;
+
+	/**
+	 *  Variables contributed to the schema when enabled
+	 */
+	variables?: VariableSchema[];
+
+	/**
+	 * Functions contributed to the schema when enabled
+	 */
+	functions?: FunctionSchema[];
+
+	/**
+	 * Types contributed to the schema when enabled
+	 */
+	types?: TypeSchema[];
+}
+
+/**
+ * User-facing configuration for enabling features.
+ * Keys are feature names, values are booleans.
+ */
+export type SELFeatureConfig = Record<string, boolean>;
 
 /**
  * Schema for a contract with available methods.
@@ -148,6 +191,12 @@ export interface VariableSchema {
 	 * Example value for documentation
 	 */
 	example?: string;
+
+	/**
+	 * The feature that contributed this variable, if any.
+	 * Set automatically by the schema builder when merging feature contributions.
+	 */
+	feature?: string;
 }
 
 /**
@@ -174,6 +223,12 @@ export interface TypeSchema {
 	 * Description
 	 */
 	description?: string;
+
+	/**
+	 * The feature that contributed this type, if any.
+	 * Set automatically by the schema builder when merging feature contributions.
+	 */
+	feature?: string;
 }
 
 /**
@@ -217,6 +272,12 @@ export interface FunctionSchema {
 	 * E.g., `receiverType: "string"` means it is called as `expr.name(...)`.
 	 */
 	receiverType?: TypeRef;
+
+	/**
+	 * The feature that contributed this function, if any.
+	 * Set automatically by the schema builder when merging feature contributions.
+	 */
+	feature?: string;
 }
 
 /**
