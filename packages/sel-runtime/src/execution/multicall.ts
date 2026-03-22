@@ -35,6 +35,18 @@ export const MULTICALL3_ADDRESS: `0x${string}` =
  */
 export const multicall3Function = AbiFunction.from(aggregate3Abi);
 
+/**
+ * Multicall3 getEthBalance ABI — returns native ETH balance for an address.
+ * Used by the sol_address.balance() accessor.
+ */
+export const getEthBalanceAbi = {
+	name: "getEthBalance",
+	type: "function",
+	stateMutability: "view",
+	inputs: [{ name: "addr", type: "address" }],
+	outputs: [{ name: "balance", type: "uint256" }],
+} as const;
+
 export interface MulticallCall {
 	target: `0x${string}`;
 	allowFailure: boolean;

@@ -166,11 +166,31 @@ const hydrateEnvironment = (
 		}
 	}
 
-	// Register schema functions with receiverType for type-checking
+	// Register schema functions with receiverType for type-checking (and runtime dispatch)
 	for (const fn of schema.functions) {
 		if (!fn.receiverType) {
 			continue;
 		}
+
+		/*
+		 * In runtime mode, wire receiver functions through the contract call handler
+		 * so they can read from the replay cache.
+		 *
+		 * In checker mode, use a no-op handler (type information only).
+		 */
+		const fnHandler =
+			handler !== undefined
+				? async (...args: unknown[]) => {
+						const raw = await handler(fn.receiverType!, fn.name, args);
+						if (!codecRegistry) {
+							throw new Error(
+								"codecRegistry is required when handler is provided",
+							);
+						}
+
+						return codecRegistry.resolve(fn.returns).parse(raw);
+					}
+				: () => undefined;
 
 		try {
 			/* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -179,7 +199,7 @@ const hydrateEnvironment = (
 					name: fn.name,
 					receiverType: fn.receiverType,
 					returnType: fn.returns,
-					handler: () => undefined,
+					handler: fnHandler,
 					params: fn.params.map((param) => ({
 						name: param.name,
 						type: param.type,

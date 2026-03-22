@@ -316,6 +316,34 @@ export const collectCalls = (
 		}
 
 		if (!receiverName || !registry.get(receiverName)) {
+			// Address accessor: .balance() on a non-contract receiver → synthetic Multicall3 call
+			if (method === "balance" && args.length === 0) {
+				const receiverNode: unknown = (node.args as unknown[])[1];
+				const { arg: receiverArg, traversed } = classifyArg(receiverNode);
+				if (receiverArg) {
+					const call: CollectedCall = {
+						id: generateCallId("__multicall3", "getEthBalance", [receiverArg]),
+						contract: "__multicall3",
+						method: "getEthBalance",
+						args: [receiverArg],
+						astNode: node,
+					};
+
+					calls.push(call);
+					debug("found address accessor %s (id=%s)", "balance", call.id);
+
+					return call;
+				}
+
+				// Unresolvable receiver — mark as deferred for lazy execution
+				deferredNodes.add(node);
+				if (!traversed) {
+					traverse(receiverNode);
+				}
+
+				return undefined;
+			}
+
 			handleNonContractRCall(node, method, args);
 
 			return undefined;

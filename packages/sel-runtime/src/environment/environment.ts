@@ -1,5 +1,6 @@
 import { SELChecker, createRuntimeEnvironment } from "@seljs/checker";
 
+import { getBuiltinContracts } from "./builtin-contracts.js";
 import { validateClient } from "./client.js";
 import { normalizeContextForEvaluation } from "./context.js";
 import {
@@ -100,7 +101,15 @@ export class SELRuntime {
 		}
 
 		this.client = config.client;
-		this.schema = config.schema;
+
+		// Augment user schema with built-in contracts (e.g., __multicall3 for address accessors)
+		this.schema = {
+			...config.schema,
+			contracts: [
+				...config.schema.contracts,
+				...getBuiltinContracts(config.multicall),
+			],
+		};
 
 		// Build handler closure that captures `this` for contract execution
 		const handler = (
@@ -108,22 +117,30 @@ export class SELRuntime {
 			methodName: string,
 			args: unknown[],
 		): unknown => {
-			const contract = this.findContract(contractName);
-			if (!contract) {
-				throw new SELContractError(`Unknown contract "${contractName}"`, {
-					contractName,
-				});
-			}
+			const resolved = this.resolveCall(contractName, methodName, args);
 
-			const method = contract.methods.find((m) => m.name === methodName);
-			if (!method) {
+			const contract = this.findContract(resolved.contractName);
+			if (!contract) {
 				throw new SELContractError(
-					`Unknown method "${contractName}.${methodName}"`,
-					{ contractName, methodName },
+					`Unknown contract "${resolved.contractName}"`,
+					{ contractName: resolved.contractName },
 				);
 			}
 
-			return executeContractCall(contract, method, args, {
+			const method = contract.methods.find(
+				(m) => m.name === resolved.methodName,
+			);
+			if (!method) {
+				throw new SELContractError(
+					`Unknown method "${resolved.contractName}.${resolved.methodName}"`,
+					{
+						contractName: resolved.contractName,
+						methodName: resolved.methodName,
+					},
+				);
+			}
+
+			return executeContractCall(contract, method, resolved.args, {
 				executionCache: this.currentCache,
 				client: this.currentClient ?? this.client,
 				codecRegistry: this.codecRegistry,
@@ -291,9 +308,12 @@ export class SELRuntime {
 			maxCalls: this.maxCalls,
 		});
 
+		// Schema already includes builtin contracts (__multicall3 etc.)
+		const contractInfoMap = buildContractInfoMap(this.schema.contracts);
+
 		const executor = new MultiRoundExecutor(
 			resolvedClient,
-			buildContractInfoMap(this.schema.contracts),
+			contractInfoMap,
 			this.multicallOptions,
 		);
 
@@ -301,6 +321,7 @@ export class SELRuntime {
 			results: Map<string, unknown>;
 			meta: ExecutionMeta;
 		};
+
 		try {
 			executionResult = await executor.execute(
 				plan,
@@ -444,6 +465,26 @@ export class SELRuntime {
 		} catch (error) {
 			throw wrapError(error);
 		}
+	}
+
+	/**
+	 * Remaps receiver method calls to their underlying contract calls.
+	 * e.g., sol_address.balance() → __multicall3.getEthBalance(addr)
+	 */
+	private resolveCall(
+		contractName: string,
+		methodName: string,
+		args: unknown[],
+	): { contractName: string; methodName: string; args: unknown[] } {
+		if (contractName === "sol_address" && methodName === "balance") {
+			return {
+				contractName: "__multicall3",
+				methodName: "getEthBalance",
+				args,
+			};
+		}
+
+		return { contractName, methodName, args };
 	}
 
 	private findContract(name: string): ContractSchema | undefined {
