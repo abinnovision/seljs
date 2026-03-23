@@ -40,7 +40,7 @@
 	},
 	"dependencies": {
 		"abitype": "^1.2.3",
-		"viem": "^2.47.2"
+		"viem": "^2.47.6"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.0",
