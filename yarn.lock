@@ -1563,7 +1563,7 @@ __metadata:
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
     typescript: "npm:^5.9.3"
-    viem: "npm:^2.47.2"
+    viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -1652,7 +1652,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     typescript: "npm:^5.9.3"
-    viem: "npm:^2.47.2"
+    viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
     zod: "npm:^4.3.6"
   languageName: unknown
@@ -1684,7 +1684,7 @@ __metadata:
     storybook: "npm:^10.3.1"
     tsdown: "npm:^0.21.4"
     typescript: "npm:^5.9.3"
-    viem: "npm:^2.47.2"
+    viem: "npm:^2.47.6"
     vite: "npm:^8.0.1"
     vitest: "npm:^4.1.0"
     zod: "npm:^4.3.6"
@@ -1736,7 +1736,7 @@ __metadata:
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
     typescript: "npm:^5.9.3"
-    viem: "npm:^2.47.2"
+    viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -5670,28 +5670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:0.14.0":
-  version: 0.14.0
-  resolution: "ox@npm:0.14.0"
-  dependencies:
-    "@adraffy/ens-normalize": "npm:^1.11.0"
-    "@noble/ciphers": "npm:^1.3.0"
-    "@noble/curves": "npm:1.9.1"
-    "@noble/hashes": "npm:^1.8.0"
-    "@scure/bip32": "npm:^1.7.0"
-    "@scure/bip39": "npm:^1.6.0"
-    abitype: "npm:^1.2.3"
-    eventemitter3: "npm:5.0.1"
-  peerDependencies:
-    typescript: ">=5.4.0"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/b5cea2f9ce562f808a64b07e1f3f0527ca7eb6c840fbc704a035f89b65afeb42cc4ac518504525b9c59ceabc4bf08a16b80f42c2054ff766df7fff78eb52b3fa
-  languageName: node
-  linkType: hard
-
-"ox@npm:^0.14.7":
+"ox@npm:0.14.7, ox@npm:^0.14.7":
   version: 0.14.7
   resolution: "ox@npm:0.14.7"
   dependencies:
@@ -7336,9 +7315,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.47.2":
-  version: 2.47.2
-  resolution: "viem@npm:2.47.2"
+"viem@npm:^2.47.6":
+  version: 2.47.6
+  resolution: "viem@npm:2.47.6"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -7346,14 +7325,14 @@ __metadata:
     "@scure/bip39": "npm:1.6.0"
     abitype: "npm:1.2.3"
     isows: "npm:1.0.7"
-    ox: "npm:0.14.0"
+    ox: "npm:0.14.7"
     ws: "npm:8.18.3"
   peerDependencies:
     typescript: ">=5.0.4"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/b4b102b5c3abaeab9279a0add890ded08200633ddb55cef16eb98ddaf57ddc7114d23b8ec3f3dd2488209ba0516d73d914a3c06188cb5d45a77c53b23e5b50ab
+  checksum: 10/76024cfa4ea5179b7a42af9efe344d3e005e5445c2b92909b23255a59be16f313538bf4ef2cab5bf5af5e05b8e2704309b228910ca2164c08fa35e8b781707bb
   languageName: node
   linkType: hard
 
