@@ -14,9 +14,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@abinnovision/eslint-config-base@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "@abinnovision/eslint-config-base@npm:3.2.0"
+"@abinnovision/eslint-config-base@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "@abinnovision/eslint-config-base@npm:3.2.2"
   dependencies:
     "@eslint/js": "npm:^9.0.0"
     "@stylistic/eslint-plugin": "npm:^5.10.0"
@@ -27,7 +27,7 @@ __metadata:
     typescript-eslint: "npm:^8.56.0"
   peerDependencies:
     eslint: ^9.0.0
-  checksum: 10/dd14f79fa72dfb46db4289ad3fe00b8703147c1fc4fc451df706b1d4a99bcccd91499ac2f3792983a16906fa899c85a19cf9ea9e48cb4b7bca7148214eca3422
+  checksum: 10/734cab214e29b78622d619e2972634a949b89dbbb6fb5e05f9a138aea02371867296b335ea446a787b4d9407d876d6484e78bcbd8445053bb6896c76bdd74e8c
   languageName: node
   linkType: hard
 
@@ -1555,7 +1555,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs-internal/fixtures@workspace:packages/fixtures"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@seljs-internal/tsconfig": "workspace:^"
     abitype: "npm:^1.2.3"
@@ -1581,7 +1581,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/cel-lezer@workspace:packages/sel-cel-lezer"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@codemirror/language": "npm:^6.12.2"
     "@lezer/generator": "npm:^1.8.0"
@@ -1600,7 +1600,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/checker@workspace:packages/sel-checker"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@marcbachmann/cel-js": "npm:^7.5.3"
     "@seljs-internal/tsconfig": "workspace:^"
@@ -1624,7 +1624,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/common@workspace:packages/sel-common"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@marcbachmann/cel-js": "npm:^7.5.3"
     "@seljs-internal/tsconfig": "workspace:^"
@@ -1640,7 +1640,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/e2e@workspace:packages/e2e"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@seljs-internal/fixtures": "workspace:*"
     "@seljs-internal/tsconfig": "workspace:^"
@@ -1662,7 +1662,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/editor-react@workspace:packages/sel-editor-react"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/checker": "workspace:*"
@@ -1698,7 +1698,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/editor@workspace:packages/sel-editor"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@codemirror/autocomplete": "npm:^6.20.1"
     "@codemirror/commands": "npm:^6.10.3"
@@ -1725,7 +1725,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/env@workspace:packages/sel-env"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/common": "workspace:*"
@@ -1766,7 +1766,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/runtime@workspace:packages/sel-runtime"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@marcbachmann/cel-js": "npm:^7.5.3"
     "@seljs-internal/fixtures": "workspace:*"
@@ -1796,7 +1796,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/schema@workspace:packages/sel-schema"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@seljs-internal/tsconfig": "workspace:^"
     "@types/node": "npm:^25.5.0"
@@ -1815,7 +1815,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@seljs/types@workspace:packages/sel-types"
   dependencies:
-    "@abinnovision/eslint-config-base": "npm:^3.2.0"
+    "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/common": "workspace:*"
