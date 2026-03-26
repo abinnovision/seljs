@@ -16,7 +16,7 @@ export interface SELClient {
 		to: `0x${string}`;
 		data: `0x${string}`;
 		blockNumber?: bigint;
-	}) => Promise<{ data?: `0x${string}` }>;
+	}) => Promise<{ data?: `0x${string}` | undefined }>;
 
 	/**
 	 *  Get the current block number (eth_blockNumber) for pinning reads
