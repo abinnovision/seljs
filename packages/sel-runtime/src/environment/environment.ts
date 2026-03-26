@@ -457,6 +457,12 @@ export class SELRuntime {
 			const evalResult: EvaluateResult<T> = executionMeta
 				? { value, meta: executionMeta }
 				: { value };
+
+			// Most likely the type is always available here.
+			if (typeCheckResult.type) {
+				evalResult.type = typeCheckResult.type;
+			}
+
 			if (diagnostics.length > 0) {
 				evalResult.diagnostics = diagnostics;
 			}
