@@ -6,13 +6,19 @@ import type { SELDiagnostic } from "@seljs/checker";
  * Contains statistics and block information from the execution run.
  */
 export interface ExecutionMeta {
-	/** Number of rounds executed (topological depth) */
+	/**
+	 * Number of rounds executed (topological depth)
+	 */
 	roundsExecuted: number;
 
-	/** Total number of contract calls executed */
+	/**
+	 *  Total number of contract calls executed
+	 */
 	totalCalls: number;
 
-	/** Block number at which calls were executed */
+	/**
+	 * Block number at which calls were executed
+	 */
 	blockNumber: bigint;
 }
 
@@ -21,10 +27,14 @@ export interface ExecutionMeta {
  * Maps call IDs to their decoded results.
  */
 export interface ExecutionResult {
-	/** Map of callId to decoded result value */
+	/**
+	 * Map of callId to decoded result value
+	 */
 	results: Map<string, unknown>;
 
-	/** Execution metadata */
+	/**
+	 *  Execution metadata
+	 */
 	meta: ExecutionMeta;
 }
 
@@ -33,10 +43,14 @@ export interface ExecutionResult {
  * Contains the block number and variable bindings.
  */
 export interface ExecutionContext {
-	/** Block number for consistent reads across all calls */
+	/**
+	 *  Block number for consistent reads across all calls
+	 */
 	blockNumber: bigint;
 
-	/** Variable name to value mapping from evaluate() context */
+	/**
+	 *  Variable name to value mapping from evaluate() context
+	 */
 	variables: Record<string, unknown>;
 }
 
@@ -44,7 +58,9 @@ export interface ExecutionContext {
  * Options for the evaluate() call.
  */
 export interface EvaluateOptions {
-	/** Override client for this evaluation */
+	/**
+	 * Override client for this evaluation
+	 */
 	client?: SELClient;
 }
 
@@ -55,12 +71,23 @@ export interface EvaluateOptions {
  * contract calls were executed, absent for pure CEL expressions.
  */
 export interface EvaluateResult<T = unknown> {
-	/** The evaluated result value */
+	/**
+	 *  The evaluated result value
+	 */
 	value: T;
 
-	/** Execution metadata, present when contract calls were executed */
+	/**
+	 *  The inferred type of the expression, when available
+	 */
+	type?: string;
+
+	/**
+	 *  Execution metadata, present when contract calls were executed
+	 */
 	meta?: ExecutionMeta;
 
-	/** Advisory diagnostics (warnings/info) from lint rules, when non-empty */
+	/**
+	 *  Advisory diagnostics (warnings/info) from lint rules, when non-empty
+	 */
 	diagnostics?: SELDiagnostic[];
 }
