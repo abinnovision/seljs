@@ -19,20 +19,34 @@ type ResolveCelType<T extends ContextFieldDefinition> = T extends ContextCelType
 		: never;
 
 /**
+ * All primitive CEL type strings as a runtime array.
+ */
+export const primitiveCelTypes = [
+	"sol_int",
+	"sol_address",
+	"bool",
+	"string",
+	"bytes",
+] as const;
+
+/**
  * Primitive CEL types valid for user-defined context variables.
  */
-export type PrimitiveCelType =
-	| "sol_int"
-	| "sol_address"
-	| "bool"
-	| "string"
-	| "bytes";
+export type PrimitiveCelType = (typeof primitiveCelTypes)[number];
+
+/**
+ * All CEL type strings (primitives + list variants) as a runtime array.
+ */
+export const contextCelTypes = [
+	...primitiveCelTypes,
+	...primitiveCelTypes.map((t) => `list<${t}>` as const),
+] as const;
 
 /**
  * All CEL types valid for user-defined context variables.
  * Includes primitives and list<primitive>.
  */
-export type ContextCelType = PrimitiveCelType | `list<${PrimitiveCelType}>`;
+export type ContextCelType = (typeof contextCelTypes)[number];
 
 /**
  * Maps primitive CEL type names to their TypeScript representation.
