@@ -1,4 +1,6 @@
-import { describe, expectTypeOf, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
+
+import { contextCelTypes, primitiveCelTypes } from "./context.js";
 
 import type { ContextCelType, InferContext } from "./context.js";
 
@@ -24,6 +26,35 @@ describe("src/context.ts", () => {
 			expectTypeOf<"list<list<sol_int>>">().not.toExtend<ContextCelType>();
 			expectTypeOf<"list<uint256>">().not.toExtend<ContextCelType>();
 			expectTypeOf<"map<string, sol_int>">().not.toExtend<ContextCelType>();
+		});
+	});
+
+	describe("primitiveCelTypes", () => {
+		it("contains all primitive types", () => {
+			expect(primitiveCelTypes).toEqual([
+				"sol_int",
+				"sol_address",
+				"bool",
+				"string",
+				"bytes",
+			]);
+		});
+	});
+
+	describe("contextCelTypes", () => {
+		it("contains all primitive and list types", () => {
+			expect(contextCelTypes).toEqual([
+				"sol_int",
+				"sol_address",
+				"bool",
+				"string",
+				"bytes",
+				"list<sol_int>",
+				"list<sol_address>",
+				"list<bool>",
+				"list<string>",
+				"list<bytes>",
+			]);
 		});
 	});
 
