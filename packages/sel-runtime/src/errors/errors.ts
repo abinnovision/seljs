@@ -1,9 +1,9 @@
-import { SELError, SELParseError, SELTypeError } from "@seljs/common";
+import { SELError } from "@seljs/common";
 
 import type { SELDiagnostic } from "@seljs/checker";
 
 // Re-export shared errors from @seljs/common
-export { SELError, SELParseError, SELTypeError };
+export { SELError };
 
 /**
  * Thrown when CEL expression evaluation fails.
