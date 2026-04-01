@@ -1,13 +1,4 @@
-import { SELError } from "./base.js";
-
-/**
- * Thrown when CEL expression parsing fails.
- * Wraps cel-js ParseError with additional context.
+/*
+ * SELParseError and SELTypeError have been removed.
+ * Parse and type errors are now surfaced as SELLintError diagnostics via SELChecker.
  */
-export class SELParseError extends SELError {}
-
-/**
- * Thrown when Solidity type validation fails.
- * Used for type checking errors specific to Solidity types.
- */
-export class SELTypeError extends SELError {}

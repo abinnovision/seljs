@@ -172,7 +172,7 @@ export class SELRuntime {
 	 *
 	 * @param expression - A CEL expression string to type-check
 	 * @returns The type-check result containing validity, inferred type, and any errors
-	 * @throws {@link SELTypeError} If the expression contains unrecoverable type errors
+	 * @throws {@link SELEvaluationError} If the expression contains unrecoverable type errors
 	 */
 	public check(expression: string): TypeCheckResult {
 		try {
