@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/types-v1.2.0...types-v1.3.0) (2026-04-01)
+
+
+### Features
+
+* enhance CEL type definitions with runtime arrays for primitives and lists ([#55](https://github.com/abinnovision/seljs/issues/55)) ([51abd94](https://github.com/abinnovision/seljs/commit/51abd9459b3516e8cabb3637b88ff1755a465220))
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/types-v1.1.0...types-v1.2.0) (2026-03-21)
 
 

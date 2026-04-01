@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/common-v1.2.0...common-v1.3.0) (2026-04-01)
+
+
+### Features
+
+* make SELChecker the single validation gate in evaluate ([#69](https://github.com/abinnovision/seljs/issues/69)) ([b279a19](https://github.com/abinnovision/seljs/commit/b279a1971ff8dc64799c231aa41392619dbadacb))
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/common-v1.1.0...common-v1.2.0) (2026-03-21)
 
 

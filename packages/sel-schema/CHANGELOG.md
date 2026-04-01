@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/schema-v1.2.0...schema-v1.3.0) (2026-04-01)
+
+
+### Features
+
+* add feature infrastructure ([#42](https://github.com/abinnovision/seljs/issues/42)) ([37abab3](https://github.com/abinnovision/seljs/commit/37abab3552e46def00d457af3e314e0f669c4ae0))
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/schema-v1.1.0...schema-v1.2.0) (2026-03-21)
 
 

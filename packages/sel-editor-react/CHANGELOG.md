@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/editor-react-v1.2.0...editor-react-v1.3.0) (2026-04-01)
+
+
+### Miscellaneous Chores
+
+* **editor-react:** Synchronize sel versions
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/editor-react-v1.1.0...editor-react-v1.2.0) (2026-03-21)
 
 
