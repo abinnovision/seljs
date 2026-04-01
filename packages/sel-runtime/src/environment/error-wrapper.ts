@@ -4,12 +4,7 @@ import {
 	ParseError,
 } from "@marcbachmann/cel-js";
 
-import {
-	SELContractError,
-	SELEvaluationError,
-	SELParseError,
-	SELTypeError,
-} from "../errors/index.js";
+import { SELContractError, SELEvaluationError } from "../errors/index.js";
 
 /**
  * Wraps an unknown error into a known SEL error type.
@@ -25,10 +20,6 @@ export const wrapError = (error: unknown): Error => {
 		return error;
 	}
 
-	if (error instanceof ParseError) {
-		return new SELParseError(error.message, { cause: error });
-	}
-
 	if (error instanceof EvaluationError) {
 		const cause = (error as EvaluationError & { cause?: unknown }).cause;
 		if (cause instanceof SELContractError) {
@@ -38,8 +29,12 @@ export const wrapError = (error: unknown): Error => {
 		return new SELEvaluationError(error.message, { cause: error });
 	}
 
+	if (error instanceof ParseError) {
+		return new SELEvaluationError(error.message, { cause: error });
+	}
+
 	if (error instanceof CelTypeError) {
-		return new SELTypeError(error.message, { cause: error });
+		return new SELEvaluationError(error.message, { cause: error });
 	}
 
 	if (error instanceof Error) {
