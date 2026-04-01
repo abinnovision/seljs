@@ -236,15 +236,11 @@ export class SELRuntime {
 		// Gate: checker validates parse, types, and lint rules
 		const checkResult = this.checker.check(expression);
 
-		const errorDiags = checkResult.diagnostics.filter(
-			(d) => d.severity === "error",
-		);
-		if (!checkResult.valid || errorDiags.length > 0) {
-			throw new SELLintError(
-				errorDiags.length > 0
-					? errorDiags
-					: checkResult.diagnostics.filter((d) => d.severity === "error"),
+		if (!checkResult.valid) {
+			const errorDiags = checkResult.diagnostics.filter(
+				(d) => d.severity === "error",
 			);
+			throw new SELLintError(errorDiags);
 		}
 
 		// Expression is valid — parse for execution (runtime env with contract bindings)
