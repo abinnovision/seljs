@@ -3,11 +3,7 @@ import { Abi } from "ox";
 import { describe, expect, it } from "vitest";
 
 import { SELRuntime } from "./environment.js";
-import {
-	SELContractError,
-	SELParseError,
-	SELTypeError,
-} from "../errors/index.js";
+import { SELContractError, SELLintError } from "../errors/index.js";
 
 describe("src/environment/environment.ts", () => {
 	describe("evaluate", () => {
@@ -192,17 +188,21 @@ describe("src/environment/environment.ts", () => {
 	});
 
 	describe("error wrapping", () => {
-		it("wraps parse errors as SELParseError", async () => {
+		it("wraps parse errors as SELLintError with diagnostics", async () => {
 			const env = new SELRuntime({ schema: buildSchema({}) });
+			await expect(env.evaluate("+++")).rejects.toBeInstanceOf(SELLintError);
 			await expect(env.evaluate("+++")).rejects.toSatisfy(
-				(e) => e instanceof SELParseError && e.cause !== undefined,
+				(e) => (e as SELLintError).diagnostics.length > 0,
 			);
 		});
 
-		it("wraps type errors for unknown variables as SELTypeError", async () => {
+		it("wraps type errors for unknown variables as SELLintError with diagnostics", async () => {
 			const env = new SELRuntime({ schema: buildSchema({}) });
+			await expect(env.evaluate("nonexistent_var")).rejects.toBeInstanceOf(
+				SELLintError,
+			);
 			await expect(env.evaluate("nonexistent_var")).rejects.toSatisfy(
-				(e) => e instanceof SELTypeError && e.cause !== undefined,
+				(e) => (e as SELLintError).diagnostics.length > 0,
 			);
 		});
 	});

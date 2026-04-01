@@ -19,7 +19,6 @@ import {
 	MulticallBatchError,
 	SELContractError,
 	SELLintError,
-	SELTypeError,
 } from "../errors/index.js";
 import { MultiRoundExecutor } from "../execution/multi-round-executor.js";
 
@@ -198,8 +197,7 @@ export class SELRuntime {
 	 * @param context Variable bindings for evaluation
 	 * @param options Optional client override
 	 * @returns An {@link EvaluateResult} containing the value and optional execution metadata
-	 * @throws {@link SELParseError} If the expression has invalid syntax
-	 * @throws {@link SELTypeError} If type-checking fails
+	 * @throws {@link SELLintError} If the expression fails parse, type-check, or lint rules
 	 * @throws {@link SELContractError} If a contract call fails or no client is available
 	 * @throws {@link SELEvaluationError} If CEL evaluation fails
 	 */
@@ -232,9 +230,24 @@ export class SELRuntime {
 		collectedCalls: CollectedCall[];
 		normalizedContext: Record<string, unknown> | undefined;
 		executionVariables: Record<string, unknown>;
-		typeCheckResult: TypeCheckResult;
+		resolvedType: string | undefined;
 		diagnostics: SELDiagnostic[];
 	} {
+		// Gate: checker validates parse, types, and lint rules
+		const checkResult = this.checker.check(expression);
+
+		const errorDiags = checkResult.diagnostics.filter(
+			(d) => d.severity === "error",
+		);
+		if (!checkResult.valid || errorDiags.length > 0) {
+			throw new SELLintError(
+				errorDiags.length > 0
+					? errorDiags
+					: checkResult.diagnostics.filter((d) => d.severity === "error"),
+			);
+		}
+
+		// Expression is valid — parse for execution (runtime env with contract bindings)
 		const parseResult = this.env.parse(expression);
 
 		const collectedCalls = collectCalls(parseResult.ast, {
@@ -255,27 +268,8 @@ export class SELRuntime {
 			? evaluationContext
 			: {};
 
-		const typeCheckResult = parseResult.check();
-		if (!typeCheckResult.valid) {
-			throw new SELTypeError(
-				typeCheckResult.error?.message ?? "Type check failed",
-				{ cause: typeCheckResult.error },
-			);
-		}
-
-		// Run lint rules via checker
-		const lintResult = this.checker.check(expression);
-
-		// Enforcement: error-severity diagnostics cause throw
-		const lintErrors = lintResult.diagnostics.filter(
-			(d) => d.severity === "error",
-		);
-		if (lintErrors.length > 0) {
-			throw new SELLintError(lintErrors);
-		}
-
 		// Advisory: warning/info diagnostics pass through to result
-		const diagnostics = lintResult.diagnostics.filter(
+		const diagnostics = checkResult.diagnostics.filter(
 			(d) => d.severity !== "error",
 		);
 
@@ -284,7 +278,7 @@ export class SELRuntime {
 			collectedCalls,
 			normalizedContext,
 			executionVariables,
-			typeCheckResult,
+			resolvedType: checkResult.type,
 			diagnostics,
 		};
 	}
@@ -401,7 +395,7 @@ export class SELRuntime {
 				collectedCalls,
 				normalizedContext,
 				executionVariables,
-				typeCheckResult,
+				resolvedType,
 				diagnostics,
 			} = this.planExecution(expression, context ?? {});
 
@@ -447,9 +441,7 @@ export class SELRuntime {
 			}
 
 			const value = (
-				typeCheckResult.type
-					? this.codecRegistry.encode(typeCheckResult.type, result)
-					: result
+				resolvedType ? this.codecRegistry.encode(resolvedType, result) : result
 			) as T;
 
 			debug("evaluate: result type=%s", typeof value);
@@ -458,9 +450,8 @@ export class SELRuntime {
 				? { value, meta: executionMeta }
 				: { value };
 
-			// Most likely the type is always available here.
-			if (typeCheckResult.type) {
-				evalResult.type = typeCheckResult.type;
+			if (resolvedType) {
+				evalResult.type = resolvedType;
 			}
 
 			if (diagnostics.length > 0) {
