@@ -385,9 +385,7 @@ All errors extend `SELError`. Catch specific types for granular handling:
 
 | Error                     | When                                                          |
 | ------------------------- | ------------------------------------------------------------- |
-| `SELParseError`           | Invalid CEL expression syntax                                 |
 | `SELEvaluationError`      | Expression evaluation fails (undefined variables, etc.)       |
-| `SELTypeError`            | Type checking fails                                           |
 | `SELLintError`            | Lint rule with error severity violated (`.diagnostics`)       |
 | `SELContractError`        | Contract call fails (includes `.contractName`, `.methodName`) |
 | `CircularDependencyError` | Circular dependency in call graph                             |

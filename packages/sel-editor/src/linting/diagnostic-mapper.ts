@@ -10,7 +10,7 @@ interface CheckResult {
  *
  * Handles both failure modes from `@seljs/runtime`'s `env.check()`:
  * 1. Returned result: `{ valid: false, error: TypeError }`
- * 2. Thrown exception: `SELParseError` or `SELTypeError`
+ * 2. Thrown exception: `SELEvaluationError`
  *
  * Usage:
  * ```ts

@@ -8,8 +8,6 @@ import {
 	SELContractError,
 	SELError,
 	SELEvaluationError,
-	SELParseError,
-	SELTypeError,
 } from "./errors.js";
 
 type AnyErrorCtor = new (
@@ -25,12 +23,6 @@ interface ErrorCase {
 }
 
 const errorCases: ErrorCase[] = [
-	{
-		Ctor: SELParseError as AnyErrorCtor,
-		name: "SELParseError",
-		extraProps: {},
-	},
-	{ Ctor: SELTypeError as AnyErrorCtor, name: "SELTypeError", extraProps: {} },
 	{
 		Ctor: SELEvaluationError as AnyErrorCtor,
 		name: "SELEvaluationError",
@@ -111,11 +103,11 @@ describe("src/errors/errors.ts", () => {
 	}
 
 	it("distinguishes between error types", () => {
-		const parseErr = new SELParseError("parse");
+		const contractErr = new SELContractError("contract", {});
 		const evalErr = new SELEvaluationError("eval");
-		expect(parseErr).toBeInstanceOf(SELParseError);
-		expect(parseErr).not.toBeInstanceOf(SELEvaluationError);
+		expect(contractErr).toBeInstanceOf(SELContractError);
+		expect(contractErr).not.toBeInstanceOf(SELEvaluationError);
 		expect(evalErr).toBeInstanceOf(SELEvaluationError);
-		expect(evalErr).not.toBeInstanceOf(SELParseError);
+		expect(evalErr).not.toBeInstanceOf(SELContractError);
 	});
 });

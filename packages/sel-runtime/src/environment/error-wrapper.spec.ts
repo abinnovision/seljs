@@ -6,12 +6,7 @@ import {
 import { describe, expect, it } from "vitest";
 
 import { wrapError } from "./error-wrapper.js";
-import {
-	SELContractError,
-	SELEvaluationError,
-	SELParseError,
-	SELTypeError,
-} from "../errors/index.js";
+import { SELContractError, SELEvaluationError } from "../errors/index.js";
 
 describe("src/environment/error-wrapper.ts", () => {
 	it("returns SELContractError as-is", () => {
@@ -21,10 +16,10 @@ describe("src/environment/error-wrapper.ts", () => {
 		expect(wrapError(err)).toBe(err);
 	});
 
-	it("wraps ParseError as SELParseError", () => {
+	it("wraps ParseError as SELEvaluationError", () => {
 		const err = new ParseError("bad syntax");
 		const result = wrapError(err);
-		expect(result).toBeInstanceOf(SELParseError);
+		expect(result).toBeInstanceOf(SELEvaluationError);
 		expect(result.message).toBe("bad syntax");
 		expect(result.cause).toBe(err);
 	});
@@ -57,10 +52,10 @@ describe("src/environment/error-wrapper.ts", () => {
 		expect(result).toBeInstanceOf(SELEvaluationError);
 	});
 
-	it("wraps CelTypeError as SELTypeError", () => {
+	it("wraps CelTypeError as SELEvaluationError", () => {
 		const err = new CelTypeError("type mismatch");
 		const result = wrapError(err);
-		expect(result).toBeInstanceOf(SELTypeError);
+		expect(result).toBeInstanceOf(SELEvaluationError);
 		expect(result.message).toBe("type mismatch");
 		expect(result.cause).toBe(err);
 	});
