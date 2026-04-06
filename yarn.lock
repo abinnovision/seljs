@@ -1681,7 +1681,7 @@ __metadata:
     prettier: "npm:^3.8.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
-    storybook: "npm:^10.3.3"
+    storybook: "npm:^10.3.4"
     tsdown: "npm:^0.21.4"
     typescript: "npm:^5.9.3"
     viem: "npm:^2.47.6"
@@ -2535,6 +2535,13 @@ __metadata:
     convert-source-map: "npm:^2.0.0"
     tinyrainbow: "npm:^3.0.3"
   checksum: 10/1ca5b588d7f9b8aaf9394f05d1c9e6a790591c26aa80c23bf2a7f2650c5ff55a23e4c305e4d8789364a23d2176b57290ca3b538c5ed8697b956d1ceff9d56e58
+  languageName: node
+  linkType: hard
+
+"@webcontainer/env@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@webcontainer/env@npm:1.1.1"
+  checksum: 10/c3cd2c207bc2948dce91fa900aa1c6541832075021b720bda01043596359142bc7dd75670608aa7b6f5075d6ae63748a0f90b24e554e1a04ee69b968551eef66
   languageName: node
   linkType: hard
 
@@ -6639,9 +6646,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^10.3.3":
-  version: 10.3.3
-  resolution: "storybook@npm:10.3.3"
+"storybook@npm:^10.3.4":
+  version: 10.3.4
+  resolution: "storybook@npm:10.3.4"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@storybook/icons": "npm:^2.0.1"
@@ -6649,6 +6656,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.1"
     "@vitest/expect": "npm:3.2.4"
     "@vitest/spy": "npm:3.2.4"
+    "@webcontainer/env": "npm:^1.1.1"
     esbuild: "npm:^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0 || ^0.25.0 || ^0.26.0 || ^0.27.0"
     open: "npm:^10.2.0"
     recast: "npm:^0.23.5"
@@ -6662,7 +6670,7 @@ __metadata:
       optional: true
   bin:
     storybook: ./dist/bin/dispatcher.js
-  checksum: 10/031b71d97bb8fdb695095e38f172556f36a0748c8ff6762fed64ab0e9a7036fd8a4ae40142c394b1028d053b4edb5949b43734eb737b628c2a60996756cbd0dc
+  checksum: 10/51231731198794f9af75a871ea78c78632200a9010184c2b151fab079e9e12c8fc9ae62d9dc6833bb0cbc2ae1cb9518c1a5ccb10054a9a6e5b1c9ce12bf8a02a
   languageName: node
   linkType: hard
 
