@@ -54,7 +54,7 @@
 		"@abinnovision/eslint-config-base": "^3.2.2",
 		"@abinnovision/prettier-config": "^2.1.5",
 		"@seljs-internal/tsconfig": "workspace:^",
-		"eslint": "^9.39.4",
+		"eslint": "^10.2.0",
 		"prettier": "^3.8.1",
 		"tsdown": "^0.21.4",
 		"typescript": "^5.9.3",
