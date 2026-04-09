@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/checker-v1.2.0...checker-v1.3.0) (2026-04-01)
+
+
+### Features
+
+* add balance() address accessor and integrate with Multicall3 ([#45](https://github.com/abinnovision/seljs/issues/45)) ([1c64d7c](https://github.com/abinnovision/seljs/commit/1c64d7ca1fdf32f9b9a909710b8131e46b3ee884))
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/checker-v1.1.0...checker-v1.2.0) (2026-03-21)
 
 
