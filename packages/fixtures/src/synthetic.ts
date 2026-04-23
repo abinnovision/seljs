@@ -157,3 +157,33 @@ export const syntheticTypeEdgeCases = {
 		},
 	],
 } as const satisfies ContractFixture;
+
+export const accessControl = {
+	abi: [
+		{
+			type: "function",
+			name: "hasRole",
+			stateMutability: "view",
+			inputs: [
+				{ name: "role", type: "bytes32" },
+				{ name: "account", type: "address" },
+			],
+			outputs: [{ name: "", type: "bool" }],
+		},
+		{
+			type: "function",
+			name: "getRoleAdmin",
+			stateMutability: "view",
+			inputs: [{ name: "role", type: "bytes32" }],
+			outputs: [{ name: "", type: "bytes32" }],
+		},
+		{
+			type: "function",
+			name: "supportsInterface",
+			stateMutability: "view",
+			inputs: [{ name: "interfaceId", type: "bytes4" }],
+			outputs: [{ name: "", type: "bool" }],
+		},
+	],
+	address: "0x000000000000000000000000000000000000aCCe",
+} as const satisfies ContractFixture;

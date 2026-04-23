@@ -188,6 +188,40 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 		returns: "bool",
 	},
 	{
+		name: "hexBytes",
+		signature: "hexBytes(string): bytes",
+		description:
+			"Decodes a 0x-prefixed hex string into a bytes value. For pasting pre-computed hashes, role constants, merkle roots, signatures.",
+		params: [{ name: "hex", type: "string" }],
+		returns: "bytes",
+	},
+	{
+		name: "hexBytes",
+		signature: "hexBytes(string, int): bytes",
+		description:
+			"Decodes a hex string and asserts the result is exactly N bytes. Use when a bytesN ABI parameter requires a specific length (bytes4 selectors, bytes32 namehashes / EIP-712 digests, bytes65 signatures).",
+		params: [
+			{ name: "hex", type: "string" },
+			{ name: "length", type: "int" },
+		],
+		returns: "bytes",
+	},
+	{
+		name: "keccak256",
+		signature: "keccak256(string): bytes",
+		description:
+			'Keccak-256 hash of the UTF-8 encoded string. Use for role identifiers (e.g. keccak256("MINTER_ROLE")), event topic hashes, and EIP-712 type hashes.',
+		params: [{ name: "value", type: "string" }],
+		returns: "bytes",
+	},
+	{
+		name: "keccak256",
+		signature: "keccak256(bytes): bytes",
+		description: "Keccak-256 hash of the bytes value.",
+		params: [{ name: "value", type: "bytes" }],
+		returns: "bytes",
+	},
+	{
 		name: "timestamp",
 		signature: "timestamp(string): timestamp",
 		description: "Parses a timestamp string",

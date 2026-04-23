@@ -5,3 +5,4 @@ export * from "./conversion.js";
 export * from "./units.js";
 export * from "./context.js";
 export * from "./constants.js";
+export * from "./hex.js";

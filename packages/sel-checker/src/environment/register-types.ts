@@ -1,13 +1,15 @@
 import {
+	EVM_CONSTANTS,
+	formatUnitsValue,
+	hexToBytes,
+	parseUnitsValue,
+	SOLIDITY_TYPES,
 	SolidityAddressTypeWrapper,
 	SolidityIntTypeWrapper,
-	SOLIDITY_TYPES,
-	toBigInt,
 	toAddress,
-	parseUnitsValue,
-	formatUnitsValue,
-	EVM_CONSTANTS,
+	toBigInt,
 } from "@seljs/types";
+import { keccak256 as viemKeccak256, toBytes as viemToBytes } from "viem";
 
 import type { Environment } from "@marcbachmann/cel-js";
 
@@ -406,6 +408,36 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		(addr) => toAddress(addr) === ZERO_ADDRESS,
 	);
 
+	// hexBytes(string): decode a 0x-prefixed hex string into a Uint8Array
+	env.registerFunction("hexBytes(string): bytes", (hex) =>
+		hexToBytes(hex as string),
+	);
+
+	// hexBytes(string, int): decode and assert exact byte length
+	env.registerFunction("hexBytes(string, int): bytes", (hex, length) => {
+		const out = hexToBytes(hex as string);
+		const expected = Number(toBigInt(length));
+		if (out.length !== expected) {
+			throw new Error(
+				`hexBytes: expected ${String(expected)} bytes, got ${String(out.length)}`,
+			);
+		}
+
+		return out;
+	});
+
+	/*
+	 * keccak256: pad through viem (returns `0x…` hex) then decode back to
+	 * Uint8Array so every `bytes` value in the runtime is uniformly a
+	 * Uint8Array. The outbound codec re-encodes to hex at call time.
+	 */
+	env.registerFunction("keccak256(string): bytes", (value) =>
+		hexToBytes(viemKeccak256(viemToBytes(value as string))),
+	);
+	env.registerFunction("keccak256(bytes): bytes", (value) =>
+		hexToBytes(viemKeccak256(value as Uint8Array)),
+	);
+
 	/*
 	 * --- `sel.*` namespace: library-provided conveniences ---
 	 *
@@ -420,10 +452,13 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	const selValues: Record<string, unknown> = {};
 	for (const constant of EVM_CONSTANTS) {
 		selFields[constant.name] = constant.type;
-		selValues[constant.name] =
-			constant.type === "sol_int"
-				? new SolidityIntTypeWrapper(constant.value)
-				: new SolidityAddressTypeWrapper(constant.value);
+		if (constant.type === "sol_int") {
+			selValues[constant.name] = new SolidityIntTypeWrapper(constant.value);
+		} else if (constant.type === "sol_address") {
+			selValues[constant.name] = new SolidityAddressTypeWrapper(constant.value);
+		} else {
+			selValues[constant.name] = constant.value;
+		}
 	}
 
 	env.registerType("SelNamespace", { ctor: SelNamespace, fields: selFields });
