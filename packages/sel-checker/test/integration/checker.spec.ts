@@ -130,6 +130,23 @@ describe("erc20 integration", () => {
 			type: "sol_int",
 		},
 
+		// int <op> sol_int — int literal on the left, sol_int on the right
+		{
+			expr: "2 * erc20.decimals()",
+			valid: true,
+			type: "sol_int",
+		},
+		{
+			expr: "18 + erc20.decimals()",
+			valid: true,
+			type: "sol_int",
+		},
+		{
+			expr: "1000 - erc20.totalSupply()",
+			valid: true,
+			type: "sol_int",
+		},
+
 		// Method chaining (string receiver methods)
 		{ expr: "erc20.name().size()", valid: true, type: "int" },
 		{ expr: 'erc20.name().startsWith("USD")', valid: true, type: "bool" },

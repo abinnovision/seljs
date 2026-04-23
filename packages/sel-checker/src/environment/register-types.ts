@@ -138,19 +138,17 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	);
 
 	/*
-	 * --- sol_int <op> int cross-type arithmetic ---
+	 * --- sol_int <op> int and int <op> sol_int cross-type arithmetic ---
 	 *
-	 * cel-js infers the result type of a binary operator from the LEFT operand.
-	 * For "sol_int <op> int", the result type is "sol_int" — matching the
-	 * SolidityIntTypeWrapper returned by toSolInt(). These are safe.
+	 * cel-js infers a binary operator's result type from the LEFT operand by
+	 * default. For "sol_int <op> int" that already gives us sol_int, matching
+	 * what toSolInt() returns — no annotation needed. For the reverse order
+	 * we use cel-js's explicit return-type annotation (the ": sol_int" suffix
+	 * on the signature) so the wrapper is routed through the sol_int codec
+	 * instead of the int codec, preventing the wrapper from leaking.
 	 *
-	 * We intentionally do NOT register "int <op> sol_int" arithmetic operators.
-	 * cel-js would infer the result as "int", but the handler would return a
-	 * SolidityIntTypeWrapper. The codec for "int" cannot unwrap that wrapper,
-	 * causing the raw wrapper to leak into the evaluation result.
-	 *
-	 * Cross-type comparison operators (below) are fine — they return plain
-	 * booleans regardless of operand order.
+	 * Cross-type comparison operators (below) return plain booleans, so both
+	 * directions are safe without any annotation.
 	 */
 
 	tryRegisterOperator(env, "sol_int + int", (a, b) =>
@@ -175,6 +173,36 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	});
 
 	tryRegisterOperator(env, "sol_int % int", (a, b) => {
+		const divisor = toBigInt(b);
+		if (divisor === 0n) {
+			throw new Error("modulo by zero");
+		}
+
+		return toSolInt(toBigInt(a) % divisor);
+	});
+
+	tryRegisterOperator(env, "int + sol_int: sol_int", (a, b) =>
+		toSolInt(toBigInt(a) + toBigInt(b)),
+	);
+
+	tryRegisterOperator(env, "int - sol_int: sol_int", (a, b) =>
+		toSolInt(toBigInt(a) - toBigInt(b)),
+	);
+
+	tryRegisterOperator(env, "int * sol_int: sol_int", (a, b) =>
+		toSolInt(toBigInt(a) * toBigInt(b)),
+	);
+
+	tryRegisterOperator(env, "int / sol_int: sol_int", (a, b) => {
+		const divisor = toBigInt(b);
+		if (divisor === 0n) {
+			throw new Error("division by zero");
+		}
+
+		return toSolInt(toBigInt(a) / divisor);
+	});
+
+	tryRegisterOperator(env, "int % sol_int: sol_int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
 			throw new Error("modulo by zero");
