@@ -180,6 +180,30 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 		receiverType: "sol_address",
 	},
 	{
+		name: "sum",
+		signature: "list<sol_int>.sum(): sol_int",
+		description: "Returns the sum of all elements. An empty list sums to 0.",
+		params: [],
+		returns: "sol_int",
+		receiverType: "list<sol_int>",
+	},
+	{
+		name: "min",
+		signature: "list<sol_int>.min(): sol_int",
+		description: "Returns the smallest element. Throws when the list is empty.",
+		params: [],
+		returns: "sol_int",
+		receiverType: "list<sol_int>",
+	},
+	{
+		name: "max",
+		signature: "list<sol_int>.max(): sol_int",
+		description: "Returns the largest element. Throws when the list is empty.",
+		params: [],
+		returns: "sol_int",
+		receiverType: "list<sol_int>",
+	},
+	{
 		name: "isZeroAddress",
 		signature: "isZeroAddress(sol_address|string): bool",
 		description:

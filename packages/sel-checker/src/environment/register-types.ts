@@ -398,6 +398,57 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		return toSolInt(v < 0n ? -v : v);
 	});
 
+	/*
+	 * --- list<sol_int> reducers: sum / min / max ---
+	 *
+	 * Specialized to sol_int element type so a list<int> or list<string> won't
+	 * resolve these overloads (cel-js dispatches on the parameterized receiver).
+	 * Empty-list semantics: sum → 0 (mathematical identity); min/max throw
+	 * because there is no sensible identity over zero elements.
+	 */
+	env.registerFunction("list<sol_int>.sum(): sol_int", (list) => {
+		let total = 0n;
+		for (const item of list as unknown[]) {
+			total += toBigInt(item);
+		}
+
+		return toSolInt(total);
+	});
+
+	env.registerFunction("list<sol_int>.min(): sol_int", (list) => {
+		const items = list as unknown[];
+		if (items.length === 0) {
+			throw new Error("list<sol_int>.min(): list is empty");
+		}
+
+		let smallest = toBigInt(items[0]);
+		for (let i = 1; i < items.length; i++) {
+			const v = toBigInt(items[i]);
+			if (v < smallest) {
+				smallest = v;
+			}
+		}
+
+		return toSolInt(smallest);
+	});
+
+	env.registerFunction("list<sol_int>.max(): sol_int", (list) => {
+		const items = list as unknown[];
+		if (items.length === 0) {
+			throw new Error("list<sol_int>.max(): list is empty");
+		}
+
+		let largest = toBigInt(items[0]);
+		for (let i = 1; i < items.length; i++) {
+			const v = toBigInt(items[i]);
+			if (v > largest) {
+				largest = v;
+			}
+		}
+
+		return toSolInt(largest);
+	});
+
 	// isZeroAddress: check if an address is the zero address
 	const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 	env.registerFunction(

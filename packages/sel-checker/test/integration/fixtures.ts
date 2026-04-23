@@ -120,6 +120,11 @@ export const COMMON_VARIABLES: VariableSchema[] = [
 	{ name: "tokenId", type: "sol_int", description: "Token identifier" },
 	{ name: "active", type: "bool", description: "Active flag" },
 	{ name: "label", type: "string", description: "Label text" },
+	{
+		name: "balances",
+		type: "list<sol_int>",
+		description: "List of wallet balances",
+	},
 ];
 
 /*

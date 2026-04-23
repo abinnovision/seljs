@@ -375,6 +375,102 @@ describe("src/environment/register-types.ts", () => {
 			expect(toBigInt(zero)).toBe(0n);
 		});
 
+		it("registers list<sol_int> reducer functions", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"list<sol_int>.sum(): sol_int",
+				expect.any(Function),
+			);
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"list<sol_int>.min(): sol_int",
+				expect.any(Function),
+			);
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"list<sol_int>.max(): sol_int",
+				expect.any(Function),
+			);
+		});
+
+		it("list<sol_int>.sum() adds all elements", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			const result = env.evaluate("nums.sum()", {
+				nums: [
+					new SolidityIntTypeWrapper(1n),
+					new SolidityIntTypeWrapper(2n),
+					new SolidityIntTypeWrapper(3n),
+				],
+			});
+			expect(toBigInt(result)).toBe(6n);
+		});
+
+		it("list<sol_int>.sum() returns 0 for an empty list", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			const result = env.evaluate("nums.sum()", { nums: [] });
+			expect(toBigInt(result)).toBe(0n);
+		});
+
+		it("list<sol_int>.min() returns the smallest element", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			const result = env.evaluate("nums.min()", {
+				nums: [
+					new SolidityIntTypeWrapper(5n),
+					new SolidityIntTypeWrapper(2n),
+					new SolidityIntTypeWrapper(9n),
+				],
+			});
+			expect(toBigInt(result)).toBe(2n);
+		});
+
+		it("list<sol_int>.max() returns the largest element", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			const result = env.evaluate("nums.max()", {
+				nums: [
+					new SolidityIntTypeWrapper(5n),
+					new SolidityIntTypeWrapper(2n),
+					new SolidityIntTypeWrapper(9n),
+				],
+			});
+			expect(toBigInt(result)).toBe(9n);
+		});
+
+		it("list<sol_int>.min() throws on empty list", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			expect(() => env.evaluate("nums.min()", { nums: [] })).toThrow(
+				"list is empty",
+			);
+		});
+
+		it("list<sol_int>.max() throws on empty list", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			expect(() => env.evaluate("nums.max()", { nums: [] })).toThrow(
+				"list is empty",
+			);
+		});
+
+		it("list<sol_int> reducers handle single-element lists", () => {
+			const env = createCheckerEnv();
+			env.registerVariable("nums", "list<sol_int>");
+
+			const ctx = { nums: [new SolidityIntTypeWrapper(42n)] };
+			expect(toBigInt(env.evaluate("nums.sum()", ctx))).toBe(42n);
+			expect(toBigInt(env.evaluate("nums.min()", ctx))).toBe(42n);
+			expect(toBigInt(env.evaluate("nums.max()", ctx))).toBe(42n);
+		});
+
 		it("registers isZeroAddress function overloads", () => {
 			const env = createMockHost();
 			registerSolidityTypes(env);
