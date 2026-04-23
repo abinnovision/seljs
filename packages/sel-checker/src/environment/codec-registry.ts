@@ -1,4 +1,5 @@
 import {
+	hexToBytes,
 	SolidityAddressTypeWrapper,
 	SolidityIntTypeWrapper,
 } from "@seljs/types";
@@ -70,15 +71,7 @@ export class CelCodecRegistry {
 			"bytes",
 			z.union([
 				z.instanceof(Uint8Array),
-				z.string().transform((s) => {
-					const hex = s.startsWith("0x") ? s.slice(2) : s;
-					const bytes = new Uint8Array(hex.length / 2);
-					for (let i = 0; i < bytes.length; i++) {
-						bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
-					}
-
-					return bytes;
-				}),
+				z.string().transform((s) => hexToBytes(s)),
 			]),
 		);
 		this.codecs.set(

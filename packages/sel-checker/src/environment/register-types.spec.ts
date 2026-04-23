@@ -619,4 +619,121 @@ describe("src/environment/register-types.ts", () => {
 			expect(toBigInt(result)).toBe(10n ** 18n + 1n);
 		});
 	});
+
+	describe("hexBytes", () => {
+		it("registers hexBytes function overloads", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"hexBytes(string): bytes",
+				expect.any(Function),
+			);
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"hexBytes(string, int): bytes",
+				expect.any(Function),
+			);
+		});
+
+		it("decodes a 0x-prefixed hex string", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('hexBytes("0xdeadbeef")', {});
+			expect(result).toBeInstanceOf(Uint8Array);
+			expect(Array.from(result as Uint8Array)).toEqual([
+				0xde, 0xad, 0xbe, 0xef,
+			]);
+		});
+
+		it("decodes a hex string without 0x prefix", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('hexBytes("deadbeef")', {});
+			expect(Array.from(result as Uint8Array)).toEqual([
+				0xde, 0xad, 0xbe, 0xef,
+			]);
+		});
+
+		it("rejects non-hex characters", () => {
+			const env = createCheckerEnv();
+			expect(() => env.evaluate('hexBytes("0xZZ")', {})).toThrow(
+				/invalid hex character/,
+			);
+		});
+
+		it("rejects odd-length hex strings", () => {
+			const env = createCheckerEnv();
+			expect(() => env.evaluate('hexBytes("0x0")', {})).toThrow(/even-length/);
+		});
+
+		it("length-asserted overload accepts matching length", () => {
+			const env = createCheckerEnv();
+			const hex = "0x" + "00".repeat(32);
+			const result = env.evaluate(`hexBytes("${hex}", 32)`, {});
+			expect((result as Uint8Array).length).toBe(32);
+		});
+
+		it("length-asserted overload rejects length mismatch", () => {
+			const env = createCheckerEnv();
+			expect(() => env.evaluate('hexBytes("0x00", 32)', {})).toThrow(
+				/expected 32 bytes, got 1/,
+			);
+		});
+
+		it("length-asserted overload works for bytes4 selector shape", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('hexBytes("0x12345678", 4)', {});
+			expect(Array.from(result as Uint8Array)).toEqual([
+				0x12, 0x34, 0x56, 0x78,
+			]);
+		});
+	});
+
+	describe("keccak256", () => {
+		it("registers keccak256 function overloads", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"keccak256(string): bytes",
+				expect.any(Function),
+			);
+			expect(env.registerFunction).toHaveBeenCalledWith(
+				"keccak256(bytes): bytes",
+				expect.any(Function),
+			);
+		});
+
+		it("hashes a UTF-8 string to the canonical MINTER_ROLE value", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('keccak256("MINTER_ROLE")', {});
+			// Precomputed: keccak256(utf8("MINTER_ROLE"))
+			const expected =
+				"0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6";
+			expect(result).toBeInstanceOf(Uint8Array);
+			const hex =
+				"0x" +
+				Array.from(result as Uint8Array)
+					.map((b) => b.toString(16).padStart(2, "0"))
+					.join("");
+			expect(hex).toBe(expected);
+		});
+
+		it("hashes an empty bytes value to the empty-input keccak256", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('keccak256(hexBytes("0x"))', {});
+			const hex =
+				"0x" +
+				Array.from(result as Uint8Array)
+					.map((b) => b.toString(16).padStart(2, "0"))
+					.join("");
+			expect(hex).toBe(
+				"0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+			);
+		});
+
+		it("keccak256 result has length 32", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('keccak256("anything")', {});
+			expect((result as Uint8Array).length).toBe(32);
+		});
+	});
 });

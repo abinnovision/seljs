@@ -1,4 +1,5 @@
 export * from "./aave-pool.js";
+export * from "./access-control.js";
 export * from "./balancer-vault.js";
 export * from "./chainlink-aggregator.js";
 export * from "./compound-comet.js";

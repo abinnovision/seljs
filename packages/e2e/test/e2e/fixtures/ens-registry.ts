@@ -45,20 +45,27 @@ export const ensRegistryFixtures = defineFixtureGroup({
 			expectedValue: false,
 		},
 
-		// bytes32 input functions — currently unsupported cast, so invalid-only
+		// bytes32 input functions — now reachable via hexBytes(string, int) literal
 		{
-			label: "invalid: ens.owner(bytes32(...)) — bytes cast not supported",
-			expr: 'ens.owner(bytes32("0x0000000000000000000000000000000000000000000000000000000000000001"))',
-			expectedType: "",
-			invalid: true,
-			minDiagnostics: 1,
+			label: "ens.owner(hexBytes(..., 32)) — length-asserted bytes32 literal",
+			expr: 'ens.owner(hexBytes("0x0000000000000000000000000000000000000000000000000000000000000001", 32))',
+			expectedType: "sol_address",
+			mocks: { owner: "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF" },
+			expectedValue: "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
 		},
 		{
-			label: "invalid: ens.resolver(bytes32(...)) — bytes cast not supported",
-			expr: 'ens.resolver(bytes32("0x0000000000000000000000000000000000000000000000000000000000000001"))',
-			expectedType: "",
-			invalid: true,
-			minDiagnostics: 1,
+			label: "ens.resolver(hexBytes(..., 32))",
+			expr: 'ens.resolver(hexBytes("0x0000000000000000000000000000000000000000000000000000000000000001", 32))',
+			expectedType: "sol_address",
+			mocks: { resolver: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
+			expectedValue: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+		},
+		{
+			label: "ens.owner(precomputed vitalik.eth namehash)",
+			expr: 'ens.owner(hexBytes("0xee6c4522aab0003e8d14cd40a6af439055fd2577951148c14b6cea9a53475835", 32))',
+			expectedType: "sol_address",
+			mocks: { owner: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+			expectedValue: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 		},
 		{
 			label: "invalid: ens.nonExistent()",
