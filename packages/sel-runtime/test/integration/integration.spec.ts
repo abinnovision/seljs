@@ -4,7 +4,7 @@ import {
 	buildRoutes,
 	routeFor,
 } from "@seljs-internal/fixtures";
-import { Abi } from "ox";
+import { Abi, AbiError, AbiFunction } from "ox";
 import { describe, expect, it } from "vitest";
 
 import { MULTICALL3_ADDRESS } from "../../src/execution/multicall.js";
@@ -605,6 +605,60 @@ describe("integration", () => {
 					sel.evaluate("token.balanceOf(user)", { user: USER_ADDRESS }),
 				).rejects.toMatchObject({
 					cause: expect.any(MulticallBatchError),
+				});
+			});
+
+			it("surfaces decoded revert reason on SELContractError when a sub-call reverts", async () => {
+				const aggregate3 = AbiFunction.from(
+					"function aggregate3((address target, bool allowFailure, bytes callData)[] calls) payable returns ((bool success, bytes returnData)[] returnData)",
+				);
+				const errorStringAbi = AbiError.from("error Error(string reason)");
+				const encodedRevert = AbiError.encode(errorStringAbi, [
+					"ERC721: owner query for nonexistent token",
+				]);
+
+				const revertingClient = {
+					getBlockNumber: () => Promise.resolve(100n),
+					call: ({ to, data }: { to: `0x${string}`; data: `0x${string}` }) => {
+						if (to.toLowerCase() !== MULTICALL3_ADDRESS.toLowerCase()) {
+							return Promise.reject(new Error(`unexpected target ${to}`));
+						}
+
+						const [calls] = AbiFunction.decodeData(aggregate3, data) as [
+							readonly {
+								target: `0x${string}`;
+								allowFailure: boolean;
+								callData: `0x${string}`;
+							}[],
+						];
+						const results = calls.map(() => ({
+							success: false,
+							returnData: encodedRevert,
+						}));
+						const returnData = AbiFunction.encodeResult(aggregate3, results);
+
+						return Promise.resolve({ data: returnData });
+					},
+				};
+
+				const sel = createSEL({
+					client: revertingClient,
+					schema: buildSchema({
+						context: { tokenId: "sol_int" },
+						contracts: {
+							nft: { address: TOKEN_ADDRESS, abi: NFT_ABI },
+						},
+					}),
+				});
+
+				await expect(
+					sel.evaluate("nft.ownerOf(tokenId)", { tokenId: 999n }),
+				).rejects.toMatchObject({
+					name: "SELContractError",
+					contractName: "nft",
+					methodName: "ownerOf",
+					revertReason: "ERC721: owner query for nonexistent token",
+					revertData: encodedRevert,
 				});
 			});
 		});

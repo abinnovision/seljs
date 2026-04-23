@@ -1,4 +1,4 @@
-import { type Abi, AbiFunction } from "ox";
+import { type Abi, AbiError, AbiFunction } from "ox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ResultCache } from "./result-cache.js";
@@ -115,7 +115,7 @@ describe("src/execution/round-executor.ts", () => {
 		expect(executeBatch.mock.calls[0]?.[0]).toEqual([
 			{
 				target: TEST_ADDRESS,
-				allowFailure: false,
+				allowFailure: true,
 				callData: AbiFunction.encodeData(TEST_ABI, "balanceOf", [user]),
 			},
 		]);
@@ -130,7 +130,7 @@ describe("src/execution/round-executor.ts", () => {
 		expect(executeBatch.mock.calls[0]?.[0]).toEqual([
 			{
 				target: TEST_ADDRESS,
-				allowFailure: false,
+				allowFailure: true,
 				callData: AbiFunction.encodeData(TEST_ABI, "balanceOf", [owner]),
 			},
 		]);
@@ -152,7 +152,7 @@ describe("src/execution/round-executor.ts", () => {
 		expect(executeBatch.mock.calls[0]?.[0]).toEqual([
 			{
 				target: TEST_ADDRESS,
-				allowFailure: false,
+				allowFailure: true,
 				callData: AbiFunction.encodeData(TEST_ABI, "balanceOf", [owner]),
 			},
 		]);
@@ -210,7 +210,7 @@ describe("src/execution/round-executor.ts", () => {
 		});
 	});
 
-	it("throws MulticallBatchError when call fails", async () => {
+	it("throws MulticallBatchError when call fails with empty revert data", async () => {
 		const call = makeCall();
 		executeBatch.mockResolvedValue([
 			{ success: false, returnData: "0x" as `0x${string}` },
@@ -226,6 +226,31 @@ describe("src/execution/round-executor.ts", () => {
 			failedCallIndex: 0,
 			contractName: "token",
 			methodName: "balanceOf",
+			revertReason: undefined,
+			revertData: "0x",
+		});
+	});
+
+	it("decodes Error(string) revert reason and surfaces it on the thrown error", async () => {
+		const call = makeCall();
+		const errorStringAbi = AbiError.from("error Error(string reason)");
+		const revertData = AbiError.encode(errorStringAbi, [
+			"ERC721: owner query for nonexistent token",
+		]);
+		executeBatch.mockResolvedValue([
+			{ success: false, returnData: revertData },
+		]);
+
+		await expect(
+			executor.executeRound(makeRound([call]), makeContext()),
+		).rejects.toMatchObject({
+			message:
+				"Call failed: token.balanceOf — ERC721: owner query for nonexistent token",
+			failedCallIndex: 0,
+			contractName: "token",
+			methodName: "balanceOf",
+			revertReason: "ERC721: owner query for nonexistent token",
+			revertData,
 		});
 	});
 });
