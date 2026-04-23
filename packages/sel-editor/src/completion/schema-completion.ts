@@ -36,6 +36,9 @@ export class SchemaCompletionProvider {
 		this.checker = checker;
 		const contractCompletions = createContractCompletions(schema.contracts);
 		const variableCompletions = createVariableCompletions(schema.variables);
+		const constantCompletions = createVariableCompletions(
+			schema.constants ?? [],
+		);
 		const freeFunctions = schema.functions.filter((f) => !f.receiverType);
 		const functionCompletions = createFunctionCompletions(freeFunctions);
 		const macroCompletions = createMacroCompletions(schema.macros);
@@ -48,6 +51,7 @@ export class SchemaCompletionProvider {
 		this.topLevelCompletions = [
 			...contractCompletions,
 			...variableCompletions,
+			...constantCompletions,
 			...functionCompletions,
 			...atomCompletions,
 		];

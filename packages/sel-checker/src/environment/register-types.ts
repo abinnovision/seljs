@@ -5,6 +5,7 @@ import {
 	toAddress,
 	parseUnitsValue,
 	formatUnitsValue,
+	EVM_CONSTANTS,
 } from "@seljs/types";
 
 import type { Environment } from "@marcbachmann/cel-js";
@@ -15,9 +16,11 @@ import type { Environment } from "@marcbachmann/cel-js";
  * to void — registerSolidityTypes never chains the return value.
  */
 type SolidityTypeHost = {
-	[K in "registerType" | "registerOperator" | "registerFunction"]: (
-		...args: Parameters<Environment[K]>
-	) => void;
+	[K in
+		| "registerType"
+		| "registerOperator"
+		| "registerFunction"
+		| "registerConstant"]: (...args: Parameters<Environment[K]>) => void;
 };
 
 /**
@@ -273,25 +276,53 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 
 	// --- Standalone helper functions ---
 
+	/*
+	 * parseUnits / formatUnits: the `decimals` argument accepts both plain `int`
+	 * and `sol_int`, because `erc20.decimals()` returns `sol_int`. The runtime
+	 * normalizes via `Number(toBigInt(...))` regardless of the incoming shape.
+	 */
+
 	// parseUnits: scale human-readable values to sol_int
 	env.registerFunction("parseUnits(string, int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
+	env.registerFunction(
+		"parseUnits(string, sol_int): sol_int",
+		(value, decimals) => parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
 	env.registerFunction("parseUnits(int, int): sol_int", (value, decimals) =>
+		parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
+	env.registerFunction("parseUnits(int, sol_int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
 	env.registerFunction("parseUnits(double, int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
+	env.registerFunction(
+		"parseUnits(double, sol_int): sol_int",
+		(value, decimals) => parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
 	env.registerFunction("parseUnits(sol_int, int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
+	env.registerFunction(
+		"parseUnits(sol_int, sol_int): sol_int",
+		(value, decimals) => parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
 
 	// formatUnits: scale sol_int down to human-readable double
 	env.registerFunction("formatUnits(sol_int, int): double", (value, decimals) =>
 		formatUnitsValue(value, Number(toBigInt(decimals))),
 	);
+	env.registerFunction(
+		"formatUnits(sol_int, sol_int): double",
+		(value, decimals) => formatUnitsValue(value, Number(toBigInt(decimals))),
+	);
 	env.registerFunction("formatUnits(int, int): double", (value, decimals) =>
+		formatUnitsValue(value, Number(toBigInt(decimals))),
+	);
+	env.registerFunction("formatUnits(int, sol_int): double", (value, decimals) =>
 		formatUnitsValue(value, Number(toBigInt(decimals))),
 	);
 
@@ -345,4 +376,9 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		"isZeroAddress(string): bool",
 		(addr) => toAddress(addr) === ZERO_ADDRESS,
 	);
+
+	// --- EVM magic constants (all sol_int) ---
+	for (const { name, value } of EVM_CONSTANTS) {
+		env.registerConstant(name, "sol_int", new SolidityIntTypeWrapper(value));
+	}
 };

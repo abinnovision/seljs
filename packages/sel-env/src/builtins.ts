@@ -1,6 +1,11 @@
-import { SOLIDITY_TYPES } from "@seljs/types";
+import { EVM_CONSTANTS, SOLIDITY_TYPES } from "@seljs/types";
 
-import type { FunctionSchema, MacroSchema, TypeSchema } from "@seljs/schema";
+import type {
+	FunctionSchema,
+	MacroSchema,
+	TypeSchema,
+	VariableSchema,
+} from "@seljs/schema";
 
 /**
  * Built-in CEL functions available in SEL expressions.
@@ -119,23 +124,23 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 	},
 	{
 		name: "parseUnits",
-		signature: "parseUnits(string|int|double|sol_int, int): sol_int",
+		signature: "parseUnits(string|int|double|sol_int, int|sol_int): sol_int",
 		description:
-			"Scales a human-readable value by 10^decimals, producing a sol_int. Mirrors viem/ethers parseUnits.",
+			"Scales a human-readable value by 10^decimals, producing a sol_int. Mirrors viem/ethers parseUnits. The decimals argument accepts either a plain int or a sol_int (e.g. the return of token.decimals()).",
 		params: [
 			{ name: "value", type: "string|int|double|sol_int" },
-			{ name: "decimals", type: "int" },
+			{ name: "decimals", type: "int|sol_int" },
 		],
 		returns: "sol_int",
 	},
 	{
 		name: "formatUnits",
-		signature: "formatUnits(sol_int|int, int): double",
+		signature: "formatUnits(sol_int|int, int|sol_int): double",
 		description:
-			"Scales a sol_int down by 10^decimals, producing a double for readable comparisons.",
+			"Scales a sol_int down by 10^decimals, producing a double for readable comparisons. The decimals argument accepts either a plain int or a sol_int (e.g. the return of token.decimals()).",
 		params: [
 			{ name: "value", type: "sol_int|int" },
-			{ name: "decimals", type: "int" },
+			{ name: "decimals", type: "int|sol_int" },
 		],
 		returns: "double",
 	},
@@ -324,3 +329,16 @@ export const SOLIDITY_PRIMITIVE_TYPES: TypeSchema[] = [
 		description: "32-byte fixed array",
 	},
 ];
+
+/**
+ * Top-level `sol_int` constants exposed in every SEL environment.
+ * Sourced from `@seljs/types` so the runtime registration and the schema
+ * metadata never drift apart.
+ */
+export const CEL_BUILTIN_CONSTANTS: VariableSchema[] = EVM_CONSTANTS.map(
+	(c) => ({
+		name: c.name,
+		type: "sol_int",
+		description: c.description,
+	}),
+);

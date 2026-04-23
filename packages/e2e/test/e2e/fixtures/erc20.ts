@@ -271,6 +271,51 @@ export const erc20Fixtures = defineFixtureGroup({
 			expectedValue: 487n,
 		},
 
+		// parseUnits / formatUnits with sol_int decimals
+		{
+			label: "formatUnits with dynamic decimals via token.decimals()",
+			expr: "formatUnits(token.balanceOf(user), token.decimals())",
+			expectedType: "double",
+			mocks: { balanceOf: 1500000n, decimals: 6 },
+			context: { user: USER, spender: SPENDER },
+			expectedValue: 1.5,
+		},
+		{
+			label: "formatUnits with sol_int literal decimals",
+			expr: "formatUnits(solInt(1500), solInt(3))",
+			expectedType: "double",
+			expectedValue: 1.5,
+		},
+		{
+			label: "parseUnits with dynamic decimals via token.decimals()",
+			expr: 'parseUnits("1", token.decimals())',
+			expectedType: "sol_int",
+			mocks: { decimals: 6 },
+			expectedValue: 1000000n,
+		},
+
+		// EVM built-in constants
+		{
+			label: "WAD constant is 10^18",
+			expr: "WAD",
+			expectedType: "sol_int",
+			expectedValue: 10n ** 18n,
+		},
+		{
+			label: "balance comparison against WAD",
+			expr: "token.balanceOf(user) > WAD",
+			expectedType: "bool",
+			mocks: { balanceOf: 2n * 10n ** 18n },
+			context: { user: USER, spender: SPENDER },
+			expectedValue: true,
+		},
+		{
+			label: "Q96 used as Uniswap sqrtPriceX96 divisor",
+			expr: "Q96 / Q96",
+			expectedType: "sol_int",
+			expectedValue: 1n,
+		},
+
 		// invalid
 		{
 			label: "invalid: token.balanceOf() missing required address arg",

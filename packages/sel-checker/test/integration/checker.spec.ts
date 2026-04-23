@@ -153,6 +153,30 @@ describe("erc20 integration", () => {
 			type: "sol_int",
 		},
 
+		// formatUnits / parseUnits accept sol_int for decimals
+		{
+			expr: "formatUnits(erc20.balanceOf(user), erc20.decimals())",
+			valid: true,
+			type: "double",
+		},
+		{
+			expr: 'parseUnits("1", erc20.decimals())',
+			valid: true,
+			type: "sol_int",
+		},
+
+		// EVM constants
+		{ expr: "WAD", valid: true, type: "sol_int" },
+		{ expr: "RAY", valid: true, type: "sol_int" },
+		{ expr: "Q96", valid: true, type: "sol_int" },
+		{ expr: "Q128", valid: true, type: "sol_int" },
+		{ expr: "MAX_UINT256", valid: true, type: "sol_int" },
+		{
+			expr: "erc20.balanceOf(user) > WAD",
+			valid: true,
+			type: "bool",
+		},
+
 		// Literals
 		{ expr: "true", valid: true, type: "bool" },
 		{ expr: "1 + 2", valid: true, type: "int" },
