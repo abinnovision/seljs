@@ -1388,4 +1388,168 @@ describe("integration", () => {
 			expect(checkResult.valid).toBe(true);
 		});
 	});
+
+	describe("list<sol_int> reducers: sum / min / max", () => {
+		it("sums a context-provided list of balances", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			const result = await sel.evaluate<bigint>("balances.sum()", {
+				balances: [100n, 200n, 300n],
+			});
+
+			expect(result.value).toBe(600n);
+		});
+
+		it("returns the smallest balance with min()", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			const result = await sel.evaluate<bigint>("balances.min()", {
+				balances: [500n, 100n, 300n],
+			});
+
+			expect(result.value).toBe(100n);
+		});
+
+		it("returns the largest balance with max()", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			const result = await sel.evaluate<bigint>("balances.max()", {
+				balances: [500n, 100n, 300n],
+			});
+
+			expect(result.value).toBe(500n);
+		});
+
+		it("sum() of an empty list is 0", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			const result = await sel.evaluate<bigint>("balances.sum()", {
+				balances: [],
+			});
+
+			expect(result.value).toBe(0n);
+		});
+
+		it("compares summed balances against a parseUnits threshold", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			const result = await sel.evaluate<boolean>(
+				"balances.sum() >= parseUnits(1000, 6)",
+				{
+					// 400 + 500 + 200 = 1100 USDC (6 decimals)
+					balances: [400_000_000n, 500_000_000n, 200_000_000n],
+				},
+			);
+
+			expect(result.value).toBe(true);
+		});
+
+		it("sums balances built from multiple contract reads", async () => {
+			const WALLET_A = "0x000000000000000000000000000000000000000A" as const;
+			const WALLET_B = "0x000000000000000000000000000000000000000B" as const;
+			const WALLET_C = "0x000000000000000000000000000000000000000C" as const;
+
+			const routes = buildRoutes(
+				routeFor({
+					abi: ERC20_ABI,
+					functionName: "balanceOf",
+					address: TOKEN_ADDRESS,
+					result: (args: readonly unknown[]) => {
+						const addr = (args[0] as string).toLowerCase();
+						if (addr === WALLET_A.toLowerCase()) {
+							return 100n;
+						}
+
+						if (addr === WALLET_B.toLowerCase()) {
+							return 250n;
+						}
+
+						if (addr === WALLET_C.toLowerCase()) {
+							return 50n;
+						}
+
+						return 0n;
+					},
+				}),
+			);
+			const { client } = createE2EMockClient(routes);
+
+			const sel = createSEL({
+				client,
+				schema: buildSchema({
+					context: {
+						a: "sol_address",
+						b: "sol_address",
+						c: "sol_address",
+					},
+					contracts: {
+						token: { address: TOKEN_ADDRESS, abi: ERC20_ABI },
+					},
+				}),
+			});
+
+			const result = await sel.evaluate<bigint>(
+				"[token.balanceOf(a), token.balanceOf(b), token.balanceOf(c)].sum()",
+				{ a: WALLET_A, b: WALLET_B, c: WALLET_C },
+			);
+
+			expect(result.value).toBe(400n);
+		});
+
+		it("min() throws on empty list", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			await expect(
+				sel.evaluate<bigint>("balances.min()", { balances: [] }),
+			).rejects.toThrow(/empty/);
+		});
+
+		it("max() throws on empty list", async () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			await expect(
+				sel.evaluate<bigint>("balances.max()", { balances: [] }),
+			).rejects.toThrow(/empty/);
+		});
+
+		it("type-checks list<sol_int>.sum() as sol_int", () => {
+			const sel = createSEL({
+				schema: buildSchema({
+					context: { balances: "list<sol_int>" },
+				}),
+			});
+
+			const checkResult = sel.check("balances.sum()");
+			expect(checkResult.valid).toBe(true);
+			expect(checkResult.type).toBe("sol_int");
+		});
+	});
 });

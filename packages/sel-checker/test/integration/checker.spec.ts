@@ -147,6 +147,17 @@ describe("erc20 integration", () => {
 			type: "sol_int",
 		},
 
+		// list<sol_int> receiver reducers — specialized to sol_int element type
+		{ expr: "balances.sum()", valid: true, type: "sol_int" },
+		{ expr: "balances.min()", valid: true, type: "sol_int" },
+		{ expr: "balances.max()", valid: true, type: "sol_int" },
+		{ expr: "balances.sum() > threshold", valid: true, type: "bool" },
+		{
+			expr: "balances.sum() + erc20.totalSupply()",
+			valid: true,
+			type: "sol_int",
+		},
+
 		// Method chaining (string receiver methods)
 		{ expr: "erc20.name().size()", valid: true, type: "int" },
 		{ expr: 'erc20.name().startsWith("USD")', valid: true, type: "bool" },
