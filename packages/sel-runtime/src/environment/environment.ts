@@ -346,12 +346,22 @@ export class SELRuntime {
 				throw error;
 			}
 
+			const revertFields =
+				error instanceof MulticallBatchError
+					? {
+							revertReason: error.revertReason,
+							revertData: error.revertData,
+							decodedError: error.decodedError,
+						}
+					: {};
+
 			throw new SELContractError(
 				`Contract call failed: ${failedCall.contract}.${failedCall.method}`,
 				{
 					cause: error,
 					contractName: failedCall.contract,
 					methodName: failedCall.method,
+					...revertFields,
 				},
 			);
 		}

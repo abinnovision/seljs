@@ -1,5 +1,6 @@
 import { type Abi, AbiFunction } from "ox";
 
+import { decodeRevertData } from "./decode-revert.js";
 import { createLogger } from "../debug.js";
 import { MulticallBatchError } from "../errors/index.js";
 
@@ -46,7 +47,7 @@ export class RoundExecutor {
 				const resolvedArgs = this.resolveArgs(call.args, context);
 				encodedCalls.push({
 					target: contract.address,
-					allowFailure: false,
+					allowFailure: true,
 					callData: AbiFunction.encodeData(
 						contract.abi,
 						call.method,
@@ -81,12 +82,20 @@ export class RoundExecutor {
 
 			const result = results[i];
 			if (!result?.success) {
+				const decoded = decodeRevertData(
+					result?.returnData ?? "0x",
+					contract.abi,
+				);
+				const suffix = decoded.reason ? ` — ${decoded.reason}` : "";
 				throw new MulticallBatchError(
-					`Call failed: ${call.contract}.${call.method}`,
+					`Call failed: ${call.contract}.${call.method}${suffix}`,
 					{
 						failedCallIndex: i,
 						contractName: call.contract,
 						methodName: call.method,
+						revertReason: decoded.reason,
+						revertData: decoded.data,
+						decodedError: decoded.decodedError,
 					},
 				);
 			}

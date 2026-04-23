@@ -31,7 +31,13 @@ const errorCases: ErrorCase[] = [
 	{
 		Ctor: SELContractError as AnyErrorCtor,
 		name: "SELContractError",
-		extraProps: { contractName: "MyContract", methodName: "transfer" },
+		extraProps: {
+			contractName: "MyContract",
+			methodName: "transfer",
+			revertReason: "ERC721: owner query for nonexistent token",
+			revertData: "0x08c379a0" as `0x${string}`,
+			decodedError: { name: "ERC721NonexistentToken", args: [42n] },
+		},
 	},
 	{
 		Ctor: CircularDependencyError as AnyErrorCtor,
@@ -52,6 +58,9 @@ const errorCases: ErrorCase[] = [
 			failedCallIndex: 2,
 			contractName: "MyContract",
 			methodName: "transfer",
+			revertReason: "ERC721: owner query for nonexistent token",
+			revertData: "0x08c379a0" as `0x${string}`,
+			decodedError: { name: "ERC721NonexistentToken", args: [42n] },
 		},
 	},
 	{
