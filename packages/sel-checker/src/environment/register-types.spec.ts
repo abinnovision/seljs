@@ -138,7 +138,10 @@ describe("src/environment/register-types.ts", () => {
 			const env = createMockHost();
 			registerSolidityTypes(env);
 
-			// sol_int <op> int arithmetic — left operand is sol_int so result type matches
+			/*
+			 * sol_int <op> int arithmetic — left operand is sol_int so result type
+			 * is inferred as sol_int without annotation
+			 */
 			expect(env.hasOperator("sol_int + int")).toBe(true);
 			expect(env.hasOperator("sol_int - int")).toBe(true);
 			expect(env.hasOperator("sol_int * int")).toBe(true);
@@ -146,18 +149,43 @@ describe("src/environment/register-types.ts", () => {
 			expect(env.hasOperator("sol_int % int")).toBe(true);
 
 			/*
-			 * int <op> sol_int arithmetic is intentionally NOT registered
-			 * (cel-js infers result as "int" but handler returns SolidityIntTypeWrapper)
+			 * int <op> sol_int arithmetic — registered with an explicit
+			 * ": sol_int" return-type annotation so cel-js routes the wrapper
+			 * through the sol_int codec instead of defaulting to int
 			 */
-			expect(env.hasOperator("int + sol_int")).toBe(false);
-			expect(env.hasOperator("int - sol_int")).toBe(false);
-			expect(env.hasOperator("int * sol_int")).toBe(false);
-			expect(env.hasOperator("int / sol_int")).toBe(false);
-			expect(env.hasOperator("int % sol_int")).toBe(false);
+			expect(env.hasOperator("int + sol_int: sol_int")).toBe(true);
+			expect(env.hasOperator("int - sol_int: sol_int")).toBe(true);
+			expect(env.hasOperator("int * sol_int: sol_int")).toBe(true);
+			expect(env.hasOperator("int / sol_int: sol_int")).toBe(true);
+			expect(env.hasOperator("int % sol_int: sol_int")).toBe(true);
 
 			// cross-type comparisons return bool, so both directions are safe
 			expect(env.hasOperator("sol_int == int")).toBe(true);
 			expect(env.hasOperator("int == sol_int")).toBe(true);
+		});
+
+		it("int <op> sol_int arithmetic evaluates to sol_int", () => {
+			const env = createCheckerEnv();
+
+			expect(toBigInt(env.evaluate("2 + solInt(10)", {}))).toBe(12n);
+			expect(toBigInt(env.evaluate("100 - solInt(1)", {}))).toBe(99n);
+			expect(toBigInt(env.evaluate("2 * solInt(10)", {}))).toBe(20n);
+			expect(toBigInt(env.evaluate("100 / solInt(4)", {}))).toBe(25n);
+			expect(toBigInt(env.evaluate("10 % solInt(3)", {}))).toBe(1n);
+		});
+
+		it("int / sol_int throws on division by zero", () => {
+			const env = createCheckerEnv();
+			expect(() => env.evaluate("100 / solInt(0)", {})).toThrow(
+				"division by zero",
+			);
+		});
+
+		it("int % sol_int throws on modulo by zero", () => {
+			const env = createCheckerEnv();
+			expect(() => env.evaluate("100 % solInt(0)", {})).toThrow(
+				"modulo by zero",
+			);
 		});
 
 		it("registers solInt cast functions", () => {
