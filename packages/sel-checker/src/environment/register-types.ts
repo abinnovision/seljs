@@ -1,10 +1,12 @@
 import {
+	SolidityAddressTypeWrapper,
 	SolidityIntTypeWrapper,
 	SOLIDITY_TYPES,
 	toBigInt,
 	toAddress,
 	parseUnitsValue,
 	formatUnitsValue,
+	EVM_CONSTANTS,
 } from "@seljs/types";
 
 import type { Environment } from "@marcbachmann/cel-js";
@@ -15,9 +17,11 @@ import type { Environment } from "@marcbachmann/cel-js";
  * to void — registerSolidityTypes never chains the return value.
  */
 type SolidityTypeHost = {
-	[K in "registerType" | "registerOperator" | "registerFunction"]: (
-		...args: Parameters<Environment[K]>
-	) => void;
+	[K in
+		| "registerType"
+		| "registerOperator"
+		| "registerFunction"
+		| "registerConstant"]: (...args: Parameters<Environment[K]>) => void;
 };
 
 /**
@@ -273,25 +277,53 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 
 	// --- Standalone helper functions ---
 
+	/*
+	 * parseUnits / formatUnits: the `decimals` argument accepts both plain `int`
+	 * and `sol_int`, because `erc20.decimals()` returns `sol_int`. The runtime
+	 * normalizes via `Number(toBigInt(...))` regardless of the incoming shape.
+	 */
+
 	// parseUnits: scale human-readable values to sol_int
 	env.registerFunction("parseUnits(string, int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
+	env.registerFunction(
+		"parseUnits(string, sol_int): sol_int",
+		(value, decimals) => parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
 	env.registerFunction("parseUnits(int, int): sol_int", (value, decimals) =>
+		parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
+	env.registerFunction("parseUnits(int, sol_int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
 	env.registerFunction("parseUnits(double, int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
+	env.registerFunction(
+		"parseUnits(double, sol_int): sol_int",
+		(value, decimals) => parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
 	env.registerFunction("parseUnits(sol_int, int): sol_int", (value, decimals) =>
 		parseUnitsValue(value, Number(toBigInt(decimals))),
+	);
+	env.registerFunction(
+		"parseUnits(sol_int, sol_int): sol_int",
+		(value, decimals) => parseUnitsValue(value, Number(toBigInt(decimals))),
 	);
 
 	// formatUnits: scale sol_int down to human-readable double
 	env.registerFunction("formatUnits(sol_int, int): double", (value, decimals) =>
 		formatUnitsValue(value, Number(toBigInt(decimals))),
 	);
+	env.registerFunction(
+		"formatUnits(sol_int, sol_int): double",
+		(value, decimals) => formatUnitsValue(value, Number(toBigInt(decimals))),
+	);
 	env.registerFunction("formatUnits(int, int): double", (value, decimals) =>
+		formatUnitsValue(value, Number(toBigInt(decimals))),
+	);
+	env.registerFunction("formatUnits(int, sol_int): double", (value, decimals) =>
 		formatUnitsValue(value, Number(toBigInt(decimals))),
 	);
 
@@ -344,5 +376,32 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	env.registerFunction(
 		"isZeroAddress(string): bool",
 		(addr) => toAddress(addr) === ZERO_ADDRESS,
+	);
+
+	/*
+	 * --- `sel.*` namespace: library-provided conveniences ---
+	 *
+	 * Grouped under a single `sel` identifier (e.g. `sel.WAD`, `sel.Q96`,
+	 * `sel.ZERO_ADDRESS`) instead of polluting the top-level scope. Modeled
+	 * as a struct type with one field per constant; the constant's runtime
+	 * value is an instance carrying the pre-wrapped field values.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+	class SelNamespace {}
+	const selFields: Record<string, string> = {};
+	const selValues: Record<string, unknown> = {};
+	for (const constant of EVM_CONSTANTS) {
+		selFields[constant.name] = constant.type;
+		selValues[constant.name] =
+			constant.type === "sol_int"
+				? new SolidityIntTypeWrapper(constant.value)
+				: new SolidityAddressTypeWrapper(constant.value);
+	}
+
+	env.registerType("SelNamespace", { ctor: SelNamespace, fields: selFields });
+	env.registerConstant(
+		"sel",
+		"SelNamespace",
+		Object.assign(new SelNamespace(), selValues),
 	);
 };

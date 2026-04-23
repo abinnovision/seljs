@@ -389,7 +389,9 @@ describe("src/builder.ts", () => {
 				},
 			});
 
-			const structTypes = simpleSchema.types.filter((t) => t.kind === "struct");
+			const structTypes = simpleSchema.types.filter(
+				(t) => t.kind === "struct" && t.name !== "SelNamespace",
+			);
 			expect(structTypes).toHaveLength(0);
 		});
 

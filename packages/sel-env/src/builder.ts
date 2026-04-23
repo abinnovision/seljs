@@ -2,8 +2,10 @@ import { structTypeName } from "@seljs/common";
 import { mapSolidityTypeToCEL } from "@seljs/types";
 
 import {
+	CEL_BUILTIN_CONSTANTS,
 	CEL_BUILTIN_FUNCTIONS,
 	CEL_BUILTIN_MACROS,
+	SEL_NAMESPACE_TYPE,
 	SOLIDITY_PRIMITIVE_TYPES,
 } from "./builtins.js";
 import { getFeatureDefinition } from "./feature-registry.js";
@@ -394,7 +396,13 @@ export const buildSchema = (config: SchemaBuilderConfig): SELSchema => {
 		version: "1.0.0",
 		contracts,
 		variables: [...contextVariables, ...featureVariables],
-		types: [...SOLIDITY_PRIMITIVE_TYPES, ...acc.types, ...featureTypes],
+		constants: CEL_BUILTIN_CONSTANTS,
+		types: [
+			...SOLIDITY_PRIMITIVE_TYPES,
+			SEL_NAMESPACE_TYPE,
+			...acc.types,
+			...featureTypes,
+		],
 		functions: [...CEL_BUILTIN_FUNCTIONS, ...featureFunctions],
 		macros: CEL_BUILTIN_MACROS,
 	};

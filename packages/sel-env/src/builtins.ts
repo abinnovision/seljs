@@ -1,6 +1,11 @@
-import { SOLIDITY_TYPES } from "@seljs/types";
+import { EVM_CONSTANTS, SOLIDITY_TYPES } from "@seljs/types";
 
-import type { FunctionSchema, MacroSchema, TypeSchema } from "@seljs/schema";
+import type {
+	FunctionSchema,
+	MacroSchema,
+	TypeSchema,
+	VariableSchema,
+} from "@seljs/schema";
 
 /**
  * Built-in CEL functions available in SEL expressions.
@@ -119,23 +124,23 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 	},
 	{
 		name: "parseUnits",
-		signature: "parseUnits(string|int|double|sol_int, int): sol_int",
+		signature: "parseUnits(string|int|double|sol_int, int|sol_int): sol_int",
 		description:
-			"Scales a human-readable value by 10^decimals, producing a sol_int. Mirrors viem/ethers parseUnits.",
+			"Scales a human-readable value by 10^decimals, producing a sol_int. Mirrors viem/ethers parseUnits. The decimals argument accepts either a plain int or a sol_int (e.g. the return of token.decimals()).",
 		params: [
 			{ name: "value", type: "string|int|double|sol_int" },
-			{ name: "decimals", type: "int" },
+			{ name: "decimals", type: "int|sol_int" },
 		],
 		returns: "sol_int",
 	},
 	{
 		name: "formatUnits",
-		signature: "formatUnits(sol_int|int, int): double",
+		signature: "formatUnits(sol_int|int, int|sol_int): double",
 		description:
-			"Scales a sol_int down by 10^decimals, producing a double for readable comparisons.",
+			"Scales a sol_int down by 10^decimals, producing a double for readable comparisons. The decimals argument accepts either a plain int or a sol_int (e.g. the return of token.decimals()).",
 		params: [
 			{ name: "value", type: "sol_int|int" },
-			{ name: "decimals", type: "int" },
+			{ name: "decimals", type: "int|sol_int" },
 		],
 		returns: "double",
 	},
@@ -322,5 +327,37 @@ export const SOLIDITY_PRIMITIVE_TYPES: TypeSchema[] = [
 		name: "bytes32",
 		kind: "primitive",
 		description: "32-byte fixed array",
+	},
+];
+
+/**
+ * Struct type backing the `sel.*` namespace — one field per entry in
+ * `EVM_CONSTANTS` (e.g. `sel.WAD`, `sel.ZERO_ADDRESS`). Surfacing this in
+ * `schema.types` lets editor autocomplete populate member completions on
+ * dot-access against `sel`.
+ */
+export const SEL_NAMESPACE_TYPE: TypeSchema = {
+	name: "SelNamespace",
+	kind: "struct",
+	description: "Namespace for SEL library-provided conveniences.",
+	fields: EVM_CONSTANTS.map((c) => ({
+		name: c.name,
+		type: c.type,
+		description: c.description,
+	})),
+};
+
+/**
+ * Runtime-registered identifiers exposed by every SEL environment. Kept
+ * in a dedicated bucket (not `schema.variables`) so the schema-hydration
+ * path doesn't try to re-register what `registerSolidityTypes` already
+ * bound via `registerConstant`.
+ */
+export const CEL_BUILTIN_CONSTANTS: VariableSchema[] = [
+	{
+		name: "sel",
+		type: "SelNamespace",
+		description:
+			"SEL library-provided conveniences: scaling factors, fixed-point divisors, and sentinel addresses.",
 	},
 ];

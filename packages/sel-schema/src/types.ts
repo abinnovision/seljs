@@ -28,6 +28,15 @@ export interface SELSchema {
 	variables: VariableSchema[];
 
 	/**
+	 * Top-level constants exposed by the runtime (e.g., WAD, Q96).
+	 * They are registered via CEL's registerConstant mechanism, so they
+	 * share the identifier namespace with variables but are read-only and
+	 * always present. Surfacing them separately keeps the schema hydration
+	 * path for `variables` free of these built-ins.
+	 */
+	constants?: VariableSchema[];
+
+	/**
 	 * Type definitions (primitives, structs, enums)
 	 */
 	types: TypeSchema[];

@@ -21,6 +21,7 @@ function createMockHost() {
 		string,
 		(left: unknown, right: unknown) => unknown
 	>();
+	const constants = new Map<string, { type: string; value: unknown }>();
 
 	return {
 		registerType: vi.fn((name: string, ctor: unknown) => {
@@ -35,9 +36,14 @@ function createMockHost() {
 			},
 		),
 		registerFunction: vi.fn(),
+		registerConstant: vi.fn((name: string, type: string, value: unknown) => {
+			constants.set(name, { type, value });
+		}),
 
 		hasType: (name: string) => types.has(name),
 		hasOperator: (signature: string) => operators.has(signature),
+		hasConstant: (name: string) => constants.has(name),
+		getConstant: (name: string) => constants.get(name),
 		evaluate(signature: string, left: unknown, right: unknown) {
 			const operator = operators.get(signature);
 			if (!operator) {
@@ -472,6 +478,117 @@ describe("src/environment/register-types.ts", () => {
 			expect(() => env.evaluate('solAddress("not-an-address")', {})).toThrow(
 				"Invalid address value: not-an-address",
 			);
+		});
+	});
+
+	describe("parseUnits / formatUnits sol_int decimals", () => {
+		it("registers sol_int decimals overloads for parseUnits", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			for (const signature of [
+				"parseUnits(string, sol_int): sol_int",
+				"parseUnits(int, sol_int): sol_int",
+				"parseUnits(double, sol_int): sol_int",
+				"parseUnits(sol_int, sol_int): sol_int",
+			]) {
+				expect(env.registerFunction).toHaveBeenCalledWith(
+					signature,
+					expect.any(Function),
+				);
+			}
+		});
+
+		it("registers sol_int decimals overloads for formatUnits", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			for (const signature of [
+				"formatUnits(sol_int, sol_int): double",
+				"formatUnits(int, sol_int): double",
+			]) {
+				expect(env.registerFunction).toHaveBeenCalledWith(
+					signature,
+					expect.any(Function),
+				);
+			}
+		});
+
+		it("formatUnits accepts sol_int for decimals", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate(
+				"formatUnits(solInt(1500000), solInt(6))",
+				{},
+			);
+			expect(result).toBe(1.5);
+		});
+
+		it("parseUnits accepts sol_int for decimals", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('parseUnits("1.5", solInt(6))', {});
+			expect(toBigInt(result)).toBe(1500000n);
+		});
+	});
+
+	describe("sel namespace", () => {
+		it("registers SelNamespace as a struct type with one field per constant", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			expect(env.hasType("SelNamespace")).toBe(true);
+		});
+
+		it("registers `sel` as a SelNamespace-typed constant", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			expect(env.hasConstant("sel")).toBe(true);
+			expect(env.getConstant("sel")?.type).toBe("SelNamespace");
+		});
+
+		it("sel.WAD evaluates to 10^18", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.WAD", {});
+			expect(toBigInt(result)).toBe(10n ** 18n);
+		});
+
+		it("sel.RAY evaluates to 10^27", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.RAY", {});
+			expect(toBigInt(result)).toBe(10n ** 27n);
+		});
+
+		it("sel.Q96 evaluates to 2^96", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.Q96", {});
+			expect(toBigInt(result)).toBe(1n << 96n);
+		});
+
+		it("sel.Q128 evaluates to 2^128", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.Q128", {});
+			expect(toBigInt(result)).toBe(1n << 128n);
+		});
+
+		it("sel.MAX_UINT256 evaluates to 2^256 - 1", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.MAX_UINT256", {});
+			expect(toBigInt(result)).toBe(2n ** 256n - 1n);
+		});
+
+		it("sel.ZERO_ADDRESS evaluates to the null address", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.ZERO_ADDRESS", {});
+			expect(result).toBeInstanceOf(SolidityAddressTypeWrapper);
+			expect((result as SolidityAddressTypeWrapper).value).toBe(
+				"0x0000000000000000000000000000000000000000",
+			);
+		});
+
+		it("sel.* constants participate in sol_int arithmetic", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.WAD + solInt(1)", {});
+			expect(toBigInt(result)).toBe(10n ** 18n + 1n);
 		});
 	});
 });
