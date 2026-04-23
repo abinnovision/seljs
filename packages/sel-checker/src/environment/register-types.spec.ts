@@ -613,6 +613,31 @@ describe("src/environment/register-types.ts", () => {
 			);
 		});
 
+		it("sel.ZERO_BYTES32 evaluates to 32 zero bytes", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.ZERO_BYTES32", {});
+			expect(result).toBeInstanceOf(Uint8Array);
+			expect((result as Uint8Array).length).toBe(32);
+			expect((result as Uint8Array).every((b) => b === 0)).toBe(true);
+		});
+
+		it("sel.ZERO_BYTES32 composes with keccak256 (ENS root → eth hash)", () => {
+			const env = createCheckerEnv();
+			// namehash("eth") = keccak256(sel.ZERO_BYTES32 + keccak256("eth"))
+			const result = env.evaluate(
+				'keccak256(sel.ZERO_BYTES32 + keccak256("eth"))',
+				{},
+			);
+			const hex =
+				"0x" +
+				Array.from(result as Uint8Array)
+					.map((b) => b.toString(16).padStart(2, "0"))
+					.join("");
+			expect(hex).toBe(
+				"0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
+			);
+		});
+
 		it("sel.* constants participate in sol_int arithmetic", () => {
 			const env = createCheckerEnv();
 			const result = env.evaluate("sel.WAD + solInt(1)", {});

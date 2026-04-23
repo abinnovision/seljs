@@ -15,6 +15,12 @@ export type EvmConstantDefinition =
 			type: "sol_address";
 			value: `0x${string}`;
 			description: string;
+	  }
+	| {
+			name: string;
+			type: "bytes";
+			value: Uint8Array;
+			description: string;
 	  };
 
 export const EVM_CONSTANTS: readonly EvmConstantDefinition[] = [
@@ -57,5 +63,12 @@ export const EVM_CONSTANTS: readonly EvmConstantDefinition[] = [
 		value: "0x0000000000000000000000000000000000000000",
 		description:
 			"The zero address (0x0…0) — burn destination and uninitialized-slot sentinel",
+	},
+	{
+		name: "ZERO_BYTES32",
+		type: "bytes",
+		value: new Uint8Array(32),
+		description:
+			"32 zero bytes — ENS root node, default AccessControl admin role, and empty-digest sentinel",
 	},
 ];

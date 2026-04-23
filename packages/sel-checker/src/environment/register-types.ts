@@ -452,10 +452,13 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	const selValues: Record<string, unknown> = {};
 	for (const constant of EVM_CONSTANTS) {
 		selFields[constant.name] = constant.type;
-		selValues[constant.name] =
-			constant.type === "sol_int"
-				? new SolidityIntTypeWrapper(constant.value)
-				: new SolidityAddressTypeWrapper(constant.value);
+		if (constant.type === "sol_int") {
+			selValues[constant.name] = new SolidityIntTypeWrapper(constant.value);
+		} else if (constant.type === "sol_address") {
+			selValues[constant.name] = new SolidityAddressTypeWrapper(constant.value);
+		} else {
+			selValues[constant.name] = constant.value;
+		}
 	}
 
 	env.registerType("SelNamespace", { ctor: SelNamespace, fields: selFields });
