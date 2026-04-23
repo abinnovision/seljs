@@ -3,7 +3,11 @@ import { Abi } from "ox";
 import { describe, expect, it } from "vitest";
 
 import { SELRuntime } from "./environment.js";
-import { SELContractError, SELLintError } from "../errors/index.js";
+import {
+	SELContractError,
+	SELEvaluationError,
+	SELLintError,
+} from "../errors/index.js";
 
 describe("src/environment/environment.ts", () => {
 	describe("evaluate", () => {
@@ -203,6 +207,16 @@ describe("src/environment/environment.ts", () => {
 			);
 			await expect(env.evaluate("nonexistent_var")).rejects.toSatisfy(
 				(e) => (e as SELLintError).diagnostics.length > 0,
+			);
+		});
+
+		it("surfaces builtin length-assertion messages verbatim from hexBytes", async () => {
+			const env = new SELRuntime({ schema: buildSchema({}) });
+			await expect(env.evaluate('hexBytes("0x00", 32)')).rejects.toThrow(
+				/hexBytes: expected 32 bytes, got 1/,
+			);
+			await expect(env.evaluate('hexBytes("0x00", 32)')).rejects.toBeInstanceOf(
+				SELEvaluationError,
 			);
 		});
 	});

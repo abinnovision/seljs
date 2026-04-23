@@ -1,3 +1,4 @@
+import { SELEvaluationError } from "@seljs/common";
 import {
 	EVM_CONSTANTS,
 	formatUnitsValue,
@@ -95,7 +96,7 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	env.registerOperator("sol_int / sol_int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
-			throw new Error("division by zero");
+			throw new SELEvaluationError("division by zero");
 		}
 
 		return toSolInt(toBigInt(a) / divisor);
@@ -104,7 +105,7 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	env.registerOperator("sol_int % sol_int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
-			throw new Error("modulo by zero");
+			throw new SELEvaluationError("modulo by zero");
 		}
 
 		return toSolInt(toBigInt(a) % divisor);
@@ -168,7 +169,7 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	tryRegisterOperator(env, "sol_int / int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
-			throw new Error("division by zero");
+			throw new SELEvaluationError("division by zero");
 		}
 
 		return toSolInt(toBigInt(a) / divisor);
@@ -177,7 +178,7 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	tryRegisterOperator(env, "sol_int % int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
-			throw new Error("modulo by zero");
+			throw new SELEvaluationError("modulo by zero");
 		}
 
 		return toSolInt(toBigInt(a) % divisor);
@@ -198,7 +199,7 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	tryRegisterOperator(env, "int / sol_int: sol_int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
-			throw new Error("division by zero");
+			throw new SELEvaluationError("division by zero");
 		}
 
 		return toSolInt(toBigInt(a) / divisor);
@@ -207,7 +208,7 @@ const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	tryRegisterOperator(env, "int % sol_int: sol_int", (a, b) => {
 		const divisor = toBigInt(b);
 		if (divisor === 0n) {
-			throw new Error("modulo by zero");
+			throw new SELEvaluationError("modulo by zero");
 		}
 
 		return toSolInt(toBigInt(a) % divisor);
@@ -418,7 +419,7 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		const out = hexToBytes(hex as string);
 		const expected = Number(toBigInt(length));
 		if (out.length !== expected) {
-			throw new Error(
+			throw new SELEvaluationError(
 				`hexBytes: expected ${String(expected)} bytes, got ${String(out.length)}`,
 			);
 		}
