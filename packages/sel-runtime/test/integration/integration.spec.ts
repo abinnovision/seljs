@@ -1476,11 +1476,17 @@ describe("integration", () => {
 					address: TOKEN_ADDRESS,
 					result: (args: readonly unknown[]) => {
 						const addr = (args[0] as string).toLowerCase();
-						if (addr === WALLET_A.toLowerCase()) {return 100n;}
+						if (addr === WALLET_A.toLowerCase()) {
+							return 100n;
+						}
 
-						if (addr === WALLET_B.toLowerCase()) {return 250n;}
+						if (addr === WALLET_B.toLowerCase()) {
+							return 250n;
+						}
 
-						if (addr === WALLET_C.toLowerCase()) {return 50n;}
+						if (addr === WALLET_C.toLowerCase()) {
+							return 50n;
+						}
 
 						return 0n;
 					},
