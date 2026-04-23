@@ -1,15 +1,9 @@
-import { SELError } from "@seljs/common";
+import { SELError, SELEvaluationError } from "@seljs/common";
 
 import type { SELDiagnostic } from "@seljs/checker";
 
 // Re-export shared errors from @seljs/common
-export { SELError };
-
-/**
- * Thrown when CEL expression evaluation fails.
- * Wraps cel-js EvaluationError with additional context.
- */
-export class SELEvaluationError extends SELError {}
+export { SELError, SELEvaluationError };
 
 /**
  * Thrown when contract validation or execution fails.

@@ -3,8 +3,9 @@ import {
 	EvaluationError,
 	ParseError,
 } from "@marcbachmann/cel-js";
+import { SELError } from "@seljs/common";
 
-import { SELContractError, SELEvaluationError } from "../errors/index.js";
+import { SELEvaluationError } from "../errors/index.js";
 
 /**
  * Wraps an unknown error into a known SEL error type.
@@ -16,13 +17,13 @@ import { SELContractError, SELEvaluationError } from "../errors/index.js";
  * @returns The wrapped error.
  */
 export const wrapError = (error: unknown): Error => {
-	if (error instanceof SELContractError) {
+	if (error instanceof SELError) {
 		return error;
 	}
 
 	if (error instanceof EvaluationError) {
 		const cause = (error as EvaluationError & { cause?: unknown }).cause;
-		if (cause instanceof SELContractError) {
+		if (cause instanceof SELError) {
 			return cause;
 		}
 
