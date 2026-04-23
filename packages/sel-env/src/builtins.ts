@@ -331,14 +331,33 @@ export const SOLIDITY_PRIMITIVE_TYPES: TypeSchema[] = [
 ];
 
 /**
- * Top-level `sol_int` constants exposed in every SEL environment.
- * Sourced from `@seljs/types` so the runtime registration and the schema
- * metadata never drift apart.
+ * Struct type backing the `sel.*` namespace — one field per entry in
+ * `EVM_CONSTANTS` (e.g. `sel.WAD`, `sel.ZERO_ADDRESS`). Surfacing this in
+ * `schema.types` lets editor autocomplete populate member completions on
+ * dot-access against `sel`.
  */
-export const CEL_BUILTIN_CONSTANTS: VariableSchema[] = EVM_CONSTANTS.map(
-	(c) => ({
+export const SEL_NAMESPACE_TYPE: TypeSchema = {
+	name: "SelNamespace",
+	kind: "struct",
+	description: "Namespace for SEL library-provided conveniences.",
+	fields: EVM_CONSTANTS.map((c) => ({
 		name: c.name,
-		type: "sol_int",
+		type: c.type,
 		description: c.description,
-	}),
-);
+	})),
+};
+
+/**
+ * Runtime-registered identifiers exposed by every SEL environment. Kept
+ * in a dedicated bucket (not `schema.variables`) so the schema-hydration
+ * path doesn't try to re-register what `registerSolidityTypes` already
+ * bound via `registerConstant`.
+ */
+export const CEL_BUILTIN_CONSTANTS: VariableSchema[] = [
+	{
+		name: "sel",
+		type: "SelNamespace",
+		description:
+			"SEL library-provided conveniences: scaling factors, fixed-point divisors, and sentinel addresses.",
+	},
+];

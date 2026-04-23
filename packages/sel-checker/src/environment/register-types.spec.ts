@@ -530,50 +530,64 @@ describe("src/environment/register-types.ts", () => {
 		});
 	});
 
-	describe("eVM constants", () => {
-		it("registers WAD, RAY, Q96, Q128, MAX_UINT256 as sol_int constants", () => {
+	describe("sel namespace", () => {
+		it("registers SelNamespace as a struct type with one field per constant", () => {
 			const env = createMockHost();
 			registerSolidityTypes(env);
 
-			for (const name of ["WAD", "RAY", "Q96", "Q128", "MAX_UINT256"]) {
-				expect(env.hasConstant(name)).toBe(true);
-				expect(env.getConstant(name)?.type).toBe("sol_int");
-			}
+			expect(env.hasType("SelNamespace")).toBe(true);
 		});
 
-		it("wAD evaluates to 10^18", () => {
+		it("registers `sel` as a SelNamespace-typed constant", () => {
+			const env = createMockHost();
+			registerSolidityTypes(env);
+
+			expect(env.hasConstant("sel")).toBe(true);
+			expect(env.getConstant("sel")?.type).toBe("SelNamespace");
+		});
+
+		it("sel.WAD evaluates to 10^18", () => {
 			const env = createCheckerEnv();
-			const result = env.evaluate("WAD", {});
+			const result = env.evaluate("sel.WAD", {});
 			expect(toBigInt(result)).toBe(10n ** 18n);
 		});
 
-		it("rAY evaluates to 10^27", () => {
+		it("sel.RAY evaluates to 10^27", () => {
 			const env = createCheckerEnv();
-			const result = env.evaluate("RAY", {});
+			const result = env.evaluate("sel.RAY", {});
 			expect(toBigInt(result)).toBe(10n ** 27n);
 		});
 
-		it("q96 evaluates to 2^96", () => {
+		it("sel.Q96 evaluates to 2^96", () => {
 			const env = createCheckerEnv();
-			const result = env.evaluate("Q96", {});
+			const result = env.evaluate("sel.Q96", {});
 			expect(toBigInt(result)).toBe(1n << 96n);
 		});
 
-		it("q128 evaluates to 2^128", () => {
+		it("sel.Q128 evaluates to 2^128", () => {
 			const env = createCheckerEnv();
-			const result = env.evaluate("Q128", {});
+			const result = env.evaluate("sel.Q128", {});
 			expect(toBigInt(result)).toBe(1n << 128n);
 		});
 
-		it("mAX_UINT256 evaluates to 2^256 - 1", () => {
+		it("sel.MAX_UINT256 evaluates to 2^256 - 1", () => {
 			const env = createCheckerEnv();
-			const result = env.evaluate("MAX_UINT256", {});
+			const result = env.evaluate("sel.MAX_UINT256", {});
 			expect(toBigInt(result)).toBe(2n ** 256n - 1n);
 		});
 
-		it("constants participate in sol_int arithmetic", () => {
+		it("sel.ZERO_ADDRESS evaluates to the null address", () => {
 			const env = createCheckerEnv();
-			const result = env.evaluate("WAD + solInt(1)", {});
+			const result = env.evaluate("sel.ZERO_ADDRESS", {});
+			expect(result).toBeInstanceOf(SolidityAddressTypeWrapper);
+			expect((result as SolidityAddressTypeWrapper).value).toBe(
+				"0x0000000000000000000000000000000000000000",
+			);
+		});
+
+		it("sel.* constants participate in sol_int arithmetic", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate("sel.WAD + solInt(1)", {});
 			expect(toBigInt(result)).toBe(10n ** 18n + 1n);
 		});
 	});

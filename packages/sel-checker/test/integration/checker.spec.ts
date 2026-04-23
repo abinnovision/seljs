@@ -165,14 +165,15 @@ describe("erc20 integration", () => {
 			type: "sol_int",
 		},
 
-		// EVM constants
-		{ expr: "WAD", valid: true, type: "sol_int" },
-		{ expr: "RAY", valid: true, type: "sol_int" },
-		{ expr: "Q96", valid: true, type: "sol_int" },
-		{ expr: "Q128", valid: true, type: "sol_int" },
-		{ expr: "MAX_UINT256", valid: true, type: "sol_int" },
+		// `sel.*` namespace constants
+		{ expr: "sel.WAD", valid: true, type: "sol_int" },
+		{ expr: "sel.RAY", valid: true, type: "sol_int" },
+		{ expr: "sel.Q96", valid: true, type: "sol_int" },
+		{ expr: "sel.Q128", valid: true, type: "sol_int" },
+		{ expr: "sel.MAX_UINT256", valid: true, type: "sol_int" },
+		{ expr: "sel.ZERO_ADDRESS", valid: true, type: "sol_address" },
 		{
-			expr: "erc20.balanceOf(user) > WAD",
+			expr: "erc20.balanceOf(user) > sel.WAD",
 			valid: true,
 			type: "bool",
 		},

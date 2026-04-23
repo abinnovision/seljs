@@ -294,26 +294,32 @@ export const erc20Fixtures = defineFixtureGroup({
 			expectedValue: 1000000n,
 		},
 
-		// EVM built-in constants
+		// `sel.*` namespace constants
 		{
-			label: "WAD constant is 10^18",
-			expr: "WAD",
+			label: "sel.WAD is 10^18",
+			expr: "sel.WAD",
 			expectedType: "sol_int",
 			expectedValue: 10n ** 18n,
 		},
 		{
-			label: "balance comparison against WAD",
-			expr: "token.balanceOf(user) > WAD",
+			label: "balance comparison against sel.WAD",
+			expr: "token.balanceOf(user) > sel.WAD",
 			expectedType: "bool",
 			mocks: { balanceOf: 2n * 10n ** 18n },
 			context: { user: USER, spender: SPENDER },
 			expectedValue: true,
 		},
 		{
-			label: "Q96 used as Uniswap sqrtPriceX96 divisor",
-			expr: "Q96 / Q96",
+			label: "sel.Q96 used as Uniswap sqrtPriceX96 divisor",
+			expr: "sel.Q96 / sel.Q96",
 			expectedType: "sol_int",
 			expectedValue: 1n,
+		},
+		{
+			label: "sel.ZERO_ADDRESS equality",
+			expr: "sel.ZERO_ADDRESS == sel.ZERO_ADDRESS",
+			expectedType: "bool",
+			expectedValue: true,
 		},
 
 		// invalid

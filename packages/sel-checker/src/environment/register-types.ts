@@ -1,4 +1,5 @@
 import {
+	SolidityAddressTypeWrapper,
 	SolidityIntTypeWrapper,
 	SOLIDITY_TYPES,
 	toBigInt,
@@ -377,8 +378,30 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		(addr) => toAddress(addr) === ZERO_ADDRESS,
 	);
 
-	// --- EVM magic constants (all sol_int) ---
-	for (const { name, value } of EVM_CONSTANTS) {
-		env.registerConstant(name, "sol_int", new SolidityIntTypeWrapper(value));
+	/*
+	 * --- `sel.*` namespace: library-provided conveniences ---
+	 *
+	 * Grouped under a single `sel` identifier (e.g. `sel.WAD`, `sel.Q96`,
+	 * `sel.ZERO_ADDRESS`) instead of polluting the top-level scope. Modeled
+	 * as a struct type with one field per constant; the constant's runtime
+	 * value is an instance carrying the pre-wrapped field values.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+	class SelNamespace {}
+	const selFields: Record<string, string> = {};
+	const selValues: Record<string, unknown> = {};
+	for (const constant of EVM_CONSTANTS) {
+		selFields[constant.name] = constant.type;
+		selValues[constant.name] =
+			constant.type === "sol_int"
+				? new SolidityIntTypeWrapper(constant.value)
+				: new SolidityAddressTypeWrapper(constant.value);
 	}
+
+	env.registerType("SelNamespace", { ctor: SelNamespace, fields: selFields });
+	env.registerConstant(
+		"sel",
+		"SelNamespace",
+		Object.assign(new SelNamespace(), selValues),
+	);
 };

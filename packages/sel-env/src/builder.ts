@@ -5,6 +5,7 @@ import {
 	CEL_BUILTIN_CONSTANTS,
 	CEL_BUILTIN_FUNCTIONS,
 	CEL_BUILTIN_MACROS,
+	SEL_NAMESPACE_TYPE,
 	SOLIDITY_PRIMITIVE_TYPES,
 } from "./builtins.js";
 import { getFeatureDefinition } from "./feature-registry.js";
@@ -396,7 +397,12 @@ export const buildSchema = (config: SchemaBuilderConfig): SELSchema => {
 		contracts,
 		variables: [...contextVariables, ...featureVariables],
 		constants: CEL_BUILTIN_CONSTANTS,
-		types: [...SOLIDITY_PRIMITIVE_TYPES, ...acc.types, ...featureTypes],
+		types: [
+			...SOLIDITY_PRIMITIVE_TYPES,
+			SEL_NAMESPACE_TYPE,
+			...acc.types,
+			...featureTypes,
+		],
 		functions: [...CEL_BUILTIN_FUNCTIONS, ...featureFunctions],
 		macros: CEL_BUILTIN_MACROS,
 	};
