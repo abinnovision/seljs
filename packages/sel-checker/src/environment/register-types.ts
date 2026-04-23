@@ -405,8 +405,39 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	 * resolve these overloads (cel-js dispatches on the parameterized receiver).
 	 * Empty-list semantics: sum → 0 (mathematical identity); min/max throw
 	 * because there is no sensible identity over zero elements.
+	 *
+	 * Registered via the structured opts form because cel-js's signature-string
+	 * parser rejects underscores in the receiver type (its regex only allows
+	 * [a-zA-Z0-9.<>]+). Bypassing the string path by passing name/receiverType/
+	 * returnType/params directly skips that parse step while preserving full
+	 * dispatch behavior.
 	 */
-	env.registerFunction("list<sol_int>.sum(): sol_int", (list) => {
+	const registerListSolIntReducer = (
+		name: string,
+		handler: (list: unknown) => unknown,
+	): void => {
+		(
+			env.registerFunction as unknown as (
+				opts: {
+					name: string;
+					receiverType: string;
+					returnType: string;
+					params: unknown[];
+				},
+				handler: (...args: unknown[]) => unknown,
+			) => void
+		)(
+			{
+				name,
+				receiverType: "list<sol_int>",
+				returnType: "sol_int",
+				params: [],
+			},
+			handler as (...args: unknown[]) => unknown,
+		);
+	};
+
+	registerListSolIntReducer("sum", (list) => {
 		let total = 0n;
 		for (const item of list as unknown[]) {
 			total += toBigInt(item);
@@ -415,7 +446,7 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		return toSolInt(total);
 	});
 
-	env.registerFunction("list<sol_int>.min(): sol_int", (list) => {
+	registerListSolIntReducer("min", (list) => {
 		const items = list as unknown[];
 		if (items.length === 0) {
 			throw new Error("list<sol_int>.min(): list is empty");
@@ -432,7 +463,7 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		return toSolInt(smallest);
 	});
 
-	env.registerFunction("list<sol_int>.max(): sol_int", (list) => {
+	registerListSolIntReducer("max", (list) => {
 		const items = list as unknown[];
 		if (items.length === 0) {
 			throw new Error("list<sol_int>.max(): list is empty");

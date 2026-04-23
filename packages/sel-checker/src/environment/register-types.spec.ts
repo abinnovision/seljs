@@ -379,18 +379,17 @@ describe("src/environment/register-types.ts", () => {
 			const env = createMockHost();
 			registerSolidityTypes(env);
 
-			expect(env.registerFunction).toHaveBeenCalledWith(
-				"list<sol_int>.sum(): sol_int",
-				expect.any(Function),
-			);
-			expect(env.registerFunction).toHaveBeenCalledWith(
-				"list<sol_int>.min(): sol_int",
-				expect.any(Function),
-			);
-			expect(env.registerFunction).toHaveBeenCalledWith(
-				"list<sol_int>.max(): sol_int",
-				expect.any(Function),
-			);
+			for (const name of ["sum", "min", "max"]) {
+				expect(env.registerFunction).toHaveBeenCalledWith(
+					{
+						name,
+						receiverType: "list<sol_int>",
+						returnType: "sol_int",
+						params: [],
+					},
+					expect.any(Function),
+				);
+			}
 		});
 
 		it("list<sol_int>.sum() adds all elements", () => {
