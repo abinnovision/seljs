@@ -55,7 +55,9 @@ describe("src/hex.ts", () => {
 
 		it("round-trips through hexToBytes", () => {
 			const original = new Uint8Array(32);
-			for (let i = 0; i < 32; i++) {original[i] = i * 7;}
+			for (let i = 0; i < 32; i++) {
+				original[i] = i * 7;
+			}
 
 			expect(hexToBytes(bytesToHex(original))).toEqual(original);
 		});
