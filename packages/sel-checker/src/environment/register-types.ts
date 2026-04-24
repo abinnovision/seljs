@@ -449,7 +449,7 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	registerListSolIntReducer("min", (list) => {
 		const items = list as unknown[];
 		if (items.length === 0) {
-			throw new Error("list<sol_int>.min(): list is empty");
+			throw new SELEvaluationError("list<sol_int>.min(): list is empty");
 		}
 
 		let smallest = toBigInt(items[0]);
@@ -466,7 +466,7 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	registerListSolIntReducer("max", (list) => {
 		const items = list as unknown[];
 		if (items.length === 0) {
-			throw new Error("list<sol_int>.max(): list is empty");
+			throw new SELEvaluationError("list<sol_int>.max(): list is empty");
 		}
 
 		let largest = toBigInt(items[0]);

@@ -1,5 +1,5 @@
 import { createLogger } from "../debug.js";
-import { ExecutionLimitError } from "../errors/index.js";
+import { SELExecutionLimitError } from "../errors/index.js";
 
 import type {
 	DependencyGraph,
@@ -38,7 +38,7 @@ export interface RoundPlannerLimits {
  * @param graph Dependency graph representing calls and their relationships.
  * @param limits Optional limits for maximum rounds and total calls.
  * @returns Execution plan containing planned rounds, total calls, and maximum depth.
- * @throws ExecutionLimitError If total calls exceed maxCalls or rounds exceed maxRounds.
+ * @throws {@link SELExecutionLimitError} If total calls exceed maxCalls or rounds exceed maxRounds.
  */
 export const planRounds = (
 	graph: DependencyGraph,
@@ -49,7 +49,7 @@ export const planRounds = (
 	const totalCalls = graph.nodes.size;
 
 	if (totalCalls > maxCalls) {
-		throw new ExecutionLimitError(
+		throw new SELExecutionLimitError(
 			`Execution limit exceeded: ${String(totalCalls)} calls exceeds maxCalls (${String(maxCalls)})`,
 			{ limitType: "maxCalls", limit: maxCalls, actual: totalCalls },
 		);
@@ -80,7 +80,7 @@ export const planRounds = (
 		}
 
 		if (rounds.length >= maxRounds) {
-			throw new ExecutionLimitError(
+			throw new SELExecutionLimitError(
 				`Execution limit exceeded: requires more than maxRounds (${String(maxRounds)}) rounds`,
 				{
 					limitType: "maxRounds",

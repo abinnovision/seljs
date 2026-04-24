@@ -1,8 +1,12 @@
+import { SELConfigError } from "@seljs/common";
 import { type Abi, AbiFunction } from "ox";
 
 import { decodeRevertData } from "./decode-revert.js";
 import { createLogger } from "../debug.js";
-import { MulticallBatchError } from "../errors/index.js";
+import {
+	SELContractRevertError,
+	SELMulticallBatchError,
+} from "../errors/index.js";
 
 import type { MulticallBatcher } from "./multicall-batcher.js";
 import type { MulticallCall } from "./multicall.js";
@@ -41,7 +45,10 @@ export class RoundExecutor {
 
 				const contract = this.contracts.get(call.contract);
 				if (!contract) {
-					throw new Error(`No ABI registered for contract "${call.contract}"`);
+					throw new SELConfigError(
+						`No ABI registered for contract "${call.contract}"`,
+						{ setting: "abi" },
+					);
 				}
 
 				const resolvedArgs = this.resolveArgs(call.args, context);
@@ -56,11 +63,14 @@ export class RoundExecutor {
 				});
 			}
 		} catch (error) {
-			if (error instanceof MulticallBatchError) {
+			if (
+				error instanceof SELMulticallBatchError ||
+				error instanceof SELConfigError
+			) {
 				throw error;
 			}
 
-			throw new MulticallBatchError("Failed to encode call", {
+			throw new SELMulticallBatchError("Failed to encode call", {
 				cause: error,
 				failedCallIndex,
 				contractName: failedCallContract,
@@ -77,7 +87,10 @@ export class RoundExecutor {
 		for (const [i, call] of round.calls.entries()) {
 			const contract = this.contracts.get(call.contract);
 			if (!contract) {
-				throw new Error(`No ABI registered for contract "${call.contract}"`);
+				throw new SELConfigError(
+					`No ABI registered for contract "${call.contract}"`,
+					{ setting: "abi" },
+				);
 			}
 
 			const result = results[i];
@@ -87,10 +100,9 @@ export class RoundExecutor {
 					contract.abi,
 				);
 				const suffix = decoded.reason ? ` — ${decoded.reason}` : "";
-				throw new MulticallBatchError(
-					`Call failed: ${call.contract}.${call.method}${suffix}`,
+				throw new SELContractRevertError(
+					`Call reverted: ${call.contract}.${call.method}${suffix}`,
 					{
-						failedCallIndex: i,
 						contractName: call.contract,
 						methodName: call.method,
 						revertReason: decoded.reason,

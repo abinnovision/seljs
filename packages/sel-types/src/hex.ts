@@ -1,3 +1,5 @@
+import { SELTypeConversionError } from "@seljs/common";
+
 const HEX_PATTERN = /^[0-9a-fA-F]*$/;
 
 /**
@@ -10,13 +12,17 @@ export const hexToBytes = (input: string): Uint8Array => {
 		input.startsWith("0x") || input.startsWith("0X") ? input.slice(2) : input;
 
 	if (body.length % 2 !== 0) {
-		throw new TypeError(
+		throw new SELTypeConversionError(
 			`hexToBytes: expected even-length hex string, got ${String(body.length)} chars`,
+			{ expectedType: "bytes", actualValue: input },
 		);
 	}
 
 	if (!HEX_PATTERN.test(body)) {
-		throw new TypeError(`hexToBytes: invalid hex character in "${input}"`);
+		throw new SELTypeConversionError(
+			`hexToBytes: invalid hex character in "${input}"`,
+			{ expectedType: "bytes", actualValue: input },
+		);
 	}
 
 	const bytes = new Uint8Array(body.length / 2);

@@ -1,5 +1,5 @@
 import { createLogger } from "../debug.js";
-import { CircularDependencyError } from "../errors/index.js";
+import { SELCircularDependencyError } from "../errors/index.js";
 
 import type { CollectedCall, DependencyGraph, GraphNode } from "./types.js";
 
@@ -8,7 +8,7 @@ const debug = createLogger("analysis:dependency");
 /**
  * Detects circular dependencies in the graph using DFS with a recursion stack.
  *
- * @throws {@link CircularDependencyError} If a cycle is found, including the call IDs forming the cycle
+ * @throws {@link SELCircularDependencyError} If a cycle is found, including the call IDs forming the cycle
  */
 const detectCycles = (
 	nodes: Map<string, GraphNode>,
@@ -21,7 +21,7 @@ const detectCycles = (
 		if (inStack.has(nodeId)) {
 			const cycleStart = path.indexOf(nodeId);
 			const cycle = path.slice(cycleStart);
-			throw new CircularDependencyError(
+			throw new SELCircularDependencyError(
 				`Circular dependency detected: ${cycle.join(" -> ")} -> ${nodeId}`,
 				{ callIds: cycle },
 			);
@@ -59,7 +59,7 @@ const detectCycles = (
  *
  * @param calls - Array of collected contract calls from AST traversal
  * @returns A dependency graph with nodes and directed edges
- * @throws {@link CircularDependencyError} If a circular dependency is detected between calls
+ * @throws {@link SELCircularDependencyError} If a circular dependency is detected between calls
  */
 export const analyzeDependencies = (
 	calls: CollectedCall[],

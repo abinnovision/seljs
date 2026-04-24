@@ -7,7 +7,7 @@ import {
 	multicall3Function,
 } from "./multicall.js";
 import { createLogger } from "../debug.js";
-import { MulticallBatchError } from "../errors/index.js";
+import { SELMulticallBatchError } from "../errors/index.js";
 
 import type { SELClient } from "../environment/client.js";
 
@@ -73,7 +73,9 @@ export class MulticallBatcher {
 			});
 
 			if (!response.data) {
-				throw new MulticallBatchError("Multicall3 aggregate3 returned no data");
+				throw new SELMulticallBatchError(
+					"Multicall3 aggregate3 returned no data",
+				);
 			}
 
 			const decoded = AbiFunction.decodeResult(
@@ -88,11 +90,11 @@ export class MulticallBatcher {
 				returnData: r.returnData,
 			}));
 		} catch (error) {
-			if (error instanceof MulticallBatchError) {
+			if (error instanceof SELMulticallBatchError) {
 				throw error;
 			}
 
-			throw new MulticallBatchError("Multicall3 aggregate3 call failed", {
+			throw new SELMulticallBatchError("Multicall3 aggregate3 call failed", {
 				cause: error,
 			});
 		}

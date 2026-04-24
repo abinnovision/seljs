@@ -1,3 +1,5 @@
+import { SELTypeConversionError } from "@seljs/common";
+
 import type { TypeWrapper } from "../abstracts/index.js";
 
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/;
@@ -13,11 +15,17 @@ export const toAddress = (value: unknown): string => {
 	}
 
 	if (typeof value !== "string") {
-		throw new TypeError(`Invalid address value: ${String(value)}`);
+		throw new SELTypeConversionError(
+			`Invalid address value: ${String(value)}`,
+			{ expectedType: "sol_address", actualValue: value },
+		);
 	}
 
 	if (!SolidityAddressTypeWrapper.isValid(value)) {
-		throw new TypeError(`Invalid address value: ${value}`);
+		throw new SELTypeConversionError(`Invalid address value: ${value}`, {
+			expectedType: "sol_address",
+			actualValue: value,
+		});
 	}
 
 	return value.toLowerCase();

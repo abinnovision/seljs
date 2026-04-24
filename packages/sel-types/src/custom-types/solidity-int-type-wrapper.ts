@@ -1,3 +1,5 @@
+import { SELTypeConversionError } from "@seljs/common";
+
 import type { TypeWrapper } from "../abstracts/index.js";
 
 /**
@@ -21,7 +23,10 @@ export function toBigInt(value: unknown): bigint {
 		return BigInt(value);
 	}
 
-	throw new TypeError(`Invalid integer value: ${String(value)}`);
+	throw new SELTypeConversionError(`Invalid integer value: ${String(value)}`, {
+		expectedType: "sol_int",
+		actualValue: value,
+	});
 }
 
 /**

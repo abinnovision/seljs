@@ -1,9 +1,13 @@
+import { SELConfigError } from "@seljs/common";
 import { type Abi, AbiError, AbiFunction } from "ox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ResultCache } from "./result-cache.js";
 import { RoundExecutor } from "./round-executor.js";
-import { MulticallBatchError } from "../errors/index.js";
+import {
+	SELContractRevertError,
+	SELMulticallBatchError,
+} from "../errors/index.js";
 
 import type { MulticallBatcher } from "./multicall-batcher.js";
 import type { MulticallResult } from "./multicall.js";
@@ -184,12 +188,12 @@ describe("src/execution/round-executor.ts", () => {
 		expect(cache.get(call2.id)).toBe(22n);
 	});
 
-	it("throws when contract is not registered", async () => {
+	it("throws SELConfigError when contract is not registered", async () => {
 		const call = makeCall({ contract: "unknown" });
 
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
-		).rejects.toThrow("Failed to encode call");
+		).rejects.toBeInstanceOf(SELConfigError);
 	});
 
 	it("includes failed call metadata when encoding fails", async () => {
@@ -199,7 +203,7 @@ describe("src/execution/round-executor.ts", () => {
 
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
-		).rejects.toBeInstanceOf(MulticallBatchError);
+		).rejects.toBeInstanceOf(SELMulticallBatchError);
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
 		).rejects.toMatchObject({
@@ -210,7 +214,7 @@ describe("src/execution/round-executor.ts", () => {
 		});
 	});
 
-	it("throws MulticallBatchError when call fails with empty revert data", async () => {
+	it("throws SELContractRevertError when a sub-call reverts with empty data", async () => {
 		const call = makeCall();
 		executeBatch.mockResolvedValue([
 			{ success: false, returnData: "0x" as `0x${string}` },
@@ -218,12 +222,11 @@ describe("src/execution/round-executor.ts", () => {
 
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
-		).rejects.toBeInstanceOf(MulticallBatchError);
+		).rejects.toBeInstanceOf(SELContractRevertError);
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
 		).rejects.toMatchObject({
-			message: "Call failed: token.balanceOf",
-			failedCallIndex: 0,
+			message: "Call reverted: token.balanceOf",
 			contractName: "token",
 			methodName: "balanceOf",
 			revertReason: undefined,
@@ -245,8 +248,7 @@ describe("src/execution/round-executor.ts", () => {
 			executor.executeRound(makeRound([call]), makeContext()),
 		).rejects.toMatchObject({
 			message:
-				"Call failed: token.balanceOf — ERC721: owner query for nonexistent token",
-			failedCallIndex: 0,
+				"Call reverted: token.balanceOf — ERC721: owner query for nonexistent token",
 			contractName: "token",
 			methodName: "balanceOf",
 			revertReason: "ERC721: owner query for nonexistent token",

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { ExecutionLimitError, SELContractError } from "../errors/index.js";
+import { SELExecutionLimitError, SELContractError } from "../errors/index.js";
 
 import type { SELClient } from "./client.js";
 import type { CelCodecRegistry } from "@seljs/checker";
@@ -62,13 +62,13 @@ describe("src/environment/contract-caller.ts", () => {
 			}).not.toThrow();
 		});
 
-		it("increment throws ExecutionLimitError when exceeding maxCalls", () => {
+		it("increment throws SELExecutionLimitError when exceeding maxCalls", () => {
 			const counter = new CallCounter(2);
 			counter.increment("erc20", "balanceOf");
 			counter.increment("erc20", "balanceOf");
 			expect(() => {
 				counter.increment("erc20", "balanceOf");
-			}).toThrow(ExecutionLimitError);
+			}).toThrow(SELExecutionLimitError);
 		});
 
 		it("defaults initialCount to 0", () => {
@@ -78,7 +78,7 @@ describe("src/environment/contract-caller.ts", () => {
 			}).not.toThrow();
 			expect(() => {
 				counter.increment("erc20", "balanceOf");
-			}).toThrow(ExecutionLimitError);
+			}).toThrow(SELExecutionLimitError);
 		});
 
 		it("carries pre-executed count via initialCount", () => {
@@ -88,7 +88,7 @@ describe("src/environment/contract-caller.ts", () => {
 			}).not.toThrow();
 			expect(() => {
 				counter.increment("erc20", "balanceOf");
-			}).toThrow(ExecutionLimitError);
+			}).toThrow(SELExecutionLimitError);
 		});
 	});
 
