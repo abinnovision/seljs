@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { analyzeDependencies } from "./dependency-analyzer.js";
-import { CircularDependencyError } from "../errors/index.js";
+import { SELCircularDependencyError } from "../errors/index.js";
 
 import type { CollectedCall } from "./types.js";
 
@@ -81,7 +81,7 @@ describe("src/analysis/dependency-analyzer.ts", () => {
 		expect(graph.nodes.get("C")?.dependsOn).toEqual(["B"]);
 	});
 
-	it("throws CircularDependencyError for circular dependency", () => {
+	it("throws SELCircularDependencyError for circular dependency", () => {
 		const calls: CollectedCall[] = [
 			createCall("A", "token", "a", [
 				{ type: "call_result", dependsOnCallId: "B" },
@@ -99,8 +99,8 @@ describe("src/analysis/dependency-analyzer.ts", () => {
 			captured = error;
 		}
 
-		expect(captured).toBeInstanceOf(CircularDependencyError);
-		expect((captured as CircularDependencyError).callIds).toEqual(
+		expect(captured).toBeInstanceOf(SELCircularDependencyError);
+		expect((captured as SELCircularDependencyError).callIds).toEqual(
 			expect.arrayContaining(["A", "B"]),
 		);
 	});

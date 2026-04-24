@@ -9,10 +9,10 @@ import { describe, expect, it } from "vitest";
 
 import { MULTICALL3_ADDRESS } from "../../src/execution/multicall.js";
 import {
-	CircularDependencyError,
+	SELCircularDependencyError,
 	createSEL,
-	ExecutionLimitError,
-	MulticallBatchError,
+	SELExecutionLimitError,
+	SELMulticallBatchError,
 	SELContractError,
 } from "../../src/index.js";
 
@@ -446,19 +446,19 @@ describe("integration", () => {
 			expect(callLog).toHaveLength(4);
 		});
 
-		it("exports CircularDependencyError as a constructable error class", () => {
-			const error = new CircularDependencyError(
+		it("exports SELCircularDependencyError as a constructable error class", () => {
+			const error = new SELCircularDependencyError(
 				"Circular dependency detected among calls",
 				{ callIds: ["call_0", "call_1", "call_2"] },
 			);
-			expect(error).toBeInstanceOf(CircularDependencyError);
+			expect(error).toBeInstanceOf(SELCircularDependencyError);
 			expect(error).toBeInstanceOf(Error);
-			expect(error.name).toBe("CircularDependencyError");
+			expect(error.name).toBe("SELCircularDependencyError");
 			expect(error.callIds).toEqual(["call_0", "call_1", "call_2"]);
 			expect(error.message).toContain("Circular dependency");
 		});
 
-		it("throws ExecutionLimitError when maxCalls is exceeded", async () => {
+		it("throws SELExecutionLimitError when maxCalls is exceeded", async () => {
 			const NFT_ADDRESS_LOCAL =
 				"0x1111111111111111111111111111111111111111" as const;
 			const routes = buildRoutes(
@@ -493,7 +493,7 @@ describe("integration", () => {
 				sel.evaluate<bigint>("token.balanceOf(user) + nft.balanceOf(user)", {
 					user: USER_ADDRESS,
 				}),
-			).rejects.toBeInstanceOf(ExecutionLimitError);
+			).rejects.toBeInstanceOf(SELExecutionLimitError);
 			await expect(
 				sel.evaluate<bigint>("token.balanceOf(user) + nft.balanceOf(user)", {
 					user: USER_ADDRESS,
@@ -582,7 +582,7 @@ describe("integration", () => {
 				expect(getRpcCallCount()).toBe(2);
 			});
 
-			it("wraps MulticallBatchError in SELContractError on batch failure", async () => {
+			it("wraps SELMulticallBatchError in SELContractError on batch failure", async () => {
 				const failingClient = {
 					call: () => Promise.reject(new Error("RPC timeout")),
 					getBlockNumber: () => Promise.resolve(100n),
@@ -604,7 +604,7 @@ describe("integration", () => {
 				await expect(
 					sel.evaluate("token.balanceOf(user)", { user: USER_ADDRESS }),
 				).rejects.toMatchObject({
-					cause: expect.any(MulticallBatchError),
+					cause: expect.any(SELMulticallBatchError),
 				});
 			});
 
@@ -654,7 +654,7 @@ describe("integration", () => {
 				await expect(
 					sel.evaluate("nft.ownerOf(tokenId)", { tokenId: 999n }),
 				).rejects.toMatchObject({
-					name: "SELContractError",
+					name: "SELContractRevertError",
 					contractName: "nft",
 					methodName: "ownerOf",
 					revertReason: "ERC721: owner query for nonexistent token",

@@ -16,9 +16,10 @@ import { analyzeDependencies } from "../analysis/dependency-analyzer.js";
 import { planRounds } from "../analysis/round-planner.js";
 import { createLogger } from "../debug.js";
 import {
-	MulticallBatchError,
 	SELContractError,
+	SELContractRevertError,
 	SELLintError,
+	SELMulticallBatchError,
 } from "../errors/index.js";
 import { MultiRoundExecutor } from "../execution/multi-round-executor.js";
 
@@ -172,7 +173,9 @@ export class SELRuntime {
 	 *
 	 * @param expression - A CEL expression string to type-check
 	 * @returns The type-check result containing validity, inferred type, and any errors
-	 * @throws {@link SELEvaluationError} If the expression contains unrecoverable type errors
+	 * @throws {@link SELParseError} If the expression cannot be parsed
+	 * @throws {@link SELTypeCheckError} If the CEL type-checker rejects the expression
+	 * @throws {@link SELLintError} If lint rules with error severity match
 	 */
 	public check(expression: string): TypeCheckResult {
 		try {
@@ -197,9 +200,19 @@ export class SELRuntime {
 	 * @param context Variable bindings for evaluation
 	 * @param options Optional client override
 	 * @returns An {@link EvaluateResult} containing the value and optional execution metadata
-	 * @throws {@link SELLintError} If the expression fails parse, type-check, or lint rules
-	 * @throws {@link SELContractError} If a contract call fails or no client is available
+	 * @throws {@link SELParseError} If the expression cannot be parsed
+	 * @throws {@link SELTypeCheckError} If the CEL type-checker rejects the expression
+	 * @throws {@link SELLintError} If lint rules with error severity match
+	 * @throws {@link SELConfigError} If an ABI / codec registry entry is missing
+	 * @throws {@link SELContractError} If a contract call fails (non-revert)
+	 * @throws {@link SELContractRevertError} If a contract call reverted
+	 * @throws {@link SELMulticallBatchError} If the Multicall3 batch itself failed
+	 * @throws {@link SELProviderTransportError} If the JSON-RPC transport failed
+	 * @throws {@link SELProviderRpcError} If the node returned a JSON-RPC error
+	 * @throws {@link SELExecutionLimitError} If maxRounds / maxCalls were exceeded
+	 * @throws {@link SELCircularDependencyError} If the call graph has a cycle
 	 * @throws {@link SELEvaluationError} If CEL evaluation fails
+	 * @throws {@link SELTypeConversionError} If a Solidity type wrapper rejected an input
 	 */
 	public async evaluate<T = unknown>(
 		expression: string,
@@ -319,8 +332,13 @@ export class SELRuntime {
 				await resolveExecutionBlockNumber(resolvedClient),
 			);
 		} catch (error) {
+			// Per-call reverts already carry full context — pass through.
+			if (error instanceof SELContractRevertError) {
+				throw error;
+			}
+
 			let failedCall = collectedCalls[0];
-			if (error instanceof MulticallBatchError) {
+			if (error instanceof SELMulticallBatchError) {
 				if (error.contractName && error.methodName) {
 					const contractName: string = error.contractName;
 					const methodName: string = error.methodName;
@@ -346,22 +364,12 @@ export class SELRuntime {
 				throw error;
 			}
 
-			const revertFields =
-				error instanceof MulticallBatchError
-					? {
-							revertReason: error.revertReason,
-							revertData: error.revertData,
-							decodedError: error.decodedError,
-						}
-					: {};
-
 			throw new SELContractError(
 				`Contract call failed: ${failedCall.contract}.${failedCall.method}`,
 				{
 					cause: error,
 					contractName: failedCall.contract,
 					methodName: failedCall.method,
-					...revertFields,
 				},
 			);
 		}

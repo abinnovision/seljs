@@ -2,7 +2,7 @@ import { type Abi, AbiFunction } from "ox";
 
 import { createReplayCallId } from "./replay-cache.js";
 import { createLogger } from "../debug.js";
-import { ExecutionLimitError, SELContractError } from "../errors/index.js";
+import { SELContractError, SELExecutionLimitError } from "../errors/index.js";
 
 import type { SELClient } from "./client.js";
 import type { CelCodecRegistry } from "@seljs/checker";
@@ -26,7 +26,7 @@ export class CallCounter {
 	public increment(contractName: string, methodName: string): void {
 		this.count++;
 		if (this.count > this.maxCalls) {
-			throw new ExecutionLimitError(
+			throw new SELExecutionLimitError(
 				`Execution limit exceeded: ${String(this.count)} calls exceeds maxCalls (${String(this.maxCalls)})`,
 				{
 					limitType: "maxCalls",

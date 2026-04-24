@@ -1,5 +1,5 @@
 import { Environment } from "@marcbachmann/cel-js";
-import { contractTypeName } from "@seljs/common";
+import { contractTypeName, SELConfigError } from "@seljs/common";
 
 import { createLogger } from "../debug.js";
 import { CelCodecRegistry } from "./codec-registry.js";
@@ -96,8 +96,9 @@ const hydrateEnvironment = (
 							);
 
 							if (!codecRegistry) {
-								throw new Error(
+								throw new SELConfigError(
 									"codecRegistry is required when handler is provided",
+									{ setting: "codecRegistry" },
 								);
 							}
 
@@ -183,8 +184,9 @@ const hydrateEnvironment = (
 				? async (...args: unknown[]) => {
 						const raw = await handler(fn.receiverType!, fn.name, args);
 						if (!codecRegistry) {
-							throw new Error(
+							throw new SELConfigError(
 								"codecRegistry is required when handler is provided",
+								{ setting: "codecRegistry" },
 							);
 						}
 
@@ -300,7 +302,10 @@ export const createRuntimeEnvironment = (
 	registerSolidityTypes(env);
 	const result = hydrateEnvironment(env, schema, handler);
 	if (!result.codecRegistry) {
-		throw new Error("codecRegistry is required when handler is provided");
+		throw new SELConfigError(
+			"codecRegistry is required when handler is provided",
+			{ setting: "codecRegistry" },
+		);
 	}
 
 	return {

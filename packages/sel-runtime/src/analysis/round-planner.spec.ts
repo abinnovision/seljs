@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { planRounds } from "./round-planner.js";
-import { ExecutionLimitError } from "../errors/index.js";
+import { SELExecutionLimitError } from "../errors/index.js";
 
 import type { CollectedCall, DependencyGraph, GraphNode } from "./types.js";
 
@@ -86,7 +86,7 @@ describe("src/analysis/round-planner.ts", () => {
 		expect(plan.rounds[2]?.calls.map((call) => call.id)).toEqual(["D"]);
 	});
 
-	it("throws ExecutionLimitError when maxRounds is exceeded", () => {
+	it("throws SELExecutionLimitError when maxRounds is exceeded", () => {
 		const graph = createGraph([
 			{ id: "A" },
 			{ id: "B", dependsOn: ["A"] },
@@ -100,11 +100,11 @@ describe("src/analysis/round-planner.ts", () => {
 			captured = error;
 		}
 
-		expect(captured).toBeInstanceOf(ExecutionLimitError);
-		expect((captured as ExecutionLimitError).limitType).toBe("maxRounds");
+		expect(captured).toBeInstanceOf(SELExecutionLimitError);
+		expect((captured as SELExecutionLimitError).limitType).toBe("maxRounds");
 	});
 
-	it("throws ExecutionLimitError when maxCalls is exceeded", () => {
+	it("throws SELExecutionLimitError when maxCalls is exceeded", () => {
 		const graph = createGraph([{ id: "A" }, { id: "B" }, { id: "C" }]);
 
 		let captured: unknown;
@@ -114,8 +114,8 @@ describe("src/analysis/round-planner.ts", () => {
 			captured = error;
 		}
 
-		expect(captured).toBeInstanceOf(ExecutionLimitError);
-		expect((captured as ExecutionLimitError).limitType).toBe("maxCalls");
+		expect(captured).toBeInstanceOf(SELExecutionLimitError);
+		expect((captured as SELExecutionLimitError).limitType).toBe("maxCalls");
 	});
 
 	it("returns empty plan for empty graph", () => {

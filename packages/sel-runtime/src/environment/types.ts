@@ -20,7 +20,7 @@ export interface MulticallOptions {
  * Limits for contract call execution.
  *
  * Execution limits (`maxRounds`, `maxCalls`) bound the multi-round contract
- * execution engine. An {@link ExecutionLimitError} is thrown when exceeded.
+ * execution engine. An {@link SELExecutionLimitError} is thrown when exceeded.
  */
 export interface SELLimits {
 	/** Maximum number of dependency-ordered execution rounds (default: 10) */

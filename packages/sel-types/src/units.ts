@@ -1,3 +1,5 @@
+import { SELTypeConversionError } from "@seljs/common";
+
 import { SolidityIntTypeWrapper, toBigInt } from "./custom-types/index.js";
 
 const parseDecimalString = (
@@ -11,15 +13,19 @@ const parseDecimalString = (
 	const parts = abs.split(".");
 
 	if (parts.length > 2) {
-		throw new TypeError(`parseUnits: invalid decimal string: "${value}"`);
+		throw new SELTypeConversionError(
+			`parseUnits: invalid decimal string: "${value}"`,
+			{ expectedType: "sol_int", actualValue: value },
+		);
 	}
 
 	const wholePart = parts[0] ?? "0";
 	const fracPart = parts[1] ?? "";
 
 	if (fracPart.length > decimals) {
-		throw new TypeError(
+		throw new SELTypeConversionError(
 			`parseUnits: fractional part "${fracPart}" exceeds ${String(decimals)} decimals`,
+			{ expectedType: "sol_int", actualValue: value },
 		);
 	}
 
@@ -65,7 +71,10 @@ export const parseUnitsValue = (
 		return parseDecimalString(value, decimals, scale);
 	}
 
-	throw new TypeError(`parseUnits: unsupported value type: ${typeof value}`);
+	throw new SELTypeConversionError(
+		`parseUnits: unsupported value type: ${typeof value}`,
+		{ expectedType: "sol_int", actualValue: value },
+	);
 };
 
 /**

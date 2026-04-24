@@ -161,26 +161,26 @@ describe("src/execution/multicall-batcher.ts", () => {
 		expect(results).toHaveLength(3);
 	});
 
-	it("wraps client.call error in MulticallBatchError with cause", async () => {
+	it("wraps client.call error in SELMulticallBatchError with cause", async () => {
 		const rpcError = new Error("rpc failed");
 		vi.mocked(mockClient.call).mockRejectedValue(rpcError);
 
 		await expect(
 			batcher.executeBatch([makeCall()], 800n),
 		).rejects.toMatchObject({
-			name: "MulticallBatchError",
+			name: "SELMulticallBatchError",
 			message: "Multicall3 aggregate3 call failed",
 			cause: rpcError,
 		});
 	});
 
-	it("throws MulticallBatchError when client.call returns no data", async () => {
+	it("throws SELMulticallBatchError when client.call returns no data", async () => {
 		vi.mocked(mockClient.call).mockResolvedValue({ data: undefined });
 
 		await expect(
 			batcher.executeBatch([makeCall()], 900n),
 		).rejects.toMatchObject({
-			name: "MulticallBatchError",
+			name: "SELMulticallBatchError",
 			message: "Multicall3 aggregate3 returned no data",
 		});
 	});
