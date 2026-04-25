@@ -364,8 +364,9 @@ export class SELRuntime {
 				throw error;
 			}
 
+			const detail = error instanceof Error ? error.message : String(error);
 			throw new SELContractError(
-				`Contract call failed: ${failedCall.contract}.${failedCall.method}`,
+				`Contract call failed: ${failedCall.contract}.${failedCall.method}: ${detail}`,
 				{
 					cause: error,
 					contractName: failedCall.contract,

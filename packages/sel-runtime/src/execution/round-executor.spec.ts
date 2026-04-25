@@ -226,10 +226,10 @@ describe("src/execution/round-executor.ts", () => {
 		await expect(
 			executor.executeRound(makeRound([call]), makeContext()),
 		).rejects.toMatchObject({
-			message: "Call reverted: token.balanceOf",
+			message: "Call reverted: token.balanceOf — reverted without data",
 			contractName: "token",
 			methodName: "balanceOf",
-			revertReason: undefined,
+			revertReason: "reverted without data",
 			revertData: "0x",
 		});
 	});
