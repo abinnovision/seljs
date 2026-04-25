@@ -1,12 +1,40 @@
 import { type Abi, AbiFunction } from "ox";
+import { BaseError as ViemBaseError } from "viem";
 
 import { createReplayCallId } from "./replay-cache.js";
 import { createLogger } from "../debug.js";
-import { SELContractError, SELExecutionLimitError } from "../errors/index.js";
+import {
+	SELContractError,
+	SELContractRevertError,
+	SELExecutionLimitError,
+} from "../errors/index.js";
+import { decodeRevertData } from "../execution/decode-revert.js";
 
 import type { SELClient } from "./client.js";
 import type { CelCodecRegistry } from "@seljs/checker";
 import type { ContractSchema, MethodSchema } from "@seljs/schema";
+
+/*
+ * Direct client.call() reverts surface as ExecutionRevertedError, not
+ * ContractFunctionRevertedError, so the standard viem helpers miss them.
+ */
+const extractRevertData = (error: unknown): `0x${string}` | undefined => {
+	if (!(error instanceof ViemBaseError)) {
+		return undefined;
+	}
+
+	const found = error.walk((e: unknown): boolean => {
+		if (typeof e !== "object" || e === null) {
+			return false;
+		}
+
+		const data = (e as { data?: unknown }).data;
+
+		return typeof data === "string" && data.startsWith("0x");
+	});
+
+	return (found as { data?: `0x${string}` } | null)?.data;
+};
 
 const debug = createLogger("contract-caller");
 
@@ -120,8 +148,28 @@ export const executeContractCall = async (
 			throw error;
 		}
 
+		const revertData = extractRevertData(error);
+		if (revertData !== undefined) {
+			const decoded = decodeRevertData(revertData, [
+				method.abi,
+			] as unknown as Abi.Abi);
+			const suffix = decoded.reason ? ` — ${decoded.reason}` : "";
+			throw new SELContractRevertError(
+				`Call reverted: ${contract.name}.${method.name}${suffix}`,
+				{
+					cause: error,
+					contractName: contract.name,
+					methodName: method.name,
+					revertReason: decoded.reason,
+					revertData: decoded.data,
+					decodedError: decoded.decodedError,
+				},
+			);
+		}
+
+		const detail = error instanceof Error ? error.message : String(error);
 		throw new SELContractError(
-			`Contract call failed: ${contract.name}.${method.name}`,
+			`Contract call failed: ${contract.name}.${method.name}: ${detail}`,
 			{
 				cause: error,
 				contractName: contract.name,

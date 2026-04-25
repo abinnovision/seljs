@@ -27,7 +27,7 @@ const panicAbi = AbiError.from("error Panic(uint256 code)");
 
 function decodeRevertData(data: `0x${string}`, abi: Abi.Abi): DecodedRevert {
 	if (data === "0x" || data.length < 10) {
-		return { data };
+		return { data, reason: "reverted without data" };
 	}
 
 	const selector = data.slice(0, 10).toLowerCase() as `0x${string}`;

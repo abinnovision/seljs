@@ -75,11 +75,11 @@ describe("decodeRevertData", () => {
 		expect(decoded.reason).toContain("50");
 	});
 
-	it("returns raw data with no reason for empty 0x", () => {
+	it("returns reverted-without-data reason for empty 0x", () => {
 		const decoded = decodeRevertData("0x", ERC721_ABI);
 
 		expect(decoded.data).toBe("0x");
-		expect(decoded.reason).toBeUndefined();
+		expect(decoded.reason).toBe("reverted without data");
 		expect(decoded.decodedError).toBeUndefined();
 	});
 
