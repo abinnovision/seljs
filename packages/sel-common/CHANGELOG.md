@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/common-v1.2.0...common-v1.3.0) (2026-04-25)
+
+
+### Features
+
+* make SELChecker the single validation gate in evaluate ([#69](https://github.com/abinnovision/seljs/issues/69)) ([b279a19](https://github.com/abinnovision/seljs/commit/b279a1971ff8dc64799c231aa41392619dbadacb))
+* structured SEL error hierarchy with static/runtime split ([#86](https://github.com/abinnovision/seljs/issues/86)) ([ab88b2c](https://github.com/abinnovision/seljs/commit/ab88b2cbf52fe5d236fd2ae099030d8558783eec))
+
+
+### Bug Fixes
+
+* throw SELEvaluationError from CEL builtins instead of plain Error ([#83](https://github.com/abinnovision/seljs/issues/83)) ([0a981af](https://github.com/abinnovision/seljs/commit/0a981af4479a1007fa34cd42f87a742f6646df6e))
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/common-v1.1.0...common-v1.2.0) (2026-03-21)
 
 
