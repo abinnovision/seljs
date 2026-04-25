@@ -13,16 +13,16 @@ export const hexToBytes = (input: string): Uint8Array => {
 
 	if (body.length % 2 !== 0) {
 		throw new SELTypeConversionError(
-			`hexToBytes: expected even-length hex string, got ${String(body.length)} chars`,
+			`expected even-length hex string, got ${String(body.length)} chars`,
 			{ expectedType: "bytes", actualValue: input },
 		);
 	}
 
 	if (!HEX_PATTERN.test(body)) {
-		throw new SELTypeConversionError(
-			`hexToBytes: invalid hex character in "${input}"`,
-			{ expectedType: "bytes", actualValue: input },
-		);
+		throw new SELTypeConversionError(`invalid hex character in "${input}"`, {
+			expectedType: "bytes",
+			actualValue: input,
+		});
 	}
 
 	const bytes = new Uint8Array(body.length / 2);
