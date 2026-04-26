@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/abinnovision/seljs/compare/types-v1.3.0...types-v1.4.0) (2026-04-26)
+
+
+### Miscellaneous Chores
+
+* **types:** Synchronize sel versions
+
 ## [1.3.0](https://github.com/abinnovision/seljs/compare/types-v1.2.0...types-v1.3.0) (2026-04-25)
 
 
