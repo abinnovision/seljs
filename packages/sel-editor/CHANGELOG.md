@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/abinnovision/seljs/compare/editor-v1.2.0...editor-v1.3.0) (2026-04-25)
+
+
+### Features
+
+* make SELChecker the single validation gate in evaluate ([#69](https://github.com/abinnovision/seljs/issues/69)) ([b279a19](https://github.com/abinnovision/seljs/commit/b279a1971ff8dc64799c231aa41392619dbadacb))
+* sol_int decimals overloads + EVM constants (WAD, RAY, Q96, Q128, MAX_UINT256) ([#80](https://github.com/abinnovision/seljs/issues/80)) ([46a1218](https://github.com/abinnovision/seljs/commit/46a12184c7ab798951993dde79ca4e487e026a12))
+
 ## [1.2.0](https://github.com/abinnovision/seljs/compare/editor-v1.1.0...editor-v1.2.0) (2026-03-21)
 
 
