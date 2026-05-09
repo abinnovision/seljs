@@ -1562,7 +1562,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
   languageName: unknown
@@ -1573,7 +1573,7 @@ __metadata:
   resolution: "@seljs-internal/tsconfig@workspace:packages/tsconfig"
   dependencies:
     prettier: "npm:^3.8.1"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -1591,7 +1591,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -1612,7 +1612,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
     zod: "npm:^4.3.6"
@@ -1632,7 +1632,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -1652,7 +1652,7 @@ __metadata:
     "@seljs/types": "workspace:*"
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
     zod: "npm:^4.3.6"
@@ -1684,7 +1684,7 @@ __metadata:
     react-dom: "npm:^19.0.0"
     storybook: "npm:^10.3.5"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     viem: "npm:^2.47.6"
     vite: "npm:^8.0.1"
     vitest: "npm:^4.1.0"
@@ -1717,7 +1717,7 @@ __metadata:
     jsdom: "npm:^29.0.1"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -1736,7 +1736,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
   languageName: unknown
@@ -1784,7 +1784,7 @@ __metadata:
     ox: "npm:^0.14.20"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     viem: "npm:^2.47.6"
     vitest: "npm:^4.1.0"
     zod: "npm:^4.3.6"
@@ -1808,7 +1808,7 @@ __metadata:
     ts-json-schema-generator: "npm:^2.9.0"
     tsdown: "npm:^0.21.4"
     tsx: "npm:^4.21.0"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -1825,7 +1825,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
     tsdown: "npm:^0.21.4"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
@@ -7205,6 +7205,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/0ef2357a4cffd916b52b683a021cdab0f81eea4e9aa35f2d254581c9a5106da02224e3392e1b0ed42b7a48f80c966e5f52b8e1a27941fa0523c1705a9c2e0330
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@npm%3A5.6.1-rc#optional!builtin<compat/typescript>":
   version: 5.6.1-rc
   resolution: "typescript@patch:typescript@npm%3A5.6.1-rc#optional!builtin<compat/typescript>::version=5.6.1-rc&hash=8c6c40"
@@ -7222,6 +7232,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 10/696e1b017bc2635f4e0c94eb4435357701008e2f272f553d06e35b494b8ddc60aa221145e286c28ace0c89ee32827a28c2040e3a69bdc108b1a5dc8fb40b72e3
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/22b67a18dafedf9b1468b64ca20d9aa02ea61d449b65413d8aa6552aeb63f52ef369e86beb25b6b4c91a803d9726ee5c196f391a9b64201263263410a4223ee6
   languageName: node
   linkType: hard
 
