@@ -1680,7 +1680,7 @@ __metadata:
     eslint: "npm:^9.39.4"
     jsdom: "npm:^29.0.1"
     prettier: "npm:^3.8.1"
-    react: "npm:^19.0.0"
+    react: "npm:^19.2.6"
     react-dom: "npm:^19.0.0"
     storybook: "npm:^10.3.5"
     tsdown: "npm:^0.21.4"
@@ -6005,10 +6005,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^19.0.0":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10/18179fe217f67eb2d0bc61cd04e7ad3c282ea09a1dface7eacd71816f62609f4bbf566c447c704335284deb8397b00bca084e0cd60e6f437279a7498e2d0bfe0
+"react@npm:^19.2.6":
+  version: 19.2.6
+  resolution: "react@npm:19.2.6"
+  checksum: 10/205f0db93bd6c6485f94471d1c3437ae1d410f322297c76186fe4f658f88a6786bb0805e3cf8f330f24d1daa923b6b610ec63960d2461e9201bca64ca8361db9
   languageName: node
   linkType: hard
 
