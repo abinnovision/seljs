@@ -1161,12 +1161,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@marcbachmann/cel-js@npm:^7.5.3":
-  version: 7.5.3
-  resolution: "@marcbachmann/cel-js@npm:7.5.3"
+"@marcbachmann/cel-js@npm:^7.6.1":
+  version: 7.6.1
+  resolution: "@marcbachmann/cel-js@npm:7.6.1"
   bin:
     cel-evaluate: bin/cel-evaluate.js
-  checksum: 10/1eef1e15f723feb5056c1eb3f8beecd519b0aeae2a872aafa955e87ce8d15dbdcce000fbdcb6dc4895e495c7f527ac34ff382478ebdbc7d462122e5ff805ce4c
+  checksum: 10/322587e1c31ece7cc5c6b418a0a00a4c5472287d307a2a1806effe1e4797593b4c17ffc6672eaa2e4a74ee4c2844217a5aaa312b9c72a2ecdddceeb82d9938e7
   languageName: node
   linkType: hard
 
@@ -1602,7 +1602,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
-    "@marcbachmann/cel-js": "npm:^7.5.3"
+    "@marcbachmann/cel-js": "npm:^7.6.1"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/common": "workspace:*"
     "@seljs/schema": "workspace:*"
@@ -1627,7 +1627,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
-    "@marcbachmann/cel-js": "npm:^7.5.3"
+    "@marcbachmann/cel-js": "npm:^7.6.1"
     "@seljs-internal/tsconfig": "workspace:^"
     eslint: "npm:^9.39.4"
     prettier: "npm:^3.8.1"
@@ -1769,7 +1769,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
-    "@marcbachmann/cel-js": "npm:^7.5.3"
+    "@marcbachmann/cel-js": "npm:^7.6.1"
     "@seljs-internal/fixtures": "workspace:*"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/checker": "workspace:*"
