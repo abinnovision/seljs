@@ -49,7 +49,7 @@
 		]
 	},
 	"dependencies": {
-		"@codemirror/language": "^6.12.2",
+		"@codemirror/language": "^6.12.3",
 		"@lezer/highlight": "^1.2.3",
 		"@lezer/lr": "^1.4.8"
 	},
