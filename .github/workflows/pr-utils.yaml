@@ -31,7 +31,7 @@ jobs:
       repository-projects: write
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - id: status
         name: Resolve current status
         run: |
@@ -75,7 +75,7 @@ jobs:
         with:
           identification: ${{ secrets.GH_APP_IDENTIFICATION_RELEASER }}
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           token: ${{ steps.token.outputs.token }}
       - name: Setup Node
