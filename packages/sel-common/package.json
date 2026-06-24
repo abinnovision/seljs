@@ -48,7 +48,7 @@
 		]
 	},
 	"dependencies": {
-		"@marcbachmann/cel-js": "^7.5.3"
+		"@marcbachmann/cel-js": "^7.6.1"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.2",
