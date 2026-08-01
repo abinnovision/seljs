@@ -8,6 +8,23 @@ import type { AbiFunction } from "abitype";
 export type TypeRef = string;
 
 /**
+ * Free-form, consumer-defined metadata bag for extending a schema entry with
+ * data that @seljs/schema itself does not read or interpret (e.g. editor
+ * hints, codegen annotations, or doc-generation metadata attached by tools
+ * built on top of this schema).
+ *
+ * This is a sanctioned escape hatch so extra data can be attached to a
+ * schema entry without triggering TypeScript's excess-property checks on
+ * object literals, and without polluting the core typed fields. The schema
+ * builder and all first-party consumers treat this as opaque and pass it
+ * through unchanged.
+ *
+ * If multiple independent tools attach data to the same entry, namespace
+ * by owner to avoid collisions, e.g. `_extension: { "my-tool": { ... } }`.
+ */
+export type SELExtension = Record<string, unknown>;
+
+/**
  * Root schema type for SEL expression language.
  * Contains all contracts, variables, types, functions, and macros available in a SEL environment.
  */
@@ -55,6 +72,11 @@ export interface SELSchema {
 	 * Names of features that are enabled in this schema.
 	 */
 	enabledFeatures?: string[];
+
+	/**
+	 * Consumer-defined metadata for the schema as a whole. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -119,6 +141,11 @@ export interface ContractSchema {
 	 * Available methods (view/pure functions only)
 	 */
 	methods: MethodSchema[];
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -153,6 +180,11 @@ export interface MethodSchema {
 	 * For autocomplete grouping
 	 */
 	category?: string;
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -174,6 +206,11 @@ export interface ParamSchema {
 	 * From NatSpec @param or custom
 	 */
 	description?: string;
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -206,6 +243,11 @@ export interface VariableSchema {
 	 * Set automatically by the schema builder when merging feature contributions.
 	 */
 	feature?: string;
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -238,6 +280,11 @@ export interface TypeSchema {
 	 * Set automatically by the schema builder when merging feature contributions.
 	 */
 	feature?: string;
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -287,6 +334,11 @@ export interface FunctionSchema {
 	 * Set automatically by the schema builder when merging feature contributions.
 	 */
 	feature?: string;
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
 
 /**
@@ -315,4 +367,9 @@ export interface MacroSchema {
 	 * Example
 	 */
 	example?: string;
+
+	/**
+	 * Consumer-defined metadata. See {@link SELExtension}.
+	 */
+	_extension?: SELExtension;
 }
