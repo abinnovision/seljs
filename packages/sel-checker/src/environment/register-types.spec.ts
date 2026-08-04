@@ -4,6 +4,7 @@ import {
 	SolidityIntTypeWrapper,
 	toBigInt,
 } from "@seljs/types";
+import { namehash as viemNamehash } from "viem";
 import { describe, expect, it, vi } from "vitest";
 
 import { registerSolidityTypes } from "./register-types.js";
@@ -731,6 +732,30 @@ describe("src/environment/register-types.ts", () => {
 			expect(hex).toBe(
 				"0x93cdeb708b7545dc668eb9280176169d1c33cfd8ed6f04690a0bcc88a93fc4ae",
 			);
+		});
+
+		it("sel.namehash(string) matches the hand-rolled composition for 'eth'", () => {
+			const env = createCheckerEnv();
+			const viaNamehash = env.evaluate('sel.namehash("eth")', {});
+			const viaComposition = env.evaluate(
+				'keccak256(sel.ZERO_BYTES32 + keccak256("eth"))',
+				{},
+			);
+			expect(viaNamehash).toBeInstanceOf(Uint8Array);
+			expect(Array.from(viaNamehash as Uint8Array)).toEqual(
+				Array.from(viaComposition as Uint8Array),
+			);
+		});
+
+		it("sel.namehash(string) matches viem's namehash for 'vitalik.eth'", () => {
+			const env = createCheckerEnv();
+			const result = env.evaluate('sel.namehash("vitalik.eth")', {});
+			const hex =
+				"0x" +
+				Array.from(result as Uint8Array)
+					.map((b) => b.toString(16).padStart(2, "0"))
+					.join("");
+			expect(hex).toBe(viemNamehash("vitalik.eth"));
 		});
 
 		it("sel.* constants participate in sol_int arithmetic", () => {

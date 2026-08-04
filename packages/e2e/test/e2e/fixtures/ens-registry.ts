@@ -68,6 +68,13 @@ export const ensRegistryFixtures = defineFixtureGroup({
 			expectedValue: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
 		},
 		{
+			label: 'ens.owner(sel.namehash("vitalik.eth"))',
+			expr: 'ens.owner(sel.namehash("vitalik.eth"))',
+			expectedType: "sol_address",
+			mocks: { owner: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" },
+			expectedValue: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+		},
+		{
 			label: "invalid: ens.nonExistent()",
 			expr: "ens.nonExistent()",
 			expectedType: "",
