@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/abinnovision/seljs/compare/env-v1.3.0...env-v1.4.0) (2026-08-04)
+
+
+### Features
+
+* **sel-checker:** add sel.namehash function ([#124](https://github.com/abinnovision/seljs/issues/124)) ([343b2f4](https://github.com/abinnovision/seljs/commit/343b2f46c52700dd367a61335f53854bedc6462e))
+
+
+### Bug Fixes
+
+* upgrade typescript to v6.0.3 ([#126](https://github.com/abinnovision/seljs/issues/126)) ([8602f47](https://github.com/abinnovision/seljs/commit/8602f47edaa60ee76022e175812cb22999e6245d))
+
 ## [1.3.0](https://github.com/abinnovision/seljs/compare/env-v1.2.0...env-v1.3.0) (2026-04-25)
 
 
