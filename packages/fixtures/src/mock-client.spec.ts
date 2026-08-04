@@ -1,4 +1,4 @@
-import { type Abi, decodeFunctionResult, encodeFunctionData } from "viem";
+import { decodeFunctionResult, encodeFunctionData } from "viem";
 import { describe, expect, it } from "vitest";
 
 import { aaveV3Pool, compoundV3Comet } from "./contracts.js";
@@ -64,7 +64,7 @@ describe("src/mock/mock-client.ts", () => {
 
 		const routes = buildRoutes(
 			routeFor({
-				abi: compoundV3Comet.abi as unknown as Abi,
+				abi: compoundV3Comet.abi,
 				functionName: "getAssetInfo",
 				address: compoundV3Comet.address,
 				result: assetInfo,
@@ -117,7 +117,7 @@ describe("src/mock/mock-client.ts", () => {
 
 		const routes = buildRoutes(
 			routeFor({
-				abi: aaveV3Pool.abi as unknown as Abi,
+				abi: aaveV3Pool.abi,
 				functionName: "getReservesList",
 				address: aaveV3Pool.address,
 				result: reserves,
@@ -151,7 +151,7 @@ describe("src/mock/mock-client.ts", () => {
 	it("returns argument-dependent values via function result", async () => {
 		const routes = buildRoutes(
 			routeFor({
-				abi: compoundV3Comet.abi as unknown as Abi,
+				abi: compoundV3Comet.abi,
 				functionName: "getSupplyRate",
 				address: compoundV3Comet.address,
 				result: (args: readonly unknown[]) => {
@@ -211,7 +211,7 @@ describe("src/mock/mock-client.ts", () => {
 	it("tracks calls in callLog and counts RPC calls", async () => {
 		const routes = buildRoutes(
 			routeFor({
-				abi: compoundV3Comet.abi as unknown as Abi,
+				abi: compoundV3Comet.abi,
 				functionName: "getUtilization",
 				address: compoundV3Comet.address,
 				result: 42n,

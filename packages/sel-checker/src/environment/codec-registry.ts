@@ -104,7 +104,7 @@ export class CelCodecRegistry {
 		if (listMatch) {
 			const elementCodec = this.resolve(listMatch[1]!);
 
-			return z.array(elementCodec as z.ZodType);
+			return z.array(elementCodec);
 		}
 
 		return this.codecs.get(celType) ?? z.unknown();

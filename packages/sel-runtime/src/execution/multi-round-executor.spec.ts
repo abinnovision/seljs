@@ -51,7 +51,7 @@ function makeClientCallResponse(
 		returnData: makeEncodedCallResponse(value, functionName),
 	}));
 
-	return { data: AbiFunction.encodeResult(multicall3Function, encoded as any) };
+	return { data: AbiFunction.encodeResult(multicall3Function, encoded) };
 }
 
 function makeCall(overrides: Partial<CollectedCall> = {}): CollectedCall {

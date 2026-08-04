@@ -12,7 +12,7 @@ interface DecodedMulticallResult {
 }
 
 function encodeResults(results: DecodedMulticallResult[]): `0x${string}` {
-	return AbiFunction.encodeResult(multicall3Function, results as any);
+	return AbiFunction.encodeResult(multicall3Function, results);
 }
 
 function makeCall(overrides: Partial<MulticallCall> = {}): MulticallCall {

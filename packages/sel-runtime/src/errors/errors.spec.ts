@@ -35,13 +35,13 @@ interface ErrorCase {
 
 const errorCases: ErrorCase[] = [
 	{
-		Ctor: SELEvaluationError as AnyErrorCtor,
+		Ctor: SELEvaluationError,
 		name: "SELEvaluationError",
 		parents: [SELRuntimeError, SELError, Error],
 		extraProps: {},
 	},
 	{
-		Ctor: SELContractError as AnyErrorCtor,
+		Ctor: SELContractError,
 		name: "SELContractError",
 		parents: [SELRuntimeError, SELError, Error],
 		extraProps: {
@@ -50,19 +50,19 @@ const errorCases: ErrorCase[] = [
 		},
 	},
 	{
-		Ctor: SELContractRevertError as AnyErrorCtor,
+		Ctor: SELContractRevertError,
 		name: "SELContractRevertError",
 		parents: [SELContractError, SELRuntimeError, SELError, Error],
 		extraProps: {
 			contractName: "MyContract",
 			methodName: "transfer",
 			revertReason: "ERC721: owner query for nonexistent token",
-			revertData: "0x08c379a0" as `0x${string}`,
+			revertData: "0x08c379a0",
 			decodedError: { name: "ERC721NonexistentToken", args: [42n] },
 		},
 	},
 	{
-		Ctor: SELMulticallBatchError as AnyErrorCtor,
+		Ctor: SELMulticallBatchError,
 		name: "SELMulticallBatchError",
 		parents: [SELContractError, SELRuntimeError, SELError, Error],
 		extraProps: {
@@ -72,21 +72,21 @@ const errorCases: ErrorCase[] = [
 		},
 	},
 	{
-		Ctor: SELCircularDependencyError as AnyErrorCtor,
+		Ctor: SELCircularDependencyError,
 		name: "SELCircularDependencyError",
 		parents: [SELExecutionError, SELRuntimeError, SELError, Error],
 		extraProps: { callIds: ["call-1", "call-2"] },
 		defaultProps: { callIds: [] },
 	},
 	{
-		Ctor: SELExecutionLimitError as AnyErrorCtor,
+		Ctor: SELExecutionLimitError,
 		name: "SELExecutionLimitError",
 		parents: [SELExecutionError, SELRuntimeError, SELError, Error],
 		extraProps: { limitType: "maxCalls", limit: 50, actual: 51 },
 		defaultProps: { limitType: "maxRounds", limit: 0, actual: 0 },
 	},
 	{
-		Ctor: SELProviderTransportError as AnyErrorCtor,
+		Ctor: SELProviderTransportError,
 		name: "SELProviderTransportError",
 		parents: [SELProviderError, SELRuntimeError, SELError, Error],
 		extraProps: {
@@ -96,7 +96,7 @@ const errorCases: ErrorCase[] = [
 		},
 	},
 	{
-		Ctor: SELProviderRpcError as AnyErrorCtor,
+		Ctor: SELProviderRpcError,
 		name: "SELProviderRpcError",
 		parents: [SELProviderError, SELRuntimeError, SELError, Error],
 		extraProps: {
@@ -106,7 +106,7 @@ const errorCases: ErrorCase[] = [
 		},
 	},
 	{
-		Ctor: SELClientError as AnyErrorCtor,
+		Ctor: SELClientError,
 		name: "SELClientError",
 		parents: [SELStaticError, SELError, Error],
 		extraProps: {},

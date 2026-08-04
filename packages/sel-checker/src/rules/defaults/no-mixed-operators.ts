@@ -40,7 +40,7 @@ export const noMixedOperators: SELRule = {
 			}
 
 			const opposite = node.op === "&&" ? "||" : "&&";
-			const [left, right] = node.args as [ASTNode, ASTNode];
+			const [left, right] = node.args;
 
 			for (const child of [left, right]) {
 				if (child.op === opposite && !hasExplicitParens(node.input, child)) {

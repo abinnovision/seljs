@@ -98,7 +98,7 @@ describe("src/environment/error-wrapper.ts", () => {
 		it("wraps ContractFunctionRevertedError as SELContractRevertError", () => {
 			const revert = new ContractFunctionRevertedError({
 				abi: [],
-				data: "0x08c379a0" as `0x${string}`,
+				data: "0x08c379a0",
 				functionName: "transfer",
 			});
 			const result = wrapError(revert);
@@ -119,7 +119,7 @@ describe("src/environment/error-wrapper.ts", () => {
 
 		it("wraps AbiDecodingDataSizeInvalidError as SELContractError", () => {
 			const err = new AbiDecodingDataSizeInvalidError({
-				data: "0x00" as `0x${string}`,
+				data: "0x00",
 				size: 1,
 			});
 			expect(wrapError(err)).toBeInstanceOf(SELContractError);
@@ -178,7 +178,7 @@ describe("src/environment/error-wrapper.ts", () => {
 		it("walks into nested ContractFunctionRevertedError through a transport error", () => {
 			const revert = new ContractFunctionRevertedError({
 				abi: [],
-				data: "0x08c379a0" as `0x${string}`,
+				data: "0x08c379a0",
 				functionName: "transfer",
 			});
 			const outer = new ContractFunctionExecutionError(revert, {

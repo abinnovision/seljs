@@ -707,7 +707,7 @@ describe("integration", () => {
 		const createPoolRoutes = () =>
 			buildRoutes(
 				routeFor({
-					abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
+					abi: STRUCT_POOL_ABI,
 					functionName: "getPool",
 					address: POOL_ADDRESS,
 					result: { token: TOKEN_ADDR, balance: 500n },
@@ -717,7 +717,7 @@ describe("integration", () => {
 		const createPairRoutes = () =>
 			buildRoutes(
 				routeFor({
-					abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
+					abi: MULTI_RETURN_PAIR_ABI,
 					functionName: "getReserves",
 					address: PAIR_ADDRESS,
 					result: [112n, 224n, 1000],
@@ -733,7 +733,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
+							abi: STRUCT_POOL_ABI,
 						},
 					},
 				}),
@@ -754,7 +754,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
+							abi: STRUCT_POOL_ABI,
 						},
 					},
 				}),
@@ -775,7 +775,7 @@ describe("integration", () => {
 					contracts: {
 						pair: {
 							address: PAIR_ADDRESS,
-							abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
+							abi: MULTI_RETURN_PAIR_ABI,
 						},
 					},
 				}),
@@ -794,7 +794,7 @@ describe("integration", () => {
 					contracts: {
 						pair: {
 							address: PAIR_ADDRESS,
-							abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
+							abi: MULTI_RETURN_PAIR_ABI,
 						},
 					},
 				}),
@@ -810,7 +810,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
+							abi: STRUCT_POOL_ABI,
 						},
 					},
 				}),
@@ -832,7 +832,7 @@ describe("integration", () => {
 					contracts: {
 						pool: {
 							address: POOL_ADDRESS,
-							abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
+							abi: STRUCT_POOL_ABI,
 						},
 					},
 				}),
@@ -849,11 +849,11 @@ describe("integration", () => {
 				contracts: {
 					pool: {
 						address: POOL_ADDRESS,
-						abi: STRUCT_POOL_ABI as unknown as Abi.Abi,
+						abi: STRUCT_POOL_ABI,
 					},
 					pair: {
 						address: PAIR_ADDRESS,
-						abi: MULTI_RETURN_PAIR_ABI as unknown as Abi.Abi,
+						abi: MULTI_RETURN_PAIR_ABI,
 					},
 				},
 			});
@@ -1332,7 +1332,7 @@ describe("integration", () => {
 		it("evaluates user.balance() via Multicall3 getEthBalance", async () => {
 			const routes = buildRoutes(
 				routeFor({
-					abi: GET_ETH_BALANCE_ABI as unknown as Abi.Abi,
+					abi: GET_ETH_BALANCE_ABI,
 					functionName: "getEthBalance",
 					address: MULTICALL3_ADDRESS,
 					result: (args: readonly unknown[]) => {
@@ -1372,7 +1372,7 @@ describe("integration", () => {
 					result: 1000n,
 				}),
 				routeFor({
-					abi: GET_ETH_BALANCE_ABI as unknown as Abi.Abi,
+					abi: GET_ETH_BALANCE_ABI,
 					functionName: "getEthBalance",
 					address: MULTICALL3_ADDRESS,
 
@@ -1406,7 +1406,7 @@ describe("integration", () => {
 		it("includes balance() in execution metadata", async () => {
 			const routes = buildRoutes(
 				routeFor({
-					abi: GET_ETH_BALANCE_ABI as unknown as Abi.Abi,
+					abi: GET_ETH_BALANCE_ABI,
 					functionName: "getEthBalance",
 					address: MULTICALL3_ADDRESS,
 					result: 1_000_000_000_000_000_000n,

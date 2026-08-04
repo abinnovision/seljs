@@ -150,9 +150,7 @@ export const executeContractCall = async (
 
 		const revertData = extractRevertData(error);
 		if (revertData !== undefined) {
-			const decoded = decodeRevertData(revertData, [
-				method.abi,
-			] as unknown as Abi.Abi);
+			const decoded = decodeRevertData(revertData, [method.abi]);
 			const suffix = decoded.reason ? ` — ${decoded.reason}` : "";
 			throw new SELContractRevertError(
 				`Call reverted: ${contract.name}.${method.name}${suffix}`,

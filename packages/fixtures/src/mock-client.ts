@@ -70,7 +70,7 @@ const routeCall = (
 	return encodeFunctionResult({
 		abi: route.abi,
 		functionName: route.functionName,
-		result: value as never,
+		result: value,
 	});
 };
 
