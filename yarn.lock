@@ -392,9 +392,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/language@npm:^6.0.0, @codemirror/language@npm:^6.12.2":
-  version: 6.12.2
-  resolution: "@codemirror/language@npm:6.12.2"
+"@codemirror/language@npm:^6.0.0, @codemirror/language@npm:^6.12.4":
+  version: 6.12.4
+  resolution: "@codemirror/language@npm:6.12.4"
   dependencies:
     "@codemirror/state": "npm:^6.0.0"
     "@codemirror/view": "npm:^6.23.0"
@@ -402,7 +402,7 @@ __metadata:
     "@lezer/highlight": "npm:^1.0.0"
     "@lezer/lr": "npm:^1.0.0"
     style-mod: "npm:^4.0.0"
-  checksum: 10/9afc704e17cad4782b68ad02869503a27103c4c3ac6927d2ffa3c6decfad627ade40b0ed78d1d6e941b2e879a7a79bda0d573e58604f3923f9e1f3311108ec36
+  checksum: 10/6a9af11337d15036761ad959dceba4cfd054cdfae84afa4d54534927d277591a57c2b581f66df4428510dd06c641151aa699ab1dc7c338d923ac06a219d83bc6
   languageName: node
   linkType: hard
 
@@ -1583,7 +1583,7 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.2.2"
     "@abinnovision/prettier-config": "npm:^2.1.5"
-    "@codemirror/language": "npm:^6.12.2"
+    "@codemirror/language": "npm:^6.12.4"
     "@lezer/generator": "npm:^1.8.0"
     "@lezer/highlight": "npm:^1.2.3"
     "@lezer/lr": "npm:^1.4.8"
@@ -1703,7 +1703,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.1.5"
     "@codemirror/autocomplete": "npm:^6.20.1"
     "@codemirror/commands": "npm:^6.10.3"
-    "@codemirror/language": "npm:^6.12.2"
+    "@codemirror/language": "npm:^6.12.4"
     "@codemirror/lint": "npm:^6.9.5"
     "@codemirror/state": "npm:^6.6.0"
     "@codemirror/view": "npm:^6.40.0"
