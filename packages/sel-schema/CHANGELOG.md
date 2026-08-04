@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/abinnovision/seljs/compare/schema-v1.3.0...schema-v1.4.0) (2026-08-04)
+
+
+### Bug Fixes
+
+* **sel-schema:** add _extension field for consumer-defined metadata ([#119](https://github.com/abinnovision/seljs/issues/119)) ([186d737](https://github.com/abinnovision/seljs/commit/186d737c2bf5094e729670ed7035cb2631a084f1))
+* upgrade typescript to v6.0.3 ([#126](https://github.com/abinnovision/seljs/issues/126)) ([8602f47](https://github.com/abinnovision/seljs/commit/8602f47edaa60ee76022e175812cb22999e6245d))
+
 ## [1.3.0](https://github.com/abinnovision/seljs/compare/schema-v1.2.0...schema-v1.3.0) (2026-04-25)
 
 

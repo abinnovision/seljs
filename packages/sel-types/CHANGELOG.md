@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/abinnovision/seljs/compare/types-v1.3.0...types-v1.4.0) (2026-08-04)
+
+
+### Bug Fixes
+
+* upgrade typescript to v6.0.3 ([#126](https://github.com/abinnovision/seljs/issues/126)) ([8602f47](https://github.com/abinnovision/seljs/commit/8602f47edaa60ee76022e175812cb22999e6245d))
+
 ## [1.3.0](https://github.com/abinnovision/seljs/compare/types-v1.2.0...types-v1.3.0) (2026-04-25)
 
 
