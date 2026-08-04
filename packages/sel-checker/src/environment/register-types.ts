@@ -10,7 +10,11 @@ import {
 	toAddress,
 	toBigInt,
 } from "@seljs/types";
-import { keccak256 as viemKeccak256, toBytes as viemToBytes } from "viem";
+import {
+	keccak256 as viemKeccak256,
+	namehash as viemNamehash,
+	toBytes as viemToBytes,
+} from "viem";
 
 import type { Environment } from "@marcbachmann/cel-js";
 
@@ -545,6 +549,9 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 	}
 
 	env.registerType("SelNamespace", { ctor: SelNamespace, fields: selFields });
+	env.registerFunction("SelNamespace.namehash(string): bytes", (_sel, name) =>
+		hexToBytes(viemNamehash(name as string)),
+	);
 	env.registerConstant(
 		"sel",
 		"SelNamespace",

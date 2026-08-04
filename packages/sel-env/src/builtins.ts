@@ -246,6 +246,15 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 		returns: "bytes",
 	},
 	{
+		name: "namehash",
+		signature: "sel.namehash(name: string): bytes",
+		description:
+			'Computes the ENS namehash of a dot-separated domain name (e.g. sel.namehash("vitalik.eth")). Returns the bytes32 node used to key ENS registry/resolver lookups.',
+		params: [{ name: "name", type: "string" }],
+		returns: "bytes",
+		receiverType: "SelNamespace",
+	},
+	{
 		name: "timestamp",
 		signature: "timestamp(string): timestamp",
 		description: "Parses a timestamp string",
