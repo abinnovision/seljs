@@ -14,6 +14,9 @@ updates:
       prefix-development: "build(deps)"
     cooldown:
       default-days: 5
+    ignore:
+      - dependency-name: "typescript"
+        versions: ["7.0.x"]
     groups:
       production-dependencies:
         dependency-type: production
