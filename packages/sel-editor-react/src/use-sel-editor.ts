@@ -1,10 +1,7 @@
-import {
-	createSELEditor,
-	type EditorView,
-	type SELEditorConfig,
-} from "@seljs/editor";
+import { createSELEditor } from "@seljs/editor";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import type { EditorView, SELEditorConfig } from "@seljs/editor";
 import type { RefCallback } from "react";
 
 export interface UseSELEditorResult {

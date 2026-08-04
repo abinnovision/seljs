@@ -1,5 +1,6 @@
-import { linter, type Diagnostic } from "@codemirror/lint";
+import { linter } from "@codemirror/lint";
 
+import type { Diagnostic } from "@codemirror/lint";
 import type { Extension } from "@codemirror/state";
 import type { SELDiagnostic } from "@seljs/checker";
 

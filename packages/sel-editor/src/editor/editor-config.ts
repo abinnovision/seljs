@@ -1,7 +1,7 @@
 import { closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { bracketMatching } from "@codemirror/language";
-import { EditorState, type Extension } from "@codemirror/state";
+import { EditorState } from "@codemirror/state";
 import { EditorView, keymap, placeholder, tooltips } from "@codemirror/view";
 import { celLanguageSupport } from "@seljs/cel-lezer";
 import { SELChecker } from "@seljs/checker";
@@ -14,6 +14,7 @@ import { createSemanticHighlighter } from "../language/semantic-highlighter";
 import { createSELLinter } from "../linting";
 
 import type { SELEditorConfig, SELEditorFeatures } from "./types";
+import type { Extension } from "@codemirror/state";
 
 const resolveFeatures = (features?: SELEditorFeatures) => ({
 	linting: features?.linting ?? true,

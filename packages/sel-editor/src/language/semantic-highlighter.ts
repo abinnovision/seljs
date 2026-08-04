@@ -1,14 +1,10 @@
 import { syntaxTree } from "@codemirror/language";
-import { type Extension, RangeSetBuilder } from "@codemirror/state";
-import {
-	Decoration,
-	type DecorationSet,
-	ViewPlugin,
-	type ViewUpdate,
-} from "@codemirror/view";
+import { RangeSetBuilder } from "@codemirror/state";
+import { Decoration, ViewPlugin } from "@codemirror/view";
 
 import type { TokenizerConfig } from "./tokenizer-config";
-import type { EditorView } from "@codemirror/view";
+import type { Extension } from "@codemirror/state";
+import type { DecorationSet, ViewUpdate, EditorView } from "@codemirror/view";
 
 const LIGHT_COLORS = {
 	contract: "#00695c",

@@ -1,4 +1,4 @@
-import { type Abi, AbiFunction } from "ox";
+import { AbiFunction } from "ox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { multicall3Function } from "./multicall.js";
@@ -9,6 +9,7 @@ import type {
 	ExecutionRound,
 } from "../analysis/types.js";
 import type { SELClient } from "../environment/client.js";
+import type { Abi } from "ox";
 
 const { MultiRoundExecutor } = await import("./multi-round-executor.js");
 

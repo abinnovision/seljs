@@ -1,11 +1,10 @@
 import {
-	type Abi,
-	type Address,
-	type PublicClient,
 	decodeFunctionData,
 	encodeAbiParameters,
 	encodeFunctionResult,
 } from "viem";
+
+import type { Abi, Address, PublicClient } from "viem";
 
 const MULTICALL3_ADDRESS = "0xcA11bde05977b3631167028862bE2a173976CA11";
 

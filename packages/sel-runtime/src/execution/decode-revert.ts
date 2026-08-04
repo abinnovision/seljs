@@ -1,4 +1,6 @@
-import { type Abi, AbiError } from "ox";
+import { AbiError } from "ox";
+
+import type { Abi } from "ox";
 
 interface DecodedRevert {
 	data: `0x${string}`;

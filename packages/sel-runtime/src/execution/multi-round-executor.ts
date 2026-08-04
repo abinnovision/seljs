@@ -1,8 +1,9 @@
 import { MulticallBatcher } from "./multicall-batcher.js";
 import { ResultCache } from "./result-cache.js";
-import { type ContractInfo, RoundExecutor } from "./round-executor.js";
+import { RoundExecutor } from "./round-executor.js";
 import { createLogger } from "../debug.js";
 
+import type { ContractInfo } from "./round-executor.js";
 import type { ExecutionContext, ExecutionResult } from "./types.js";
 import type { ExecutionPlan } from "../analysis/types.js";
 import type { SELClient } from "../environment/client.js";

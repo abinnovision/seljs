@@ -1,7 +1,9 @@
-import { type ASTNode, Environment } from "@marcbachmann/cel-js";
+import { Environment } from "@marcbachmann/cel-js";
 import { describe, expect, it } from "vitest";
 
 import { collectCalls } from "./call-collector.js";
+
+import type { ASTNode } from "@marcbachmann/cel-js";
 
 /**
  * Creates a simple contract lookup map for testing.

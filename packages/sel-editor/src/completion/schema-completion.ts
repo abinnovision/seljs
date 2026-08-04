@@ -1,9 +1,4 @@
-import {
-	autocompletion,
-	type CompletionContext,
-	type CompletionResult,
-	type Completion,
-} from "@codemirror/autocomplete";
+import { autocompletion } from "@codemirror/autocomplete";
 import { isTypeCompatible } from "@seljs/checker";
 
 import {
@@ -15,6 +10,11 @@ import {
 } from "./completion-items";
 import { getCompletionContext } from "./tree-context";
 
+import type {
+	CompletionContext,
+	CompletionResult,
+	Completion,
+} from "@codemirror/autocomplete";
 import type { Extension } from "@codemirror/state";
 import type { SELChecker, CompletionItem } from "@seljs/checker";
 import type { SELSchema } from "@seljs/schema";
