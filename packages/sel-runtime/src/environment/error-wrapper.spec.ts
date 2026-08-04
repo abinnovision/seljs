@@ -58,17 +58,17 @@ describe("src/environment/error-wrapper.ts", () => {
 			const contractErr = new SELContractError("inner", {
 				contractName: "vault",
 			});
-			const evalErr = new (EvaluationError as new (
-				...args: unknown[]
-			) => EvaluationError)("eval fail", undefined, contractErr);
+			const evalErr = new (
+				EvaluationError as new (...args: unknown[]) => EvaluationError
+			)("eval fail", undefined, contractErr);
 			expect(wrapError(evalErr)).toBe(contractErr);
 		});
 
 		it("wraps EvaluationError with non-SEL cause as SELEvaluationError", () => {
 			const cause = new Error("generic");
-			const evalErr = new (EvaluationError as new (
-				...args: unknown[]
-			) => EvaluationError)("eval fail", undefined, cause);
+			const evalErr = new (
+				EvaluationError as new (...args: unknown[]) => EvaluationError
+			)("eval fail", undefined, cause);
 			const result = wrapError(evalErr);
 			expect(result).toBeInstanceOf(SELEvaluationError);
 			expect(result.cause).toBe(evalErr);
@@ -85,9 +85,9 @@ describe("src/environment/error-wrapper.ts", () => {
 				status: 500,
 				body: { method: "eth_call" },
 			});
-			const evalErr = new (EvaluationError as new (
-				...args: unknown[]
-			) => EvaluationError)("eval fail", undefined, viemErr);
+			const evalErr = new (
+				EvaluationError as new (...args: unknown[]) => EvaluationError
+			)("eval fail", undefined, viemErr);
 			const result = wrapError(evalErr);
 			expect(result).toBeInstanceOf(SELProviderTransportError);
 			expect((result as SELProviderTransportError).httpStatus).toBe(500);

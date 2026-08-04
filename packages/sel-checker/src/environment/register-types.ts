@@ -24,11 +24,13 @@ import type { Environment } from "@marcbachmann/cel-js";
  * to void — registerSolidityTypes never chains the return value.
  */
 type SolidityTypeHost = {
-	[K in
-		| "registerType"
-		| "registerOperator"
-		| "registerFunction"
-		| "registerConstant"]: (...args: Parameters<Environment[K]>) => void;
+	[
+		K in
+			| "registerType"
+			| "registerOperator"
+			| "registerFunction"
+			| "registerConstant"
+	]: (...args: Parameters<Environment[K]>) => void;
 };
 
 /**

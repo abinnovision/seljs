@@ -56,13 +56,13 @@
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.2.2",
-		"@abinnovision/prettier-config": "^2.1.5",
+		"@abinnovision/prettier-config": "^2.2.0",
 		"@seljs-internal/tsconfig": "workspace:^",
-		"eslint": "^9.39.4",
-		"prettier": "^3.8.1",
+		"eslint": "^9.39.5",
+		"prettier": "^3.9.6",
 		"tsdown": "^0.22.14",
 		"typescript": "^6.0.3",
-		"vitest": "^4.1.0"
+		"vitest": "^4.1.10"
 	},
 	"publishConfig": {
 		"npm": true,
