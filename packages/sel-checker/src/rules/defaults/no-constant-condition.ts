@@ -2,7 +2,6 @@ import { walkAST } from "../../utils/index.js";
 
 import type { SELDiagnostic } from "../../checker/index.js";
 import type { RuleContext, SELRule } from "../types.js";
-import type { ASTNode } from "@marcbachmann/cel-js";
 
 /**
  * Flags conditions that are always true or always false:
@@ -22,7 +21,7 @@ export const noConstantCondition: SELRule = {
 		walkAST(context.ast, (node) => {
 			// Check && / || with boolean literal operands
 			if (node.op === "&&" || node.op === "||") {
-				const [left, right] = node.args as [ASTNode, ASTNode];
+				const [left, right] = node.args;
 
 				if (left.op === "value" && typeof left.args === "boolean") {
 					diagnostics.push(
@@ -47,7 +46,7 @@ export const noConstantCondition: SELRule = {
 
 			// Check == / != where both sides are literals
 			if (node.op === "==" || node.op === "!=") {
-				const [left, right] = node.args as [ASTNode, ASTNode];
+				const [left, right] = node.args;
 
 				if (left.op === "value" && right.op === "value") {
 					diagnostics.push(

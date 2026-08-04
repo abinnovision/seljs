@@ -33,12 +33,11 @@ const {
 const makeContract = (
 	name = "erc20",
 	address = "0x1234" as const,
-): ContractSchema =>
-	({
-		name,
-		address,
-		methods: [],
-	}) as unknown as ContractSchema;
+): ContractSchema => ({
+	name,
+	address,
+	methods: [],
+});
 
 const makeMethod = (name = "balanceOf", paramType = "address"): MethodSchema =>
 	({

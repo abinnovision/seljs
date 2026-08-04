@@ -2,7 +2,6 @@ import { walkAST } from "../../utils/index.js";
 
 import type { SELDiagnostic } from "../../checker/index.js";
 import type { RuleContext, SELRule } from "../types.js";
-import type { ASTNode } from "@marcbachmann/cel-js";
 
 /**
  * Flags redundant boolean comparisons: `x == true`, `x != false`, etc.
@@ -22,7 +21,7 @@ export const noRedundantBool: SELRule = {
 				return;
 			}
 
-			const [left, right] = node.args as [ASTNode, ASTNode];
+			const [left, right] = node.args;
 			const leftIsBool = left.op === "value" && typeof left.args === "boolean";
 			const rightIsBool =
 				right.op === "value" && typeof right.args === "boolean";

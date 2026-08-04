@@ -30,7 +30,7 @@ describe("src/type-conversion-errors.spec.ts", () => {
 		});
 
 		it("throws SELTypeConversionError via SolidityIntTypeWrapper constructor", () => {
-			expect(() => new SolidityIntTypeWrapper({} as unknown)).toThrow(
+			expect(() => new SolidityIntTypeWrapper({})).toThrow(
 				SELTypeConversionError,
 			);
 		});
@@ -52,7 +52,7 @@ describe("src/type-conversion-errors.spec.ts", () => {
 		});
 
 		it("throws SELTypeConversionError via SolidityAddressTypeWrapper constructor", () => {
-			expect(() => new SolidityAddressTypeWrapper(123 as unknown)).toThrow(
+			expect(() => new SolidityAddressTypeWrapper(123)).toThrow(
 				SELTypeConversionError,
 			);
 		});

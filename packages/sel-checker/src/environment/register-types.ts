@@ -437,7 +437,7 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 				returnType: "sol_int",
 				params: [],
 			},
-			handler as (...args: unknown[]) => unknown,
+			handler,
 		);
 	};
 
