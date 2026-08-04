@@ -63,8 +63,7 @@ export interface CelTypeToTs {
  * A context field can be a bare CEL type string or an object with type and description.
  */
 export type ContextFieldDefinition =
-	| ContextCelType
-	| { type: ContextCelType; description: string };
+	ContextCelType | { type: ContextCelType; description: string };
 
 /**
  * Flat definition of context variables: key is the variable name, value is the CEL type or a typed object with description.
