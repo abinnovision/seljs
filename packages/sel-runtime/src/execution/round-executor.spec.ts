@@ -1,5 +1,5 @@
 import { SELConfigError } from "@seljs/common";
-import { type Abi, AbiError, AbiFunction } from "ox";
+import { AbiError, AbiFunction } from "ox";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ResultCache } from "./result-cache.js";
@@ -13,6 +13,7 @@ import type { MulticallBatcher } from "./multicall-batcher.js";
 import type { MulticallResult } from "./multicall.js";
 import type { ExecutionContext } from "./types.js";
 import type { CollectedCall, ExecutionRound } from "../analysis/types.js";
+import type { Abi } from "ox";
 
 const TEST_ABI: Abi.Abi = [
 	{

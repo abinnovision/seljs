@@ -1,4 +1,4 @@
-import { type Abi, AbiFunction } from "ox";
+import { AbiFunction } from "ox";
 import { BaseError as ViemBaseError } from "viem";
 
 import { createReplayCallId } from "./replay-cache.js";
@@ -13,6 +13,7 @@ import { decodeRevertData } from "../execution/decode-revert.js";
 import type { SELClient } from "./client.js";
 import type { CelCodecRegistry } from "@seljs/checker";
 import type { ContractSchema, MethodSchema } from "@seljs/schema";
+import type { Abi } from "ox";
 
 /*
  * Direct client.call() reverts surface as ExecutionRevertedError, not

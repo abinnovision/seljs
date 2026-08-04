@@ -1,6 +1,8 @@
-import { type Extension, StateEffect, StateField } from "@codemirror/state";
-import { EditorView, showPanel, type Panel } from "@codemirror/view";
+import { StateEffect, StateField } from "@codemirror/state";
+import { EditorView, showPanel } from "@codemirror/view";
 
+import type { Extension } from "@codemirror/state";
+import type { Panel } from "@codemirror/view";
 import type { SELChecker } from "@seljs/checker";
 
 const setType = StateEffect.define<string | null>();

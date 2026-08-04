@@ -1,14 +1,10 @@
 import { AbiFunction } from "ox";
 
-import {
-	MULTICALL3_ADDRESS,
-	type MulticallCall,
-	type MulticallResult,
-	multicall3Function,
-} from "./multicall.js";
+import { MULTICALL3_ADDRESS, multicall3Function } from "./multicall.js";
 import { createLogger } from "../debug.js";
 import { SELMulticallBatchError } from "../errors/index.js";
 
+import type { MulticallCall, MulticallResult } from "./multicall.js";
 import type { SELClient } from "../environment/client.js";
 
 const debug = createLogger("execute:multicall");

@@ -1,5 +1,5 @@
 import { SELConfigError } from "@seljs/common";
-import { type Abi, AbiFunction } from "ox";
+import { AbiFunction } from "ox";
 
 import { decodeRevertData } from "./decode-revert.js";
 import { createLogger } from "../debug.js";
@@ -13,6 +13,7 @@ import type { MulticallCall } from "./multicall.js";
 import type { ResultCache } from "./result-cache.js";
 import type { ExecutionContext } from "./types.js";
 import type { CallArgument, ExecutionRound } from "../analysis/types.js";
+import type { Abi } from "ox";
 
 const debug = createLogger("execute:round");
 

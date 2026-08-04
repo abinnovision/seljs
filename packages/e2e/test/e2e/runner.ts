@@ -182,7 +182,6 @@ const runFixtureGroup = (group: AbiFixtureGroup): void => {
 		const completionRows: CompletionRow[] = group.cases
 			.filter((c) => c.completions && c.completions.length > 0)
 			.flatMap((c) =>
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- filtered above
 				c.completions!.map(
 					(a) =>
 						[
@@ -217,7 +216,6 @@ const runFixtureGroup = (group: AbiFixtureGroup): void => {
 		const typeAtRows: TypeAtRow[] = group.cases
 			.filter((c) => c.typeAt && c.typeAt.length > 0)
 			.flatMap((c) =>
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- filtered above
 				c.typeAt!.map(
 					(a) =>
 						[`${labelFor(c)} @ offset ${String(a.offset)}`, c, a] as TypeAtRow,
@@ -238,7 +236,6 @@ const runFixtureGroup = (group: AbiFixtureGroup): void => {
 		const expectedTypeAtRows: ExpectedTypeAtRow[] = group.cases
 			.filter((c) => c.expectedTypeAt && c.expectedTypeAt.length > 0)
 			.flatMap((c) =>
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- filtered above
 				c.expectedTypeAt!.map(
 					(a) =>
 						[
