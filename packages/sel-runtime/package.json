@@ -49,14 +49,14 @@
 		]
 	},
 	"dependencies": {
-		"@marcbachmann/cel-js": "^7.5.3",
+		"@marcbachmann/cel-js": "^8.0.0",
 		"@seljs/checker": "workspace:*",
 		"@seljs/common": "workspace:*",
 		"@seljs/env": "workspace:*",
 		"@seljs/schema": "workspace:*",
 		"@seljs/types": "workspace:*",
 		"debug": "^4.4.3",
-		"ox": "^0.14.20",
+		"ox": "^1.4.0",
 		"viem": "^2.55.10"
 	},
 	"devDependencies": {
