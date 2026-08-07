@@ -1204,7 +1204,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/ciphers@npm:^2.2.0":
+"@noble/ciphers@npm:^2.2.0, @noble/ciphers@npm:~2.2.0":
   version: 2.2.0
   resolution: "@noble/ciphers@npm:2.2.0"
   checksum: 10/d75348aa682b41ad3e24cdd0a56c6d9ca033fb629ab93f37d6690be41c4882359b27598a11af0f5439ba82df4f9e3875dea1f875064310f68fef63cf24e3481a
@@ -1220,7 +1220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:2.2.0, @noble/curves@npm:^2.2.0":
+"@noble/curves@npm:2.2.0, @noble/curves@npm:^2.2.0, @noble/curves@npm:~2.2.0":
   version: 2.2.0
   resolution: "@noble/curves@npm:2.2.0"
   dependencies:
@@ -1245,10 +1245,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:2.2.0, @noble/hashes@npm:^2.2.0":
+"@noble/hashes@npm:2.2.0, @noble/hashes@npm:^2.2.0, @noble/hashes@npm:~2.2.0":
   version: 2.2.0
   resolution: "@noble/hashes@npm:2.2.0"
   checksum: 10/b1b78bedc2a01394be047429f3d888905015fe8a09f1b7e43e0b5736b54133df62f73dcc73ede43af38e96e86156afb45b86973fdeaa95d9f0880333c3fc0907
+  languageName: node
+  linkType: hard
+
+"@noble/post-quantum@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "@noble/post-quantum@npm:0.6.1"
+  dependencies:
+    "@noble/ciphers": "npm:~2.2.0"
+    "@noble/curves": "npm:~2.2.0"
+    "@noble/hashes": "npm:~2.2.0"
+  checksum: 10/befe191f3a648082938e45b837fbec42f55b3f57e3bfb9efcbcf1227f633013abaa57d0a1c449e0c0fe0d5bd066bed8d433e462d3c5f019cbb3b31bfa0770fbc
   languageName: node
   linkType: hard
 
@@ -2005,7 +2016,7 @@ __metadata:
     concurrently: "npm:^10.0.4"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.8.0"
-    ox: "npm:^1.5.0"
+    ox: "npm:^1.6.0"
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
@@ -5228,14 +5239,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "ox@npm:1.5.0"
+"ox@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "ox@npm:1.6.0"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^2.2.0"
     "@noble/curves": "npm:^2.2.0"
     "@noble/hashes": "npm:^2.2.0"
+    "@noble/post-quantum": "npm:^0.6.1"
     "@scure/bip32": "npm:^2.0.0"
     "@scure/bip39": "npm:^2.0.0"
     abitype: "npm:^1.3.0"
@@ -5246,7 +5258,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/6c453e9ac269af9a340773cde536713f94fcd1f2c141737062b0b24386a07965ca2d0dd16ded719333dcfc4890073d04911db764a5b73c77c3e02495dd2c36a6
+  checksum: 10/fd2d9d800f29095cf15f3e63541d07936b1933c3da6483ab86272126bf5aa27a652aef8c92529e0a4782f47f1d7987cce6cda5a134070592098e19b9b304e383
   languageName: node
   linkType: hard
 
