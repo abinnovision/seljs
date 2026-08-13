@@ -58,7 +58,7 @@
 		"@abinnovision/prettier-config": "^2.2.0",
 		"@lezer/generator": "^1.8.0",
 		"@seljs-internal/tsconfig": "workspace:^",
-		"eslint": "^10.8.0",
+		"eslint": "^10.8.1",
 		"prettier": "^3.9.6",
 		"tsdown": "^0.22.14",
 		"typescript": "^6.0.3",
