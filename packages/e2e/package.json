@@ -29,7 +29,7 @@
 		"@seljs/runtime": "workspace:*",
 		"@seljs/schema": "workspace:*",
 		"@seljs/types": "workspace:*",
-		"viem": "^2.55.11"
+		"viem": "^2.55.16"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.2",
