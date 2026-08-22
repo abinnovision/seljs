@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/abinnovision/seljs/compare/common-v1.4.0...common-v1.4.1) (2026-08-04)
+
+
+### Miscellaneous Chores
+
+* **common:** Synchronize sel versions
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/common-v1.3.0...common-v1.4.0) (2026-08-04)
 
 
