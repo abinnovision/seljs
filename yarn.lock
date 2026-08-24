@@ -323,15 +323,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/commands@npm:^6.10.4":
-  version: 6.10.4
-  resolution: "@codemirror/commands@npm:6.10.4"
+"@codemirror/commands@npm:^6.11.0":
+  version: 6.11.0
+  resolution: "@codemirror/commands@npm:6.11.0"
   dependencies:
     "@codemirror/language": "npm:^6.0.0"
     "@codemirror/state": "npm:^6.7.0"
     "@codemirror/view": "npm:^6.27.0"
     "@lezer/common": "npm:^1.1.0"
-  checksum: 10/384808f8767967f7a2bf4007cb57e2b137e98fbeb6bb7239502b79ad06fb8039b67b43ab2f5eaf955a2569c65203c7a0e59ad758e7d90ba727936f9b2a77e47b
+  checksum: 10/a503625e6b5baeb748f391ff9fc83d875d65a0be303f4eefa84b2c128598ce1b792057bf0102276786afdc9e135d2da54074fc7138b5bc2a9be90e3054c6a271
   languageName: node
   linkType: hard
 
@@ -369,15 +369,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.42.0, @codemirror/view@npm:^6.43.8":
-  version: 6.43.8
-  resolution: "@codemirror/view@npm:6.43.8"
+"@codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.42.0, @codemirror/view@npm:^6.43.9":
+  version: 6.43.9
+  resolution: "@codemirror/view@npm:6.43.9"
   dependencies:
     "@codemirror/state": "npm:^6.7.0"
     crelt: "npm:^1.0.6"
     style-mod: "npm:^4.1.0"
     w3c-keyname: "npm:^2.2.4"
-  checksum: 10/88cd5543b09c4b945862ff128aeea48e259a582e1106fbc22370ddf773e629810b43baaf3abdf743150098e07c601ca481186cdf46b537f0312452fa2e7e8f51
+  checksum: 10/b653dddf81278311985a8f7723f6b0ac50f4ff019725dc4020c40c4d4707f209067e6edbd1f022cb40176d8a0b327c72d3234d2a5c815be689ca2cc1272466d6
   languageName: node
   linkType: hard
 
@@ -1759,7 +1759,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.55.11"
+    viem: "npm:^2.55.19"
     vitest: "npm:^4.1.10"
   languageName: unknown
   linkType: soft
@@ -1809,7 +1809,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.55.11"
+    viem: "npm:^2.55.19"
     vitest: "npm:^4.1.10"
     zod: "npm:^4.4.3"
   peerDependencies:
@@ -1849,7 +1849,7 @@ __metadata:
     eslint: "npm:^10.8.1"
     prettier: "npm:^3.9.6"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.55.11"
+    viem: "npm:^2.55.19"
     vitest: "npm:^4.1.10"
     zod: "npm:^4.4.3"
   languageName: unknown
@@ -1881,7 +1881,7 @@ __metadata:
     storybook: "npm:^10.5.8"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.55.11"
+    viem: "npm:^2.55.19"
     vite: "npm:^8.2.1"
     vitest: "npm:^4.1.10"
     zod: "npm:^4.4.3"
@@ -1898,11 +1898,11 @@ __metadata:
     "@abinnovision/eslint-config-base": "npm:^3.4.2"
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@codemirror/autocomplete": "npm:^6.20.3"
-    "@codemirror/commands": "npm:^6.10.4"
+    "@codemirror/commands": "npm:^6.11.0"
     "@codemirror/language": "npm:^6.12.4"
     "@codemirror/lint": "npm:^6.9.7"
     "@codemirror/state": "npm:^6.7.1"
-    "@codemirror/view": "npm:^6.43.8"
+    "@codemirror/view": "npm:^6.43.9"
     "@lezer/common": "npm:^1.5.2"
     "@lezer/highlight": "npm:^1.2.3"
     "@seljs-internal/tsconfig": "workspace:^"
@@ -1933,7 +1933,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.55.11"
+    viem: "npm:^2.55.19"
     vitest: "npm:^4.1.10"
   languageName: unknown
   linkType: soft
@@ -1977,11 +1977,11 @@ __metadata:
     concurrently: "npm:^10.0.4"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.8.1"
-    ox: "npm:^1.6.2"
+    ox: "npm:^1.7.0"
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.55.11"
+    viem: "npm:^2.55.19"
     vitest: "npm:^4.1.10"
     zod: "npm:^4.4.3"
   peerDependencies:
@@ -5179,9 +5179,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:0.14.33, ox@npm:^0.14.30":
-  version: 0.14.33
-  resolution: "ox@npm:0.14.33"
+"ox@npm:0.14.34, ox@npm:^0.14.30":
+  version: 0.14.34
+  resolution: "ox@npm:0.14.34"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^1.3.0"
@@ -5196,13 +5196,13 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/8a1390fa4799fc8629ea64c00b49fe4c5c93417c92033bad7599a1861842af202303ea1cdc85023f19145192563ebe9085609d84b0a3d0145ed1b61e579a2052
+  checksum: 10/11512fb79ff73e9b33b5ff7a0875cd8b09a55b10ac7905079c2b105d84a2e4649cbd4a5f19146bef9aa4b0806c0591da4baa12b9f629b41e9af0379ca5cd58ac
   languageName: node
   linkType: hard
 
-"ox@npm:^1.6.2":
-  version: 1.6.2
-  resolution: "ox@npm:1.6.2"
+"ox@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "ox@npm:1.7.0"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^2.2.0"
@@ -5219,7 +5219,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/0935a702a9c47fdc89a96e6db3a2c16e503f6aadd114b21f1aecebaa04b78f00910a768e90a461d706dbd94b9d0f848cf82015dfeaa8dde1f2d6b68cec7fa4c3
+  checksum: 10/23b13acdaab630bf0f854a29c8a672bfbfe24d17edd6f57c4af16cc555bac3ea7bc18842e81bb73359ed95c36a3b0bd879edf609e3b1c8746da72f76781a9f96
   languageName: node
   linkType: hard
 
@@ -6656,9 +6656,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.55.11":
-  version: 2.55.11
-  resolution: "viem@npm:2.55.11"
+"viem@npm:^2.55.19":
+  version: 2.55.19
+  resolution: "viem@npm:2.55.19"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6666,14 +6666,14 @@ __metadata:
     "@scure/bip39": "npm:1.6.0"
     abitype: "npm:1.2.3"
     isows: "npm:1.0.7"
-    ox: "npm:0.14.33"
+    ox: "npm:0.14.34"
     ws: "npm:8.21.0"
   peerDependencies:
     typescript: ">=5.0.4"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/de0a6e4937c3f979803a6c550dfa9477aa30f0e26262ddb98f0d195d384c0546395e369cc5e7ac47409fdcbfb8c854676b53506acc883735d4778cf25a973163
+  checksum: 10/ca989141ab0a10a3bc002ea37677c3aea550c9d0071bc3c4230f39ef920cd637adb484cff05bf2c56b779de1fbfbfecf3b91fce8e991cc4d506f6f413c07ab14
   languageName: node
   linkType: hard
 
