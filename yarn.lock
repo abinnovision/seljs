@@ -1984,7 +1984,7 @@ __metadata:
     concurrently: "npm:^10.0.5"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.9.0"
-    ox: "npm:^1.7.1"
+    ox: "npm:^1.7.2"
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
@@ -5228,9 +5228,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:^1.7.1":
-  version: 1.7.1
-  resolution: "ox@npm:1.7.1"
+"ox@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "ox@npm:1.7.2"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^2.2.0"
@@ -5247,7 +5247,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/7d59151e45676275cad7bc458b4e37877f2ad4ee3b446ed13be1ec28e0354f5d6313c14908f9fa3084daf313bbfc1deaf325971b2a516aa91fe1c039bce898f4
+  checksum: 10/50d148fa9f33f719555a9dd53b3a3c962bade50d5c308d54076d7fac293ae8c7187272394fa57cef1b5c5fb8bb3df39cab8074ca128e76afaff5c2d2fc22dba6
   languageName: node
   linkType: hard
 
