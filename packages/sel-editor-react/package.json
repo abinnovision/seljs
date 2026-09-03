@@ -61,7 +61,7 @@
 		"@seljs/checker": "workspace:*",
 		"@seljs/env": "workspace:^",
 		"@seljs/runtime": "workspace:^",
-		"@shazow/whatsabi": "^0.28.0",
+		"@shazow/whatsabi": "^0.29.0",
 		"@storybook/react": "^10.5.9",
 		"@storybook/react-vite": "^10.5.10",
 		"@testing-library/dom": "^10.4.1",
@@ -78,7 +78,7 @@
 		"viem": "^2.55.19",
 		"vite": "^8.2.2",
 		"vitest": "^4.1.11",
-		"zod": "^4.4.3"
+		"zod": "^4.5.2"
 	},
 	"peerDependencies": {
 		"react": ">= 18",

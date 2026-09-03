@@ -1828,7 +1828,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     viem: "npm:^2.55.19"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.4.3"
+    zod: "npm:^4.5.2"
   peerDependencies:
     zod: ^4.0.0
   languageName: unknown
@@ -1868,7 +1868,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     viem: "npm:^2.55.19"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.4.3"
+    zod: "npm:^4.5.2"
   languageName: unknown
   linkType: soft
 
@@ -1884,7 +1884,7 @@ __metadata:
     "@seljs/env": "workspace:^"
     "@seljs/runtime": "workspace:^"
     "@seljs/schema": "workspace:*"
-    "@shazow/whatsabi": "npm:^0.28.0"
+    "@shazow/whatsabi": "npm:^0.29.0"
     "@storybook/react": "npm:^10.5.9"
     "@storybook/react-vite": "npm:^10.5.10"
     "@testing-library/dom": "npm:^10.4.1"
@@ -1901,7 +1901,7 @@ __metadata:
     viem: "npm:^2.55.19"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.4.3"
+    zod: "npm:^4.5.2"
   peerDependencies:
     react: ">= 18"
     react-dom: ">= 18"
@@ -2000,7 +2000,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     viem: "npm:^2.55.19"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.4.3"
+    zod: "npm:^4.5.2"
   peerDependencies:
     zod: ^4.0.0
   languageName: unknown
@@ -2042,14 +2042,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@shazow/whatsabi@npm:^0.28.0":
-  version: 0.28.0
-  resolution: "@shazow/whatsabi@npm:0.28.0"
+"@shazow/whatsabi@npm:^0.29.0":
+  version: 0.29.0
+  resolution: "@shazow/whatsabi@npm:0.29.0"
   dependencies:
-    ox: "npm:^0.14.33"
-  peerDependencies:
-    "@noble/hashes": ^2.0.1
-  checksum: 10/818667dcad793444f42b9e291db2eee1067d265e8b30f1219c5d99aa0fb744a5fa34535e9622c0cb9982f1ffa0ecf331cec92640f9c1833e38a6c292193c5cea
+    ox: "npm:^1.7.2"
+  checksum: 10/18435e37f559fe8145807b5484b59ce0cd215f32693ae68462c29b7efc66c51186b6a5df4b39affe855b1052029e033ee0cca4b5786d70199c3945580903f4b2
   languageName: node
   linkType: hard
 
@@ -5217,27 +5215,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:^0.14.33":
-  version: 0.14.36
-  resolution: "ox@npm:0.14.36"
-  dependencies:
-    "@adraffy/ens-normalize": "npm:^1.11.0"
-    "@noble/ciphers": "npm:^1.3.0"
-    "@noble/curves": "npm:1.9.1"
-    "@noble/hashes": "npm:^1.8.0"
-    "@scure/bip32": "npm:^1.7.0"
-    "@scure/bip39": "npm:^1.6.0"
-    abitype: "npm:^1.2.3"
-    eventemitter3: "npm:5.0.1"
-  peerDependencies:
-    typescript: ">=5.4.0"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10/741d665e5e3509d4aa0422d6df733e29d2dcd197bffe96058a6d9dce3897c5df42f5696c13d41f3a2102b7c9d73d250ba0d2c58d9b6d1dce2c65c7c21b14036b
-  languageName: node
-  linkType: hard
-
 "ox@npm:^1.7.2":
   version: 1.7.2
   resolution: "ox@npm:1.7.2"
@@ -7182,9 +7159,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.4.3":
-  version: 4.4.3
-  resolution: "zod@npm:4.4.3"
-  checksum: 10/804b9a42aa8f35f2b3c5a8dff906291cb749115f83ee2afe3576d70b5b5c53c965365c7f4967690647a9c54af9838ff232a85ff9577a0a36c44b68bc6cdefe36
+"zod@npm:^4.4.3, zod@npm:^4.5.2":
+  version: 4.5.4
+  resolution: "zod@npm:4.5.4"
+  checksum: 10/b2fd4aaf358359650a1f27f303a462f0f49b4e5582f517ad8894ed566fdceb9da391b59babffe3c70574c8064174883735657eb28e12db5c7021455a631866c4
   languageName: node
   linkType: hard
