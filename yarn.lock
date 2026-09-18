@@ -1151,12 +1151,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@marcbachmann/cel-js@npm:7.5.3":
-  version: 7.5.3
-  resolution: "@marcbachmann/cel-js@npm:7.5.3"
+"@marcbachmann/cel-js@npm:8.0.0":
+  version: 8.0.0
+  resolution: "@marcbachmann/cel-js@npm:8.0.0"
   bin:
     cel-evaluate: bin/cel-evaluate.js
-  checksum: 10/1eef1e15f723feb5056c1eb3f8beecd519b0aeae2a872aafa955e87ce8d15dbdcce000fbdcb6dc4895e495c7f527ac34ff382478ebdbc7d462122e5ff805ce4c
+  checksum: 10/99cbff3ff069eb68e99a5b464770b299893f8aa088fd989e0999492eef262778e5243ceeade1e506973c3354af18ac90a54c072829f0e846131b6042e0ff973b
   languageName: node
   linkType: hard
 
@@ -1776,7 +1776,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.3"
+    viem: "npm:^2.56.5"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1826,7 +1826,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.3"
+    viem: "npm:^2.56.5"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -1866,7 +1866,7 @@ __metadata:
     eslint: "npm:^10.9.1"
     prettier: "npm:^3.9.6"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.3"
+    viem: "npm:^2.56.5"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   languageName: unknown
@@ -1898,7 +1898,7 @@ __metadata:
     storybook: "npm:^10.6.0"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.3"
+    viem: "npm:^2.56.5"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
@@ -1950,7 +1950,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.3"
+    viem: "npm:^2.56.5"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1998,7 +1998,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.3"
+    viem: "npm:^2.56.5"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -6646,9 +6646,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.56.3":
-  version: 2.56.3
-  resolution: "viem@npm:2.56.3"
+"viem@npm:^2.56.5":
+  version: 2.56.5
+  resolution: "viem@npm:2.56.5"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6663,7 +6663,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/5877be20f0fce5fd89801bee5530aadc57ebd8c94eb122c14d8c93b7dfcd0156beb47224a3a40de4f084b6366e658a24b2aaf7520fd38b2bd867de28770ec27d
+  checksum: 10/2c5f8b028579fb8550c9eb38a7228dc03b8461f6997a352a14e502f5d8970ad27bb85481d0cdf99bf9811a164bc2acfed2bd2a92f8a1ba81a7a9cc4148d30601
   languageName: node
   linkType: hard
 
