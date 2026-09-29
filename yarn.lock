@@ -1124,12 +1124,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.3":
-  version: 1.2.3
-  resolution: "@lezer/highlight@npm:1.2.3"
+"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "@lezer/highlight@npm:1.2.4"
   dependencies:
     "@lezer/common": "npm:^1.3.0"
-  checksum: 10/8f787d464f8a036f117a0b23e73ac034d224a57d72501c6559089098a28f127c9e495b90ac7d132acc86199e0b64d4c038f75f9293a37c7c61add52fa1acdb4e
+  checksum: 10/314a680c323be163ae036ca7b585713ced7bf0ba21d3fe9b851ffbb2e66cb2fa440c1e03f682a7e2da5dd4e19c2fb83b28738a290630948dfe8197bde621f008
   languageName: node
   linkType: hard
 
@@ -1151,12 +1151,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@marcbachmann/cel-js@npm:7.5.3":
-  version: 7.5.3
-  resolution: "@marcbachmann/cel-js@npm:7.5.3"
+"@marcbachmann/cel-js@npm:8.0.0":
+  version: 8.0.0
+  resolution: "@marcbachmann/cel-js@npm:8.0.0"
   bin:
     cel-evaluate: bin/cel-evaluate.js
-  checksum: 10/1eef1e15f723feb5056c1eb3f8beecd519b0aeae2a872aafa955e87ce8d15dbdcce000fbdcb6dc4895e495c7f527ac34ff382478ebdbc7d462122e5ff805ce4c
+  checksum: 10/99cbff3ff069eb68e99a5b464770b299893f8aa088fd989e0999492eef262778e5243ceeade1e506973c3354af18ac90a54c072829f0e846131b6042e0ff973b
   languageName: node
   linkType: hard
 
@@ -1798,7 +1798,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@codemirror/language": "npm:^6.12.4"
     "@lezer/generator": "npm:^1.8.0"
-    "@lezer/highlight": "npm:^1.2.3"
+    "@lezer/highlight": "npm:^1.2.4"
     "@lezer/lr": "npm:^1.4.10"
     "@seljs-internal/tsconfig": "workspace:^"
     eslint: "npm:^10.9.1"
@@ -1921,7 +1921,7 @@ __metadata:
     "@codemirror/state": "npm:^6.7.6"
     "@codemirror/view": "npm:^6.43.13"
     "@lezer/common": "npm:^1.5.2"
-    "@lezer/highlight": "npm:^1.2.3"
+    "@lezer/highlight": "npm:^1.2.4"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/cel-lezer": "workspace:*"
     "@seljs/checker": "workspace:*"
