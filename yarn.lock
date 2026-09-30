@@ -1105,10 +1105,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/common@npm:^1.0.0, @lezer/common@npm:^1.1.0, @lezer/common@npm:^1.3.0, @lezer/common@npm:^1.5.0, @lezer/common@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "@lezer/common@npm:1.5.2"
-  checksum: 10/62c0a0ce431cb14bfa6cded04e24a05efa566e9260314bb3f3cf547d501efa1db5c83fc9a7871f8e0b6a4030212840f0e6567433168960c7c83bb3ffbeef8b99
+"@lezer/common@npm:^1.0.0, @lezer/common@npm:^1.1.0, @lezer/common@npm:^1.3.0, @lezer/common@npm:^1.5.0, @lezer/common@npm:^1.5.3":
+  version: 1.5.3
+  resolution: "@lezer/common@npm:1.5.3"
+  checksum: 10/298f5601442978fbc9d7cd598edf952bdcd861d0bdf180f835c5db40025313ff2a97f8b524daab2c70623c69f64c4d1cb3bfc4588838626ae7bf4df3ac147022
   languageName: node
   linkType: hard
 
@@ -1124,12 +1124,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.3":
-  version: 1.2.3
-  resolution: "@lezer/highlight@npm:1.2.3"
+"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "@lezer/highlight@npm:1.2.4"
   dependencies:
     "@lezer/common": "npm:^1.3.0"
-  checksum: 10/8f787d464f8a036f117a0b23e73ac034d224a57d72501c6559089098a28f127c9e495b90ac7d132acc86199e0b64d4c038f75f9293a37c7c61add52fa1acdb4e
+  checksum: 10/314a680c323be163ae036ca7b585713ced7bf0ba21d3fe9b851ffbb2e66cb2fa440c1e03f682a7e2da5dd4e19c2fb83b28738a290630948dfe8197bde621f008
   languageName: node
   linkType: hard
 
@@ -1776,7 +1776,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.8"
+    viem: "npm:^2.56.9"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1798,7 +1798,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@codemirror/language": "npm:^6.12.4"
     "@lezer/generator": "npm:^1.8.0"
-    "@lezer/highlight": "npm:^1.2.3"
+    "@lezer/highlight": "npm:^1.2.4"
     "@lezer/lr": "npm:^1.4.10"
     "@seljs-internal/tsconfig": "workspace:^"
     eslint: "npm:^10.9.1"
@@ -1826,7 +1826,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.8"
+    viem: "npm:^2.56.9"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -1866,7 +1866,7 @@ __metadata:
     eslint: "npm:^10.9.1"
     prettier: "npm:^3.9.6"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.8"
+    viem: "npm:^2.56.9"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   languageName: unknown
@@ -1898,7 +1898,7 @@ __metadata:
     storybook: "npm:^10.6.0"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.8"
+    viem: "npm:^2.56.9"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
@@ -1920,8 +1920,8 @@ __metadata:
     "@codemirror/lint": "npm:^6.9.7"
     "@codemirror/state": "npm:^6.7.6"
     "@codemirror/view": "npm:^6.43.13"
-    "@lezer/common": "npm:^1.5.2"
-    "@lezer/highlight": "npm:^1.2.3"
+    "@lezer/common": "npm:^1.5.3"
+    "@lezer/highlight": "npm:^1.2.4"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/cel-lezer": "workspace:*"
     "@seljs/checker": "workspace:*"
@@ -1950,7 +1950,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.8"
+    viem: "npm:^2.56.9"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1998,7 +1998,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.8"
+    viem: "npm:^2.56.9"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -6646,9 +6646,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.56.8":
-  version: 2.56.8
-  resolution: "viem@npm:2.56.8"
+"viem@npm:^2.56.9":
+  version: 2.56.9
+  resolution: "viem@npm:2.56.9"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6663,7 +6663,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/db2166334b7fb97cea5fc8feb10fcf0ee14d4fd403f4cffa6b26db22e01f57dd0f273c174147960314d34a9f4564c3b9ecc53241a1a71cc40e81d92d58acb2bc
+  checksum: 10/cb26e8dc26fb6dae94976fc013debbfd213c4785ce5bfe692d0ddf26b4aa38fc777863d26efceb73f83d95ecbc2d9498e098d06408a5370fa6205d54c49dae5a
   languageName: node
   linkType: hard
 

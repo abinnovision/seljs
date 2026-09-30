@@ -50,7 +50,7 @@
 	},
 	"dependencies": {
 		"@codemirror/language": "^6.12.4",
-		"@lezer/highlight": "^1.2.3",
+		"@lezer/highlight": "^1.2.4",
 		"@lezer/lr": "^1.4.10"
 	},
 	"devDependencies": {
