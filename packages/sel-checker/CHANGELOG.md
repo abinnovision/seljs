@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.1](https://github.com/abinnovision/seljs/compare/checker-v1.4.0...checker-v1.4.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** bump patch/minor production dependencies ([#130](https://github.com/abinnovision/seljs/issues/130)) ([6c1e05f](https://github.com/abinnovision/seljs/commit/6c1e05f6197c1bf0063ced50b32ab26f32fc13d9))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#190](https://github.com/abinnovision/seljs/issues/190)) ([bd4463e](https://github.com/abinnovision/seljs/commit/bd4463e900192bc7f6a71b465ffe7d107a5aaf9f))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#149](https://github.com/abinnovision/seljs/issues/149)) ([91ad954](https://github.com/abinnovision/seljs/commit/91ad954f70e428a1a1abca3d5873f65eb2b6a80a))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#167](https://github.com/abinnovision/seljs/issues/167)) ([96bed22](https://github.com/abinnovision/seljs/commit/96bed22af0926992129ea6fb7f0deccf4a6944a9))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#179](https://github.com/abinnovision/seljs/issues/179)) ([2dd7070](https://github.com/abinnovision/seljs/commit/2dd7070888a694dc760a6a56cd584f3743cb1813))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#185](https://github.com/abinnovision/seljs/issues/185)) ([6bc8648](https://github.com/abinnovision/seljs/commit/6bc8648ba337a6983dea8a0aadb112872dcec549))
+* **deps:** bump the production-dependencies group with 2 updates ([#133](https://github.com/abinnovision/seljs/issues/133)) ([741efa7](https://github.com/abinnovision/seljs/commit/741efa756bf43a66171c98642a3ed08f86c8c9c2))
+* **deps:** bump the production-dependencies group with 3 updates ([#181](https://github.com/abinnovision/seljs/issues/181)) ([a13b149](https://github.com/abinnovision/seljs/commit/a13b149e703c61b36c4376cc79dc45c9ee3035b9))
+* **deps:** bump the production-dependencies group with 4 updates ([#136](https://github.com/abinnovision/seljs/issues/136)) ([ba202e0](https://github.com/abinnovision/seljs/commit/ba202e0f79b30310077425db74d0a4649d59a4b9))
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/checker-v1.3.0...checker-v1.4.0) (2026-08-04)
 
 
