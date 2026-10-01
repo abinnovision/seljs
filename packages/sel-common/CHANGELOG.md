@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/abinnovision/seljs/compare/common-v1.4.0...common-v1.4.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 2 updates ([#133](https://github.com/abinnovision/seljs/issues/133)) ([741efa7](https://github.com/abinnovision/seljs/commit/741efa756bf43a66171c98642a3ed08f86c8c9c2))
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/common-v1.3.0...common-v1.4.0) (2026-08-04)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/abinnovision/seljs/compare/cel-lezer-v1.4.0...cel-lezer-v1.4.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **deps:** bump patch/minor production dependencies ([#130](https://github.com/abinnovision/seljs/issues/130)) ([6c1e05f](https://github.com/abinnovision/seljs/commit/6c1e05f6197c1bf0063ced50b32ab26f32fc13d9))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#190](https://github.com/abinnovision/seljs/issues/190)) ([bd4463e](https://github.com/abinnovision/seljs/commit/bd4463e900192bc7f6a71b465ffe7d107a5aaf9f))
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/cel-lezer-v1.3.0...cel-lezer-v1.4.0) (2026-08-04)
 
 
