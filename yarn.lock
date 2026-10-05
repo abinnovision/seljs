@@ -1124,12 +1124,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.4":
-  version: 1.2.4
-  resolution: "@lezer/highlight@npm:1.2.4"
+"@lezer/highlight@npm:^1.0.0, @lezer/highlight@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "@lezer/highlight@npm:1.2.5"
   dependencies:
     "@lezer/common": "npm:^1.3.0"
-  checksum: 10/314a680c323be163ae036ca7b585713ced7bf0ba21d3fe9b851ffbb2e66cb2fa440c1e03f682a7e2da5dd4e19c2fb83b28738a290630948dfe8197bde621f008
+  checksum: 10/57a492dee8a613d51a4a076b0e15e2de378a50d4a2ccc546003f4742d4e1151c86b77bac22a3d9b1c5416dc6802ab51d1f44426a455b38779fbe9d733bc424a5
   languageName: node
   linkType: hard
 
@@ -1776,7 +1776,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.9"
+    viem: "npm:^2.57.1"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1798,7 +1798,7 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@codemirror/language": "npm:^6.12.4"
     "@lezer/generator": "npm:^1.8.0"
-    "@lezer/highlight": "npm:^1.2.4"
+    "@lezer/highlight": "npm:^1.2.5"
     "@lezer/lr": "npm:^1.4.10"
     "@seljs-internal/tsconfig": "workspace:^"
     eslint: "npm:^10.9.1"
@@ -1826,7 +1826,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.9"
+    viem: "npm:^2.57.1"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -1866,7 +1866,7 @@ __metadata:
     eslint: "npm:^10.9.1"
     prettier: "npm:^3.9.6"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.9"
+    viem: "npm:^2.57.1"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   languageName: unknown
@@ -1898,7 +1898,7 @@ __metadata:
     storybook: "npm:^10.6.0"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.9"
+    viem: "npm:^2.57.1"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
@@ -1921,7 +1921,7 @@ __metadata:
     "@codemirror/state": "npm:^6.7.6"
     "@codemirror/view": "npm:^6.43.13"
     "@lezer/common": "npm:^1.5.3"
-    "@lezer/highlight": "npm:^1.2.4"
+    "@lezer/highlight": "npm:^1.2.5"
     "@seljs-internal/tsconfig": "workspace:^"
     "@seljs/cel-lezer": "workspace:*"
     "@seljs/checker": "workspace:*"
@@ -1950,7 +1950,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.9"
+    viem: "npm:^2.57.1"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1994,11 +1994,11 @@ __metadata:
     concurrently: "npm:^10.0.5"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.9.1"
-    ox: "npm:^1.8.1"
+    ox: "npm:^1.8.5"
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.56.9"
+    viem: "npm:^2.57.1"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -5199,9 +5199,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:^1.7.2, ox@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "ox@npm:1.8.1"
+"ox@npm:^1.7.2, ox@npm:^1.8.5":
+  version: 1.8.5
+  resolution: "ox@npm:1.8.5"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^2.2.0"
@@ -5218,7 +5218,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/f85379830b64fc6950f1bdcf6386914ca4e2c51e3445dc04af20f24246749e96f6731a7ee6f865599f62c584ab0b0991bc93f9f8d469a05d4090fd320f3cd9b7
+  checksum: 10/8fcc60270bfb1d57865c28c57e9a174ccd7c653d59ef126c9bdf924e4990a420c813bb5c87524ff1b45bcfd09539b0e931da8ffb63d56ace3fc9ff400e9be4a2
   languageName: node
   linkType: hard
 
@@ -6646,9 +6646,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.56.9":
-  version: 2.56.9
-  resolution: "viem@npm:2.56.9"
+"viem@npm:^2.57.1":
+  version: 2.57.1
+  resolution: "viem@npm:2.57.1"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6663,7 +6663,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/cb26e8dc26fb6dae94976fc013debbfd213c4785ce5bfe692d0ddf26b4aa38fc777863d26efceb73f83d95ecbc2d9498e098d06408a5370fa6205d54c49dae5a
+  checksum: 10/c205c5a3de978956d33da608d09000a24fdc8f4f25bdd06c9a23569489a1709b31a18eec7bf35b5b08a5acc8239e72c11bd4a28cfac52d08b92c4c31c82354a3
   languageName: node
   linkType: hard
 
