@@ -1,7 +1,7 @@
 name: PR Utils
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
     types:
@@ -10,8 +10,8 @@ on:
       - synchronize
 
 jobs:
-  commitlint:
-    name: Commitlint
+  lint-commits:
+    name: Lint commits
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
