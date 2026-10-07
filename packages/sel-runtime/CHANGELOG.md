@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.4.1](https://github.com/abinnovision/seljs/compare/runtime-v1.4.0...runtime-v1.4.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* **deps:** bump patch/minor production dependencies ([#130](https://github.com/abinnovision/seljs/issues/130)) ([6c1e05f](https://github.com/abinnovision/seljs/commit/6c1e05f6197c1bf0063ced50b32ab26f32fc13d9))
+* **deps:** bump the production-dependencies group across 1 directory with 2 updates ([#141](https://github.com/abinnovision/seljs/issues/141)) ([c379c9e](https://github.com/abinnovision/seljs/commit/c379c9e6aaeab496592e6a56fa36fc70d4279538))
+* **deps:** bump the production-dependencies group across 1 directory with 2 updates ([#156](https://github.com/abinnovision/seljs/issues/156)) ([7718595](https://github.com/abinnovision/seljs/commit/771859553aa358e88cbb44cdde02b9ab8cf261da))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#190](https://github.com/abinnovision/seljs/issues/190)) ([bd4463e](https://github.com/abinnovision/seljs/commit/bd4463e900192bc7f6a71b465ffe7d107a5aaf9f))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#195](https://github.com/abinnovision/seljs/issues/195)) ([8bcc186](https://github.com/abinnovision/seljs/commit/8bcc1862dd127ac1a6283098ece86081e68ea8ad))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#149](https://github.com/abinnovision/seljs/issues/149)) ([91ad954](https://github.com/abinnovision/seljs/commit/91ad954f70e428a1a1abca3d5873f65eb2b6a80a))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#167](https://github.com/abinnovision/seljs/issues/167)) ([96bed22](https://github.com/abinnovision/seljs/commit/96bed22af0926992129ea6fb7f0deccf4a6944a9))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#179](https://github.com/abinnovision/seljs/issues/179)) ([2dd7070](https://github.com/abinnovision/seljs/commit/2dd7070888a694dc760a6a56cd584f3743cb1813))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#185](https://github.com/abinnovision/seljs/issues/185)) ([6bc8648](https://github.com/abinnovision/seljs/commit/6bc8648ba337a6983dea8a0aadb112872dcec549))
+* **deps:** bump the production-dependencies group with 2 updates ([#133](https://github.com/abinnovision/seljs/issues/133)) ([741efa7](https://github.com/abinnovision/seljs/commit/741efa756bf43a66171c98642a3ed08f86c8c9c2))
+* **deps:** bump the production-dependencies group with 2 updates ([#134](https://github.com/abinnovision/seljs/issues/134)) ([a75f72b](https://github.com/abinnovision/seljs/commit/a75f72b783b70a3d990e1f381c83caefb0c61052))
+* **deps:** bump the production-dependencies group with 2 updates ([#135](https://github.com/abinnovision/seljs/issues/135)) ([b1766bc](https://github.com/abinnovision/seljs/commit/b1766bc42a28e0e7ea4ad37f4c8d57cc866b3271))
+* **deps:** bump the production-dependencies group with 2 updates ([#151](https://github.com/abinnovision/seljs/issues/151)) ([d01110b](https://github.com/abinnovision/seljs/commit/d01110bbb7dc5541e0729bfc77ca1a861b42117a))
+* **deps:** bump the production-dependencies group with 3 updates ([#181](https://github.com/abinnovision/seljs/issues/181)) ([a13b149](https://github.com/abinnovision/seljs/commit/a13b149e703c61b36c4376cc79dc45c9ee3035b9))
+* **deps:** bump the production-dependencies group with 4 updates ([#136](https://github.com/abinnovision/seljs/issues/136)) ([ba202e0](https://github.com/abinnovision/seljs/commit/ba202e0f79b30310077425db74d0a4649d59a4b9))
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/runtime-v1.3.0...runtime-v1.4.0) (2026-08-04)
 
 
