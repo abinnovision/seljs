@@ -335,17 +335,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/language@npm:^6.0.0, @codemirror/language@npm:^6.12.4":
-  version: 6.12.4
-  resolution: "@codemirror/language@npm:6.12.4"
+"@codemirror/language@npm:^6.0.0, @codemirror/language@npm:^6.13.1":
+  version: 6.13.1
+  resolution: "@codemirror/language@npm:6.13.1"
   dependencies:
     "@codemirror/state": "npm:^6.0.0"
+    "@codemirror/streamparser": "npm:^6.0.0"
     "@codemirror/view": "npm:^6.23.0"
     "@lezer/common": "npm:^1.5.0"
     "@lezer/highlight": "npm:^1.0.0"
     "@lezer/lr": "npm:^1.0.0"
     style-mod: "npm:^4.0.0"
-  checksum: 10/6a9af11337d15036761ad959dceba4cfd054cdfae84afa4d54534927d277591a57c2b581f66df4428510dd06c641151aa699ab1dc7c338d923ac06a219d83bc6
+  checksum: 10/54b57fdc202cd05d1cbd6c93718dbbc405de8205ab6cdccf402faa3b68340adb54e970773ba46909fe811f6aaaf8bab489708a73de00f36dc8cebfbe474689aa
   languageName: node
   linkType: hard
 
@@ -369,15 +370,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.42.0, @codemirror/view@npm:^6.43.13":
-  version: 6.43.13
-  resolution: "@codemirror/view@npm:6.43.13"
+"@codemirror/streamparser@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@codemirror/streamparser@npm:6.0.0"
+  checksum: 10/cb53674d779d9c5b5d39e6866c10228307684e40a14983078cb4adf8167a510f16fa226fe022cbe30d7fe345dd872bdbdcc2b47cc19b7a2a189efa4b77b4af61
+  languageName: node
+  linkType: hard
+
+"@codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.42.0, @codemirror/view@npm:^6.43.14":
+  version: 6.43.14
+  resolution: "@codemirror/view@npm:6.43.14"
   dependencies:
     "@codemirror/state": "npm:^6.7.0"
     crelt: "npm:^1.0.6"
     style-mod: "npm:^4.1.0"
     w3c-keyname: "npm:^2.2.4"
-  checksum: 10/fb40f226570b98edf83bc4da1be6f6187415e34197f82aac911307aae8bdff2cdc538c8835e0a7e81c8214a1026404642d50356f99c99d2740b943fcb4a4a6a6
+  checksum: 10/bad3cd6bcb0801141eb1f2cff3d777738b575efc726615fd05e8a15321191a501afc63f8c904d77e5115447cffda8116f689053ab175b0c5ec368d5e9b5ce5f4
   languageName: node
   linkType: hard
 
@@ -1133,12 +1141,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lezer/lr@npm:^1.0.0, @lezer/lr@npm:^1.3.0, @lezer/lr@npm:^1.4.10":
-  version: 1.4.10
-  resolution: "@lezer/lr@npm:1.4.10"
+"@lezer/lr@npm:^1.0.0, @lezer/lr@npm:^1.3.0, @lezer/lr@npm:^1.4.11":
+  version: 1.4.11
+  resolution: "@lezer/lr@npm:1.4.11"
   dependencies:
     "@lezer/common": "npm:^1.0.0"
-  checksum: 10/f8615c755dbbc44aa77f018d81d941cb9afc6bf7c59d78d099dadf2b15c5971bd6cbe38930c0ec143d1b4b3ee7f05da758f72e4980849c9b3eeb19f4af6f34f8
+  checksum: 10/1d010cd7598a9219ccacf9009c5e67d1ac4649741972f709a8899b3c1668cfd6b07563a05bc99d11349f0e989588ae6e2e4739323ba34bf9091eacc04ba5fe06
   languageName: node
   linkType: hard
 
@@ -1776,7 +1784,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.1"
+    viem: "npm:^2.57.4"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1796,10 +1804,10 @@ __metadata:
   dependencies:
     "@abinnovision/eslint-config-base": "npm:^3.4.2"
     "@abinnovision/prettier-config": "npm:^2.2.0"
-    "@codemirror/language": "npm:^6.12.4"
+    "@codemirror/language": "npm:^6.13.1"
     "@lezer/generator": "npm:^1.8.0"
     "@lezer/highlight": "npm:^1.2.5"
-    "@lezer/lr": "npm:^1.4.10"
+    "@lezer/lr": "npm:^1.4.11"
     "@seljs-internal/tsconfig": "workspace:^"
     eslint: "npm:^10.9.1"
     prettier: "npm:^3.9.6"
@@ -1826,7 +1834,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.1"
+    viem: "npm:^2.57.4"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -1866,7 +1874,7 @@ __metadata:
     eslint: "npm:^10.9.1"
     prettier: "npm:^3.9.6"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.1"
+    viem: "npm:^2.57.4"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   languageName: unknown
@@ -1898,7 +1906,7 @@ __metadata:
     storybook: "npm:^10.6.0"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.1"
+    viem: "npm:^2.57.4"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
@@ -1916,10 +1924,10 @@ __metadata:
     "@abinnovision/prettier-config": "npm:^2.2.0"
     "@codemirror/autocomplete": "npm:^6.20.3"
     "@codemirror/commands": "npm:^6.11.1"
-    "@codemirror/language": "npm:^6.12.4"
+    "@codemirror/language": "npm:^6.13.1"
     "@codemirror/lint": "npm:^6.9.7"
     "@codemirror/state": "npm:^6.7.6"
-    "@codemirror/view": "npm:^6.43.13"
+    "@codemirror/view": "npm:^6.43.14"
     "@lezer/common": "npm:^1.5.3"
     "@lezer/highlight": "npm:^1.2.5"
     "@seljs-internal/tsconfig": "workspace:^"
@@ -1950,7 +1958,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.1"
+    viem: "npm:^2.57.4"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1994,11 +2002,11 @@ __metadata:
     concurrently: "npm:^10.0.5"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.9.1"
-    ox: "npm:^1.8.5"
+    ox: "npm:^1.8.6"
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.1"
+    viem: "npm:^2.57.4"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.5.2"
   peerDependencies:
@@ -5178,9 +5186,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:0.14.45":
-  version: 0.14.45
-  resolution: "ox@npm:0.14.45"
+"ox@npm:0.14.54":
+  version: 0.14.54
+  resolution: "ox@npm:0.14.54"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^1.3.0"
@@ -5195,13 +5203,13 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/44f4414d28a93cfe1f608eba7135a2fe7b153305f25b0af5fc35eb7d345ad452e47423d1045ea3a15035d130bd10874fb71be958d5ed16ad49d97114075cae58
+  checksum: 10/d2cf3686e7a3b690172498ca71f4f395dd2ba268b9c6c532abbd203e8bc83ca281741219541a13c7b62fbba2beec646b8d988e7616e4cf0c8a02a56fd3bf1f9d
   languageName: node
   linkType: hard
 
-"ox@npm:^1.7.2, ox@npm:^1.8.5":
-  version: 1.8.5
-  resolution: "ox@npm:1.8.5"
+"ox@npm:^1.7.2, ox@npm:^1.8.6":
+  version: 1.8.6
+  resolution: "ox@npm:1.8.6"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^2.2.0"
@@ -5218,7 +5226,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/8fcc60270bfb1d57865c28c57e9a174ccd7c653d59ef126c9bdf924e4990a420c813bb5c87524ff1b45bcfd09539b0e931da8ffb63d56ace3fc9ff400e9be4a2
+  checksum: 10/4ec976ff1df16fed1a179ffd24d654d3e447a55988a9dfe9cd08399dc1c7e139eb1f9c5ce4291148c213d574fa0222042cc6f1c5e24299a68bc85a5206208563
   languageName: node
   linkType: hard
 
@@ -6646,9 +6654,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.57.1":
-  version: 2.57.1
-  resolution: "viem@npm:2.57.1"
+"viem@npm:^2.57.4":
+  version: 2.57.4
+  resolution: "viem@npm:2.57.4"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6656,14 +6664,14 @@ __metadata:
     "@scure/bip39": "npm:1.6.0"
     abitype: "npm:1.2.3"
     isows: "npm:1.0.7"
-    ox: "npm:0.14.45"
+    ox: "npm:0.14.54"
     ws: "npm:8.21.0"
   peerDependencies:
     typescript: ">=5.0.4"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/c205c5a3de978956d33da608d09000a24fdc8f4f25bdd06c9a23569489a1709b31a18eec7bf35b5b08a5acc8239e72c11bd4a28cfac52d08b92c4c31c82354a3
+  checksum: 10/974b6561058be483fc454d8ccbc46bd2f6af3c649f893ba770a751175ce9b3a82a0c38c51d37ae6944b75d760e080452dfb9f6261bfeae650b4e767eec066bda
   languageName: node
   linkType: hard
 
