@@ -57,7 +57,7 @@
 		"@seljs/types": "workspace:*",
 		"debug": "^4.4.3",
 		"ox": "^1.8.8",
-		"viem": "^2.57.6"
+		"viem": "^2.57.7"
 	},
 	"devDependencies": {
 		"@abinnovision/eslint-config-base": "^3.4.2",
