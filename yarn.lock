@@ -1836,7 +1836,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     viem: "npm:^2.57.6"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.5.2"
+    zod: "npm:^4.6.6"
   peerDependencies:
     zod: ^4.0.0
   languageName: unknown
@@ -1876,7 +1876,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     viem: "npm:^2.57.6"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.5.2"
+    zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
 
@@ -1909,7 +1909,7 @@ __metadata:
     viem: "npm:^2.57.6"
     vite: "npm:^8.2.4"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.5.2"
+    zod: "npm:^4.6.6"
   peerDependencies:
     react: ">= 18"
     react-dom: ">= 18"
@@ -2008,7 +2008,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     viem: "npm:^2.57.6"
     vitest: "npm:^4.1.11"
-    zod: "npm:^4.5.2"
+    zod: "npm:^4.6.6"
   peerDependencies:
     zod: ^4.0.0
   languageName: unknown
@@ -7132,9 +7132,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.4.3, zod@npm:^4.5.2":
-  version: 4.5.4
-  resolution: "zod@npm:4.5.4"
-  checksum: 10/b2fd4aaf358359650a1f27f303a462f0f49b4e5582f517ad8894ed566fdceb9da391b59babffe3c70574c8064174883735657eb28e12db5c7021455a631866c4
+"zod@npm:^4.4.3, zod@npm:^4.6.6":
+  version: 4.6.7
+  resolution: "zod@npm:4.6.7"
+  checksum: 10/3ca8b8d6bb401538e59504c543db629ea7beaa775e504c3f22269b406fdffbf1431c856d59a597bf66d8487e4d2be12b03a55d76fc2c63d9f046eae1ca173bca
   languageName: node
   linkType: hard
