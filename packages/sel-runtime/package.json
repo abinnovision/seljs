@@ -65,12 +65,12 @@
 		"@seljs-internal/fixtures": "workspace:*",
 		"@seljs-internal/tsconfig": "workspace:^",
 		"@types/debug": "^4.1.13",
-		"concurrently": "^10.0.5",
-		"eslint": "^10.9.1",
-		"prettier": "^3.9.6",
-		"tsdown": "^0.22.14",
+		"concurrently": "^10.0.6",
+		"eslint": "^10.13.0",
+		"prettier": "^3.9.10",
+		"tsdown": "^0.23.1",
 		"typescript": "^6.0.3",
-		"vitest": "^4.1.11",
+		"vitest": "^5.0.5",
 		"zod": "^4.6.6"
 	},
 	"peerDependencies": {
