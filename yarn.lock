@@ -1784,7 +1784,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.13"
+    viem: "npm:^2.57.16"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -1834,7 +1834,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.13"
+    viem: "npm:^2.57.16"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.6.6"
   peerDependencies:
@@ -1874,7 +1874,7 @@ __metadata:
     eslint: "npm:^10.9.1"
     prettier: "npm:^3.9.6"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.13"
+    viem: "npm:^2.57.16"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.6.6"
   languageName: unknown
@@ -1906,7 +1906,7 @@ __metadata:
     storybook: "npm:^10.6.2"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.13"
+    viem: "npm:^2.57.16"
     vite: "npm:^8.2.4"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.6.6"
@@ -1958,7 +1958,7 @@ __metadata:
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.13"
+    viem: "npm:^2.57.16"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -2002,11 +2002,11 @@ __metadata:
     concurrently: "npm:^10.0.5"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.9.1"
-    ox: "npm:^1.8.12"
+    ox: "npm:^1.8.13"
     prettier: "npm:^3.9.6"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.13"
+    viem: "npm:^2.57.16"
     vitest: "npm:^4.1.11"
     zod: "npm:^4.6.6"
   peerDependencies:
@@ -5207,9 +5207,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:^1.7.2, ox@npm:^1.8.12":
-  version: 1.8.12
-  resolution: "ox@npm:1.8.12"
+"ox@npm:^1.7.2, ox@npm:^1.8.13":
+  version: 1.8.13
+  resolution: "ox@npm:1.8.13"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^2.2.0"
@@ -5226,7 +5226,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/b8124a70dde81cf74da784ab41c73a33402ce10d9b07bfb20bb255f68270f91827d5c5345c1d12e11bf5629945f76d234aaa8138f9d867ec6b4483d66d797174
+  checksum: 10/824938761b98c782a47da8c84d102d3c7c135001fb0666024fcec968ac148ea63c6a7592cdfc4ee9d693a8591b1355ae9c8e7cdb21d193eadc3edb86b8a59c3a
   languageName: node
   linkType: hard
 
@@ -6654,9 +6654,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.57.13":
-  version: 2.57.13
-  resolution: "viem@npm:2.57.13"
+"viem@npm:^2.57.16":
+  version: 2.57.16
+  resolution: "viem@npm:2.57.16"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6667,11 +6667,14 @@ __metadata:
     ox: "npm:0.14.59"
     ws: "npm:8.21.0"
   peerDependencies:
+    mppx: ">=0.17.0"
     typescript: ">=5.0.4"
   peerDependenciesMeta:
+    mppx:
+      optional: true
     typescript:
       optional: true
-  checksum: 10/4055d44229e36b8925580cad450f42a569bb95b99aa33209eaf3d268466ddb1375bb0a45111e0eed9d143fb35b81b044cc7a4b21eb24dacdcc00cf5f4261998f
+  checksum: 10/cf1ddb7fd89baebce32b370bde9ea5f5564e45c1801c6a467dabbb37ce7b954d909c236607e61bb7ec77d30304e7451b7afe00fb1fa39fd4b696cdbff96cbd6e
   languageName: node
   linkType: hard
 
