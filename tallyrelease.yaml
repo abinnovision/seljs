@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://cdn.jsdelivr.net/npm/@tallyrelease/cli@0/dist/tallyrelease.schema.json
+plugins:
+  node: {}
+
+branches:
+  - name: main
+    line: default
+    channels:
+      build: beta
+
+# Ids match the existing tags ({id}-v{version}).
+units:
+  packages/sel-cel-lezer: { id: cel-lezer, release: true, tags: [dist] }
+  packages/sel-common: { id: common, release: true, tags: [dist] }
+  packages/sel-types: { id: types, release: true, tags: [dist] }
+  packages/sel-env: { id: env, release: true, tags: [dist] }
+  packages/sel-checker: { id: checker, release: true, tags: [dist] }
+  packages/sel-runtime: { id: runtime, release: true, tags: [dist] }
+  packages/sel-schema: { id: schema, release: true, tags: [dist] }
+  packages/sel-editor: { id: editor, release: true, tags: [dist] }
+  packages/sel-editor-react: { id: editor-react, release: true, tags: [dist] }
+
+# All packages release together with one version, one release PR and one GitHub release.
+groups:
+  sel: { tags: [dist], releaseTag: "{id}-v{version}" }
+
+# Changes here rebuild every unit (added to the node plugin defaults).
+globalInputs:
+  - .tool-versions
+
+ignore:
+  - "*.md"
+  - .github/**
+  - .husky/**
+  - .idea/**
+  - .editorconfig
+  - .gitattributes

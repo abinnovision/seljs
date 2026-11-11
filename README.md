@@ -412,6 +412,13 @@ SEL registers custom CEL types instead of using the built-in `int` and `string` 
 - **`sol_int`** — Wraps all Solidity integer types (`uint8`–`uint256`, `int8`–`int256`) as a single CEL type backed by native `BigInt`. This bypasses cel-js's built-in `int` type which enforces 64-bit overflow checks — necessary because Solidity integers go up to 256 bits. Cast literals with `solInt(0)` or `solInt("1000000000000000000")`.
 - **`sol_address`** — Wraps Solidity `address` as a dedicated CEL type with hex validation and lowercase normalization. This ensures address comparisons are case-insensitive (matching EVM semantics) rather than relying on plain string equality.
 
+## Releasing
+
+All `@seljs/*` packages are released together with one version by [tallyrelease](https://github.com/abinnovision/tallyrelease), configured in [`tallyrelease.yaml`](./tallyrelease.yaml).
+
+- Every merge to `main` publishes the packages as prereleases to the npm `beta` dist-tag.
+- tallyrelease keeps one release PR open for the `sel` group. Merging it tags each package as `<package>-v<version>`, creates one GitHub release `sel-v<version>` and publishes the stable versions to `latest`.
+
 ## Credits
 
 - [@marcbachmann/cel-js](https://github.com/marcbachmann/cel-js) — CEL parser, type checker, and evaluator
