@@ -1,4 +1,5 @@
 import {
+	bytesToHex,
 	hexToBytes,
 	SolidityAddressTypeWrapper,
 	SolidityIntTypeWrapper,
@@ -114,6 +115,7 @@ export class CelCodecRegistry {
 	 * Encode a CEL value back to its raw form using the codec for the given type.
 	 * For bidirectional codecs (SolidityAddress, SolidityInt) this calls .encode().
 	 * For structs, it recursively encodes each field.
+	 * Raw address and bytes strings are normalized to lowercase hex when valid.
 	 * For passthrough types (bool, string, int), returns the value as-is.
 	 */
 	public encode(celType: string, value: unknown): unknown {
@@ -126,6 +128,14 @@ export class CelCodecRegistry {
 						.map((b) => b.toString(16).padStart(2, "0"))
 						.join("")
 				);
+			}
+
+			if (typeof value === "string") {
+				try {
+					return bytesToHex(hexToBytes(value));
+				} catch {
+					return value;
+				}
 			}
 
 			return value;
@@ -165,6 +175,13 @@ export class CelCodecRegistry {
 			}
 
 			return result;
+		}
+
+		// Raw address strings use the lowercase form of decoded wrappers
+		if (celType === "sol_address" && typeof value === "string") {
+			return SolidityAddressTypeWrapper.isValid(value)
+				? value.toLowerCase()
+				: value;
 		}
 
 		// For bidirectional codecs, use .encode(); for passthrough, return as-is
