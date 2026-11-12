@@ -17,6 +17,9 @@ updates:
     ignore:
       - dependency-name: "typescript"
         versions: ["7.0.x"]
+      # Pinned via root resolutions; newer releases change the type registration API.
+      - dependency-name: "@marcbachmann/cel-js"
+        versions: [">=7.6.0"]
     groups:
       production-dependencies:
         dependency-type: production
