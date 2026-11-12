@@ -5,6 +5,6 @@ export default defineConfig({
 		name: "@seljs/runtime#integration",
 		include: ["**/*.spec.ts"],
 		testTimeout: 30_000,
-		typecheck: { enabled: true, include: ["**/*.ts"] },
+		typecheck: { enabled: true, include: ["**/*.spec.ts"] },
 	},
 });
