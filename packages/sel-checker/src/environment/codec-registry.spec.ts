@@ -219,6 +219,27 @@ describe("src/environment/codec-registry.ts", () => {
 			expect(result).toEqual([addr1, addr2]);
 		});
 
+		it("sol_address string encode lowercases valid addresses", () => {
+			const registry = new CelCodecRegistry();
+			const checksummed = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+			const lower = checksummed.toLowerCase();
+			expect(registry.encode("sol_address", checksummed)).toBe(lower);
+			expect(registry.encode("list<sol_address>", [checksummed])).toEqual([
+				lower,
+			]);
+			expect(registry.encode("sol_address", "not-an-address")).toBe(
+				"not-an-address",
+			);
+		});
+
+		it("bytes string encode normalizes hex", () => {
+			const registry = new CelCodecRegistry();
+			expect(registry.encode("bytes", "0xAB")).toBe("0xab");
+			expect(registry.encode("bytes", "0XAB")).toBe("0xab");
+			expect(registry.encode("bytes", "ab")).toBe("0xab");
+			expect(registry.encode("bytes", "0xzz")).toBe("0xzz");
+		});
+
 		it("passthrough for bool, string, int", () => {
 			const registry = new CelCodecRegistry();
 			expect(registry.encode("bool", true)).toBe(true);

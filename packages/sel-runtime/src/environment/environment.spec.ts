@@ -35,11 +35,11 @@ const MULTICALL3_ABI = Abi.from([
 ]);
 
 const VAULT = "0x1111111111111111111111111111111111111111" as const;
-const A_TOKEN = "0x2222222222222222222222222222222222222222" as const;
+const A_TOKEN = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" as const;
 const PROXY = "0x3333333333333333333333333333333333333333" as const;
 const PROXY_IMPL = "0x4444444444444444444444444444444444444444" as const;
 
-const chainSchema = (context?: Record<string, "bytes">) =>
+const chainSchema = (context?: Record<string, "bytes" | "sol_address">) =>
 	buildSchema({
 		contracts: {
 			vault: { address: VAULT, abi: VAULT_ABI },
@@ -742,6 +742,22 @@ describe("src/environment/environment.ts", () => {
 			const env = new SELRuntime({ client, schema: chainSchema() });
 
 			const result = await env.evaluate("vault.balanceOf(aToken.address)");
+
+			expect(result.value).toBe(5n);
+			expect(call).toHaveBeenCalledTimes(1);
+			expect(result.meta?.deferredCalls).toBe(0);
+		});
+
+		it("batches a checksummed address argument once", async () => {
+			const { client, call } = createChainClient();
+			const env = new SELRuntime({
+				client,
+				schema: chainSchema({ holder: "sol_address" }),
+			});
+
+			const result = await env.evaluate<bigint>("vault.balanceOf(holder)", {
+				holder: A_TOKEN,
+			});
 
 			expect(result.value).toBe(5n);
 			expect(call).toHaveBeenCalledTimes(1);
