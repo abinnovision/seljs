@@ -4,17 +4,18 @@ import { describe, expect, it } from "vitest";
 import { collectCalls } from "./call-collector.js";
 
 import type { ASTNode } from "@marcbachmann/cel-js";
+import type { BuiltinBlockField } from "@seljs/checker";
 
 /**
  * Creates a simple contract lookup map for testing.
  * collectCalls only needs ContractLookup (.get(name)), not a full registry.
  */
-const createRegistry = (): Map<string, true> => {
-	const map = new Map<string, true>();
-	map.set("token", true);
-	map.set("nft", true);
-	map.set("staking", true);
-	map.set("pool", true);
+const createRegistry = (): Map<string, { address: string }> => {
+	const map = new Map<string, { address: string }>();
+	map.set("token", { address: "0x0000000000000000000000000000000000000001" });
+	map.set("nft", { address: "0x0000000000000000000000000000000000000002" });
+	map.set("staking", { address: "0x0000000000000000000000000000000000000003" });
+	map.set("pool", { address: "0x0000000000000000000000000000000000000004" });
 
 	return map;
 };
@@ -83,6 +84,7 @@ describe("src/analysis/call-collector.ts", () => {
 		const calls = collectCalls(
 			parseAst("nft.ownerOf(solInt(tokenId))"),
 			registry,
+			{ variableTypes: new Map([["tokenId", "sol_int"]]) },
 		);
 
 		expect(calls).toHaveLength(1);
@@ -150,6 +152,7 @@ describe("src/analysis/call-collector.ts", () => {
 		const calls = collectCalls(
 			parseAst("token.balanceOf(solAddress(userAddr))"),
 			registry,
+			{ variableTypes: new Map([["userAddr", "string"]]) },
 		);
 
 		expect(calls).toHaveLength(1);
@@ -357,6 +360,131 @@ describe("src/analysis/call-collector.ts", () => {
 
 			// balance(extra) has args, so it should NOT be treated as address accessor
 			expect(calls.every((c) => c.contract !== "__multicall3")).toBe(true);
+		});
+	});
+
+	describe("builtin block", () => {
+		const options = { builtinBlock: true };
+
+		it("emits one synthetic timestamp call for block.timestamp", () => {
+			const calls = collectCalls(
+				parseAst("block.timestamp > solInt(0) && block.timestamp < solInt(9)"),
+				createRegistry(),
+				options,
+			);
+
+			expect(calls.map((c) => c.id)).toEqual([
+				"__multicall3:getCurrentBlockTimestamp:",
+			]);
+		});
+
+		it("emits the timestamp call for a bare block in cel.bind", () => {
+			const calls = collectCalls(
+				parseAst("cel.bind(b, block, b.timestamp > solInt(0))"),
+				createRegistry(),
+				options,
+			);
+
+			expect(calls.map((c) => c.id)).toEqual([
+				"__multicall3:getCurrentBlockTimestamp:",
+			]);
+		});
+
+		it("resolves block fields as call arguments", () => {
+			const calls = collectCalls(
+				parseAst("pool.f(block.number) + pool.g(block.timestamp)"),
+				createRegistry(),
+				options,
+			);
+
+			expect(calls.find((c) => c.method === "f")?.args).toEqual([
+				{ type: "variable", variableName: "block.number" },
+			]);
+			expect(calls.find((c) => c.method === "g")?.args).toEqual([
+				{
+					type: "call_result",
+					dependsOnCallId: "__multicall3:getCurrentBlockTimestamp:",
+				},
+			]);
+		});
+
+		it("keeps outer scoped block bindings in nested scopes", () => {
+			for (const expression of [
+				"cel.bind(block, 1, cel.bind(block, 2, block) + block)",
+				"[1].map(block, [2].map(block, block).size() + block)",
+			]) {
+				expect(
+					collectCalls(parseAst(expression), createRegistry(), options),
+				).toEqual([]);
+			}
+		});
+
+		it("reports referenced block fields", () => {
+			const blockFields = new Set<BuiltinBlockField>();
+			const calls = collectCalls(parseAst("block.number"), createRegistry(), {
+				builtinBlock: true,
+				blockFields,
+			});
+
+			expect(calls).toEqual([]);
+			expect([...blockFields]).toEqual(["number"]);
+		});
+
+		it("ignores block when the builtin is inactive", () => {
+			const calls = collectCalls(
+				parseAst("block.timestamp > 0"),
+				createRegistry(),
+			);
+
+			expect(calls).toHaveLength(0);
+		});
+	});
+
+	describe("contract address", () => {
+		it("resolves <contract>.address as a literal argument", () => {
+			const calls = collectCalls(
+				parseAst("token.balanceOf(pool.address)"),
+				createRegistry(),
+			);
+
+			expect(calls).toHaveLength(1);
+			expect(calls[0]?.args).toEqual([
+				{
+					type: "literal",
+					value: "0x0000000000000000000000000000000000000004",
+				},
+			]);
+		});
+
+		it("batches <contract>.address.balance()", () => {
+			const calls = collectCalls(
+				parseAst("pool.address.balance()"),
+				createRegistry(),
+			);
+
+			expect(calls).toHaveLength(1);
+			expect(calls[0]?.method).toBe("getEthBalance");
+		});
+	});
+
+	describe("scalar wrapper variables", () => {
+		it("defers solInt() over a bytes variable", () => {
+			const calls = collectCalls(
+				parseAst("nft.ownerOf(solInt(data))"),
+				createRegistry(),
+				{ variableTypes: new Map([["data", "bytes"]]) },
+			);
+
+			expect(calls).toHaveLength(0);
+		});
+
+		it("defers solInt() over an undeclared variable", () => {
+			const calls = collectCalls(
+				parseAst("nft.ownerOf(solInt(tokenId))"),
+				createRegistry(),
+			);
+
+			expect(calls).toHaveLength(0);
 		});
 	});
 });

@@ -13,7 +13,7 @@ import type {
 	ParseResult,
 	TypeCheckResult,
 } from "@marcbachmann/cel-js";
-import type { SELSchema, TypeSchema } from "@seljs/schema";
+import type { ContractSchema, SELSchema, TypeSchema } from "@seljs/schema";
 
 interface SELCheckResult {
 	valid: boolean;
@@ -394,12 +394,7 @@ export class SELChecker {
 			return {
 				kind: "dot-access",
 				receiverType: contractTypeName(contract.name),
-				items: contract.methods.map((method) => ({
-					label: method.name,
-					type: method.returns,
-					detail: `(${method.params.map((p) => `${p.name}: ${p.type}`).join(", ")}): ${method.returns}`,
-					description: method.description,
-				})),
+				items: this.contractMembersFor(contract),
 			};
 		}
 
@@ -414,12 +409,7 @@ export class SELChecker {
 				return {
 					kind: "dot-access",
 					receiverType,
-					items: contractByType.methods.map((m) => ({
-						label: m.name,
-						type: m.returns,
-						detail: `(${m.params.map((p) => `${p.name}: ${p.type}`).join(", ")}): ${m.returns}`,
-						description: m.description,
-					})),
+					items: this.contractMembersFor(contractByType),
 				};
 			}
 
@@ -531,6 +521,23 @@ export class SELChecker {
 		}
 
 		return map;
+	}
+
+	private contractMembersFor(contract: ContractSchema): CompletionItem[] {
+		return [
+			{
+				label: "address",
+				type: "sol_address",
+				detail: "sol_address",
+				description: "Contract address from the schema",
+			},
+			...contract.methods.map((m) => ({
+				label: m.name,
+				type: m.returns,
+				detail: `(${m.params.map((p) => `${p.name}: ${p.type}`).join(", ")}): ${m.returns}`,
+				description: m.description,
+			})),
+		];
 	}
 
 	private structFieldsFor(typeName: string): CompletionItem[] | undefined {

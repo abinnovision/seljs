@@ -126,6 +126,47 @@ describe("src/checker/checker.ts", () => {
 			expect(result.diagnostics.length).toBeGreaterThan(0);
 		});
 
+		it("types the builtin block fields", () => {
+			const checker = new SELChecker(ERC20_SCHEMA);
+
+			expect(checker.check("block.timestamp").type).toBe("sol_int");
+			expect(checker.check("block.number").type).toBe("sol_int");
+			expect(checker.check("block.foo").valid).toBe(false);
+		});
+
+		it("lets a schema variable named block shadow the builtin", () => {
+			const checker = new SELChecker({
+				...ERC20_SCHEMA,
+				variables: [{ name: "block", type: "int" }],
+			});
+
+			expect(checker.check("block + 1").type).toBe("int");
+		});
+
+		it("keeps the address field distinct from an address() method", () => {
+			const checker = new SELChecker({
+				...ERC20_SCHEMA,
+				contracts: [
+					contract({
+						name: "proxy",
+						methods: [
+							method({ name: "address", params: [], returns: "sol_address" }),
+						],
+					}),
+				],
+			});
+
+			expect(
+				checker.dotCompletions("proxy").items.map((i) => i.detail),
+			).toEqual(["sol_address", "(): sol_address"]);
+		});
+
+		it("types contract addresses as sol_address", () => {
+			const checker = new SELChecker(ERC20_SCHEMA);
+
+			expect(checker.check("erc20.address").type).toBe("sol_address");
+		});
+
 		it("returns valid for simple literals", () => {
 			const checker = new SELChecker(ERC20_SCHEMA);
 
@@ -263,9 +304,10 @@ describe("src/checker/checker.ts", () => {
 			const info = checker.completionsAt("erc20.", 6);
 
 			expect(info.kind).toBe("dot-access");
-			expect(info.items.length).toBe(3);
+			expect(info.items.length).toBe(4);
 
 			const labels = info.items.map((i) => i.label);
+			expect(labels).toContain("address");
 			expect(labels).toContain("balanceOf");
 			expect(labels).toContain("totalSupply");
 			expect(labels).toContain("name");

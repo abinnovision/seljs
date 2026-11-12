@@ -1,13 +1,115 @@
 import { buildSchema } from "@seljs/env";
+import {
+	buildRoutes,
+	createE2EMockClient,
+	routeFor,
+} from "@seljs-internal/fixtures";
 import { Abi } from "ox";
-import { describe, expect, it } from "vitest";
+import {
+	HttpRequestError,
+	decodeFunctionData,
+	encodeAbiParameters,
+} from "viem";
+import { describe, expect, it, vi } from "vitest";
 
 import { SELRuntime } from "./environment.js";
 import {
 	SELContractError,
 	SELEvaluationError,
 	SELLintError,
+	SELProviderError,
 } from "../errors/index.js";
+import { MULTICALL3_ADDRESS } from "../execution/multicall.js";
+
+import type { SELClient } from "./client.js";
+
+const VAULT_ABI = Abi.from([
+	"function f(uint256 x) view returns (uint256)",
+	"function g() view returns (uint256)",
+	"function balanceOf(address account) view returns (uint256)",
+]);
+const PROXY_ABI = Abi.from(["function address() view returns (address)"]);
+const MULTICALL3_ABI = Abi.from([
+	"function getEthBalance(address addr) view returns (uint256)",
+	"function getCurrentBlockTimestamp() view returns (uint256)",
+]);
+
+const VAULT = "0x1111111111111111111111111111111111111111" as const;
+const A_TOKEN = "0x2222222222222222222222222222222222222222" as const;
+const PROXY = "0x3333333333333333333333333333333333333333" as const;
+const PROXY_IMPL = "0x4444444444444444444444444444444444444444" as const;
+
+const chainSchema = (context?: Record<string, "bytes">) =>
+	buildSchema({
+		contracts: {
+			vault: { address: VAULT, abi: VAULT_ABI },
+			aToken: { address: A_TOKEN, abi: VAULT_ABI },
+			proxy: { address: PROXY, abi: PROXY_ABI },
+		},
+		context,
+	});
+
+/** Mock client routing batched and direct calls, with spies on both methods. */
+const createChainClient = () => {
+	const { client } = createE2EMockClient(
+		buildRoutes(
+			routeFor({
+				abi: VAULT_ABI,
+				functionName: "f",
+				address: VAULT,
+				result: (args: readonly unknown[]) => (args[0] as bigint) * 10n,
+			}),
+			routeFor({
+				abi: VAULT_ABI,
+				functionName: "g",
+				address: VAULT,
+				result: 7n,
+			}),
+			routeFor({
+				abi: VAULT_ABI,
+				functionName: "balanceOf",
+				address: VAULT,
+				result: 5n,
+			}),
+			routeFor({
+				abi: PROXY_ABI,
+				functionName: "address",
+				address: PROXY,
+				result: PROXY_IMPL,
+			}),
+			routeFor({
+				abi: MULTICALL3_ABI,
+				functionName: "getEthBalance",
+				address: MULTICALL3_ADDRESS,
+				result: 3n,
+			}),
+			routeFor({
+				abi: MULTICALL3_ABI,
+				functionName: "getCurrentBlockTimestamp",
+				address: MULTICALL3_ADDRESS,
+				result: 1700000000n,
+			}),
+		),
+	);
+
+	return {
+		client,
+		call: vi.spyOn(client, "call"),
+		getBlockNumber: vi.spyOn(client, "getBlockNumber"),
+	};
+};
+
+/** Mock client answering every direct call with the uint256 `1`. */
+const createUintClient = () => {
+	const client = {
+		getBlockNumber: vi.fn().mockResolvedValue(100n),
+		call: vi.fn().mockResolvedValue({
+			data: encodeAbiParameters([{ type: "uint256" }], [1n]),
+		}),
+	};
+
+	return { client: client as SELClient, ...client };
+};
 
 describe("src/environment/environment.ts", () => {
 	describe("evaluate", () => {
@@ -469,6 +571,295 @@ describe("src/environment/environment.ts", () => {
 			const result = env.check("isZeroAddress(owner)");
 			expect(result.valid).toBe(true);
 			expect(result.type).toBe("bool");
+		});
+	});
+
+	describe("pinned live calls", () => {
+		it("pins deferred calls to one block and records them in meta", async () => {
+			const { client, call, getBlockNumber } = createUintClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate("[1, 2, 3].map(i, vault.f(i))");
+
+			expect(getBlockNumber).toHaveBeenCalledTimes(1);
+			expect(call).toHaveBeenCalledTimes(3);
+			for (const [params] of call.mock.calls) {
+				expect(params).toMatchObject({ blockNumber: 100n });
+			}
+
+			expect(result.meta).toEqual({
+				roundsExecuted: 0,
+				totalCalls: 3,
+				blockNumber: 100n,
+				deferredCalls: 3,
+			});
+		});
+
+		it("reuses the batch block for deferred calls", async () => {
+			const { client, call, getBlockNumber } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate<bigint>(
+				"vault.g() + [1, 2].map(i, vault.f(i)).sum()",
+			);
+
+			expect(result.value).toBe(37n);
+			expect(getBlockNumber).toHaveBeenCalledTimes(1);
+			for (const [params] of call.mock.calls) {
+				expect(params).toMatchObject({ blockNumber: 100n });
+			}
+
+			expect(result.meta?.totalCalls).toBe(3);
+			expect(result.meta?.deferredCalls).toBe(2);
+		});
+
+		it("pins deferred balance() calls", async () => {
+			const { client, call } = createUintClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			await env.evaluate(
+				'[solAddress("0x0000000000000000000000000000000000000001")].map(a, a.balance())',
+			);
+
+			expect(call).toHaveBeenCalledTimes(1);
+			expect(call.mock.calls[0]?.[0]).toMatchObject({ blockNumber: 100n });
+		});
+
+		it.each(["[1].map(i, vault.f(i))", "vault.g()"])(
+			"surfaces block number failures as provider errors: %s",
+			async (expression) => {
+				const { client, getBlockNumber } = createUintClient();
+				getBlockNumber.mockRejectedValue(new HttpRequestError({ url: "x" }));
+				const env = new SELRuntime({ client, schema: chainSchema() });
+
+				await expect(env.evaluate(expression)).rejects.toBeInstanceOf(
+					SELProviderError,
+				);
+			},
+		);
+
+		it("does not fetch a block for pure expressions", async () => {
+			const { client, getBlockNumber } = createUintClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate("1 + 2");
+
+			expect(getBlockNumber).not.toHaveBeenCalled();
+			expect(result.meta).toBeUndefined();
+		});
+	});
+
+	describe("builtin block", () => {
+		it("reads block.timestamp in the pinned batch", async () => {
+			const { client, call } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate(
+				"block.timestamp == solInt(1700000000)",
+			);
+
+			expect(result.value).toBe(true);
+			expect(call).toHaveBeenCalledTimes(1);
+			expect(call.mock.calls[0]?.[0]).toMatchObject({ blockNumber: 100n });
+		});
+
+		it("reads block.number from the pin without calls", async () => {
+			const { client, call } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate("block.number == solInt(100)");
+
+			expect(result.value).toBe(true);
+			expect(call).not.toHaveBeenCalled();
+			expect(result.meta?.blockNumber).toBe(100n);
+		});
+
+		it("batches calls with block fields as arguments", async () => {
+			const { client } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+			const context = {};
+
+			const byNumber = await env.evaluate<bigint>(
+				"vault.f(block.number)",
+				context,
+			);
+			const byTimestamp = await env.evaluate<bigint>(
+				"vault.f(block.timestamp)",
+			);
+
+			expect(byNumber.value).toBe(1000n);
+			expect(byNumber.meta?.deferredCalls).toBe(0);
+			expect(byTimestamp.value).toBe(17000000000n);
+			expect(byTimestamp.meta?.deferredCalls).toBe(0);
+			expect("block.number" in context).toBe(false);
+		});
+
+		it("binds a bare block in cel.bind", async () => {
+			const { client } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate(
+				"cel.bind(b, block, b.timestamp > solInt(0) && b.number == solInt(100))",
+			);
+
+			expect(result.value).toBe(true);
+		});
+
+		it("is shadowed by a schema variable named block", async () => {
+			const env = new SELRuntime({
+				schema: buildSchema({ context: { block: "sol_int" } }),
+			});
+
+			const result = await env.evaluate("block + 1", { block: 5n });
+
+			expect(result.value).toBe(6n);
+		});
+
+		it("wins over an undeclared block context key", async () => {
+			const { client } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate("block.number", { block: 999 });
+
+			expect(result.value).toBe(100n);
+		});
+
+		it("requires a client for block.number", async () => {
+			const env = new SELRuntime({ schema: chainSchema() });
+
+			const error: unknown = await env
+				.evaluate("block.number")
+				.catch((e: unknown) => e);
+
+			expect(error).toBeInstanceOf(SELContractError);
+			expect((error as Error).message).toMatch(/^No client provided/);
+		});
+	});
+
+	describe("contract address", () => {
+		it("batches calls taking a contract address", async () => {
+			const { client, call } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate("vault.balanceOf(aToken.address)");
+
+			expect(result.value).toBe(5n);
+			expect(call).toHaveBeenCalledTimes(1);
+			expect(result.meta?.deferredCalls).toBe(0);
+		});
+
+		it("batches balance() on a contract address", async () => {
+			const { client } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate("aToken.address.balance()");
+
+			expect(result.value).toBe(3n);
+			expect(result.meta?.deferredCalls).toBe(0);
+		});
+
+		it("compares a contract address without a client", async () => {
+			const env = new SELRuntime({ schema: chainSchema() });
+
+			const result = await env.evaluate(
+				`aToken.address == solAddress("${A_TOKEN}")`,
+			);
+
+			expect(result.value).toBe(true);
+		});
+
+		it("keeps an ABI address() method callable next to the field", async () => {
+			const { client } = createChainClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const field = await env.evaluate(
+				`proxy.address == solAddress("${PROXY}")`,
+			);
+			const method = await env.evaluate(
+				`proxy.address() == solAddress("${PROXY_IMPL}")`,
+			);
+
+			expect(field.value).toBe(true);
+			expect(method.value).toBe(true);
+		});
+	});
+
+	describe("solInt(bytes)", () => {
+		it("reads bytes as a big-endian unsigned integer", async () => {
+			const env = new SELRuntime({ schema: buildSchema({}) });
+			const max = `0x${"ff".repeat(32)}`;
+
+			expect(
+				(await env.evaluate('solInt(hexBytes("0x0100")) == solInt(256)')).value,
+			).toBe(true);
+			expect(
+				(await env.evaluate('solInt(hexBytes("0x")) == solInt(0)')).value,
+			).toBe(true);
+			expect(
+				(
+					await env.evaluate(
+						`solInt(hexBytes("${max}")) == solInt("115792089237316195423570985008687907853269984665640564039457584007913129639935")`,
+					)
+				).value,
+			).toBe(true);
+		});
+
+		it("rejects more than 32 bytes", async () => {
+			const env = new SELRuntime({ schema: buildSchema({}) });
+
+			await expect(
+				env.evaluate(`solInt(hexBytes("0x${"00".repeat(33)}"))`),
+			).rejects.toBeInstanceOf(SELEvaluationError);
+		});
+
+		it("pins solInt(keccak256(...)) arguments as deferred calls", async () => {
+			const { client, call } = createUintClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			const result = await env.evaluate('vault.f(solInt(keccak256("a")))');
+
+			expect(result.meta?.deferredCalls).toBe(1);
+			expect(call.mock.calls[0]?.[0]).toMatchObject({ blockNumber: 100n });
+		});
+
+		it("encodes solInt(bytes) as the uint argument", async () => {
+			const { client, call } = createUintClient();
+			const env = new SELRuntime({ client, schema: chainSchema() });
+
+			await env.evaluate('vault.f(solInt(hexBytes("0x0100")))');
+
+			const params = call.mock.calls[0]?.[0] as { data: `0x${string}` };
+			const decoded = decodeFunctionData({ abi: VAULT_ABI, data: params.data });
+			expect(decoded.args).toEqual([256n]);
+		});
+
+		it("defers solInt() over a bytes variable", async () => {
+			const { client } = createChainClient();
+			const env = new SELRuntime({
+				client,
+				schema: chainSchema({ data: "bytes" }),
+			});
+
+			const result = await env.evaluate<bigint>("vault.f(solInt(data))", {
+				data: new Uint8Array([1, 0]),
+			});
+
+			expect(result.value).toBe(2560n);
+			expect(result.meta?.deferredCalls).toBe(1);
+		});
+
+		it("batches solInt() over an int variable", async () => {
+			const { client } = createChainClient();
+			const schema = chainSchema();
+			schema.variables.push({ name: "n", type: "int" });
+			const env = new SELRuntime({ client, schema });
+
+			const result = await env.evaluate<bigint>("vault.f(solInt(n))", {
+				n: 4n,
+			});
+
+			expect(result.value).toBe(40n);
+			expect(result.meta?.deferredCalls).toBe(0);
 		});
 	});
 });

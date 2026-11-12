@@ -390,7 +390,10 @@ describe("src/builder.ts", () => {
 			});
 
 			const structTypes = simpleSchema.types.filter(
-				(t) => t.kind === "struct" && t.name !== "SelNamespace",
+				(t) =>
+					t.kind === "struct" &&
+					t.name !== "SelNamespace" &&
+					t.name !== "SelBlock",
 			);
 			expect(structTypes).toHaveLength(0);
 		});
@@ -524,6 +527,24 @@ describe("src/builder.ts", () => {
 			expect(method.abi).toBeDefined();
 			expect(method.abi.name).toBe("balanceOf");
 			expect(method.abi.type).toBe("function");
+		});
+	});
+
+	describe("builtin block", () => {
+		it("exposes the block constant and SelBlock type", () => {
+			const schema = buildSchema({});
+
+			expect(schema.constants?.map((c) => c.name)).toContain("block");
+			expect(schema.types.find((t) => t.name === "SelBlock")?.fields).toEqual([
+				expect.objectContaining({ name: "number", type: "sol_int" }),
+				expect.objectContaining({ name: "timestamp", type: "sol_int" }),
+			]);
+		});
+
+		it("omits the block constant when the schema defines block", () => {
+			const schema = buildSchema({ context: { block: "sol_int" } });
+
+			expect(schema.constants?.map((c) => c.name)).not.toContain("block");
 		});
 	});
 });

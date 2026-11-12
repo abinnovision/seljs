@@ -111,8 +111,8 @@ export const CEL_BUILTIN_FUNCTIONS: FunctionSchema[] = [
 		name: "solInt",
 		signature: "solInt(string): sol_int",
 		description:
-			"Converts a string or int to a sol_int (arbitrary-precision integer)",
-		params: [{ name: "value", type: "string|int" }],
+			"Converts a string, int, or bytes to a sol_int (arbitrary-precision integer). Bytes are read as a big-endian unsigned integer of at most 32 bytes.",
+		params: [{ name: "value", type: "string|int|bytes" }],
 		returns: "sol_int",
 	},
 	{
@@ -412,6 +412,39 @@ export const SEL_NAMESPACE_TYPE: TypeSchema = {
 		type: c.type,
 		description: c.description,
 	})),
+};
+
+/**
+ * Struct type backing the builtin `block` identifier. Surfacing this in
+ * `schema.types` lets editor autocomplete populate `block.` completions.
+ */
+export const SEL_BLOCK_TYPE: TypeSchema = {
+	name: "SelBlock",
+	kind: "struct",
+	description: "Block context pinned for the evaluation.",
+	fields: [
+		{
+			name: "number",
+			type: "sol_int",
+			description: "Block number all chain reads of the evaluation observe.",
+		},
+		{
+			name: "timestamp",
+			type: "sol_int",
+			description: "Timestamp of the pinned block, in seconds.",
+		},
+	],
+};
+
+/**
+ * Builtin `block` identifier. Only exposed when the schema defines no
+ * contract or variable named `block`, which shadows it.
+ */
+export const SEL_BLOCK_CONSTANT: VariableSchema = {
+	name: "block",
+	type: "SelBlock",
+	description:
+		"Block context of the evaluation: block.number and block.timestamp.",
 };
 
 /**

@@ -1,4 +1,10 @@
-import { SELChecker, createRuntimeEnvironment } from "@seljs/checker";
+import {
+	BUILTIN_BLOCK_NAME,
+	SELChecker,
+	createBlockValue,
+	createRuntimeEnvironment,
+	isBuiltinBlockActive,
+} from "@seljs/checker";
 
 import { getBuiltinContracts } from "./builtin-contracts.js";
 import { validateClient } from "./client.js";
@@ -10,8 +16,14 @@ import {
 	resolveExecutionBlockNumber,
 } from "./contract-caller.js";
 import { wrapError } from "./error-wrapper.js";
-import { buildExecutionReplayCache } from "./replay-cache.js";
-import { collectCalls } from "../analysis/call-collector.js";
+import {
+	buildExecutionReplayCache,
+	createReplayCallId,
+} from "./replay-cache.js";
+import {
+	BLOCK_NUMBER_VARIABLE,
+	collectCalls,
+} from "../analysis/call-collector.js";
 import { analyzeDependencies } from "../analysis/dependency-analyzer.js";
 import { planRounds } from "../analysis/round-planner.js";
 import { createLogger } from "../debug.js";
@@ -32,7 +44,11 @@ import type {
 	ExecutionMeta,
 } from "../execution/types.js";
 import type { Environment, TypeCheckResult } from "@marcbachmann/cel-js";
-import type { CelCodecRegistry, SELDiagnostic } from "@seljs/checker";
+import type {
+	BuiltinBlockField,
+	CelCodecRegistry,
+	SELDiagnostic,
+} from "@seljs/checker";
 import type { ContractSchema, SELSchema } from "@seljs/schema";
 
 /**
@@ -56,6 +72,7 @@ export class SELRuntime {
 	private readonly multicallOptions?: MulticallOptions;
 	private readonly contractBindings: Record<string, unknown>;
 	private readonly codecRegistry: CelCodecRegistry;
+	private readonly builtinBlock: boolean;
 
 	/**
 	 * Per-evaluation mutable state.
@@ -77,6 +94,7 @@ export class SELRuntime {
 	private currentCache?: Map<string, unknown>;
 	private currentClient?: SELClient;
 	private currentCallCounter?: CallCounter;
+	private currentBlockResolver?: () => Promise<bigint>;
 
 	/** Mutex to serialize concurrent evaluate() calls (protects current* fields) */
 	private mutex = Promise.resolve();
@@ -101,6 +119,7 @@ export class SELRuntime {
 		}
 
 		this.client = config.client;
+		this.builtinBlock = isBuiltinBlockActive(config.schema);
 
 		// Augment user schema with built-in contracts (e.g., __multicall3 for address accessors)
 		this.schema = {
@@ -145,6 +164,7 @@ export class SELRuntime {
 				client: this.currentClient ?? this.client,
 				codecRegistry: this.codecRegistry,
 				callCounter: this.currentCallCounter,
+				resolveBlockNumber: this.currentBlockResolver,
 			});
 		};
 
@@ -241,6 +261,7 @@ export class SELRuntime {
 	): {
 		parseResult: ReturnType<Environment["parse"]>;
 		collectedCalls: CollectedCall[];
+		blockFields: Set<BuiltinBlockField>;
 		normalizedContext: Record<string, unknown> | undefined;
 		executionVariables: Record<string, unknown>;
 		resolvedType: string | undefined;
@@ -259,9 +280,16 @@ export class SELRuntime {
 		// Expression is valid — parse for execution (runtime env with contract bindings)
 		const parseResult = this.env.parse(expression);
 
-		const collectedCalls = collectCalls(parseResult.ast, {
-			get: (name: string) => this.findContract(name),
-		});
+		const blockFields = new Set<BuiltinBlockField>();
+		const collectedCalls = collectCalls(
+			parseResult.ast,
+			{ get: (name: string) => this.findContract(name) },
+			{
+				variableTypes: this.variableTypes,
+				builtinBlock: this.builtinBlock,
+				blockFields,
+			},
+		);
 
 		debug("evaluate: collected %d calls", collectedCalls.length);
 
@@ -285,6 +313,7 @@ export class SELRuntime {
 		return {
 			parseResult,
 			collectedCalls,
+			blockFields,
 			normalizedContext,
 			executionVariables,
 			resolvedType: checkResult.type,
@@ -325,12 +354,16 @@ export class SELRuntime {
 			meta: ExecutionMeta;
 		};
 
+		const blockNumber = await resolveExecutionBlockNumber(resolvedClient);
+
+		// Copy so the caller's context never receives the pinned block number
+		const variables = {
+			...executionVariables,
+			[BLOCK_NUMBER_VARIABLE]: blockNumber,
+		};
+
 		try {
-			executionResult = await executor.execute(
-				plan,
-				executionVariables,
-				await resolveExecutionBlockNumber(resolvedClient),
-			);
+			executionResult = await executor.execute(plan, variables, blockNumber);
 		} catch (error) {
 			// Per-call reverts already carry full context — pass through.
 			if (error instanceof SELContractRevertError) {
@@ -379,7 +412,7 @@ export class SELRuntime {
 		const executionCache = buildExecutionReplayCache(
 			collectedCalls,
 			executionResult.results,
-			executionVariables,
+			variables,
 			this.codecRegistry,
 			(contract, method) => {
 				const c = this.findContract(contract);
@@ -408,6 +441,7 @@ export class SELRuntime {
 			const {
 				parseResult,
 				collectedCalls,
+				blockFields,
 				normalizedContext,
 				executionVariables,
 				resolvedType,
@@ -435,24 +469,76 @@ export class SELRuntime {
 				));
 			}
 
+			/*
+			 * One block per evaluation: reuse the batch block, otherwise resolve
+			 * once on first use by a live call or `block.number`.
+			 */
+			let pinnedBlock = executionMeta?.blockNumber;
+			let pendingBlock: Promise<bigint> | undefined;
+			const resolveBlockNumber = async (): Promise<bigint> => {
+				if (pinnedBlock !== undefined) {
+					return pinnedBlock;
+				}
+
+				if (!resolvedClient) {
+					throw new SELContractError(
+						"No client provided for block context. Provide a client in SELRuntime config or evaluate() options.",
+					);
+				}
+
+				pendingBlock ??= resolveExecutionBlockNumber(resolvedClient);
+				pinnedBlock = await pendingBlock;
+
+				return pinnedBlock;
+			};
+
+			const bindings: Record<string, unknown> = {
+				...normalizedContext,
+				...this.contractBindings,
+			};
+			if (this.builtinBlock) {
+				bindings[BUILTIN_BLOCK_NAME] = createBlockValue({
+					number: blockFields.has("number")
+						? await resolveBlockNumber()
+						: undefined,
+					timestamp: blockFields.has("timestamp")
+						? (executionCache?.get(
+								createReplayCallId(
+									"__multicall3",
+									"getCurrentBlockTimestamp",
+									[],
+								),
+							) as bigint)
+						: undefined,
+				});
+			}
+
+			const batchedCalls = executionMeta?.totalCalls ?? 0;
+
 			// Set per-evaluation state for the handler closure
 			this.currentCache = executionCache;
 			this.currentClient = resolvedClient;
-			this.currentCallCounter = new CallCounter(
-				this.maxCalls,
-				executionMeta?.totalCalls ?? 0,
-			);
+			this.currentCallCounter = new CallCounter(this.maxCalls, batchedCalls);
+			this.currentBlockResolver = resolveBlockNumber;
 
+			const callCounter = this.currentCallCounter;
 			let result: unknown;
 			try {
-				result = await (parseResult({
-					...normalizedContext,
-					...this.contractBindings,
-				}) as Promise<unknown>);
+				result = await (parseResult(bindings) as Promise<unknown>);
 			} finally {
 				this.currentCache = undefined;
 				this.currentClient = undefined;
 				this.currentCallCounter = undefined;
+				this.currentBlockResolver = undefined;
+			}
+
+			if (pinnedBlock !== undefined) {
+				executionMeta = {
+					roundsExecuted: executionMeta?.roundsExecuted ?? 0,
+					totalCalls: callCounter.total,
+					blockNumber: pinnedBlock,
+					deferredCalls: callCounter.total - batchedCalls,
+				};
 			}
 
 			const value = (

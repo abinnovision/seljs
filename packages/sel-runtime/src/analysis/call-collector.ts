@@ -1,15 +1,31 @@
-import { COMPREHENSION_MACROS, SCALAR_WRAPPER_FUNCTIONS } from "@seljs/checker";
+import {
+	BUILTIN_BLOCK_NAME,
+	COMPREHENSION_MACROS,
+	SCALAR_WRAPPER_FUNCTIONS,
+	getBuiltinBlockField,
+	getContractAddressSelect,
+	isResolvableScalarWrapperVar,
+} from "@seljs/checker";
 import { isAstNode } from "@seljs/common";
 
 import { createLogger } from "../debug.js";
 
 import type { CallArgument, CollectedCall } from "./types.js";
 import type { ASTNode } from "@marcbachmann/cel-js";
+import type { BuiltinBlockField } from "@seljs/checker";
 
 /** Minimal interface required by collectCalls for contract lookup. */
 export interface ContractLookup {
-	get: (name: string) => unknown;
+	get: (name: string) => { address: string } | undefined;
 }
+
+/** Synthetic Multicall3 call backing `block.timestamp`. */
+const BLOCK_TIMESTAMP_CALL = {
+	contract: "__multicall3",
+	method: "getCurrentBlockTimestamp",
+} as const;
+
+const BLOCK_TIMESTAMP_CALL_ID = `${BLOCK_TIMESTAMP_CALL.contract}:${BLOCK_TIMESTAMP_CALL.method}:`;
 
 const debug = createLogger("analysis:collect");
 
@@ -56,10 +72,15 @@ const generateCallId = (
  * Attempts to extract a scalar argument from a Solidity cast/wrapper call
  * (e.g. `uint256(42)`, `solAddress("0x...")`, `int256(tokenId)`).
  *
- * Handles both literal values and variable references.
- * Returns undefined if the node is not a recognized scalar wrapper.
+ * Handles literal values and variable references whose declared type the
+ * wrapper accepts. Returns undefined if the node is not a recognized scalar
+ * wrapper or its argument cannot be resolved before evaluation.
  */
-const collectScalarArgument = (argNode: unknown): CallArgument | undefined => {
+const collectScalarArgument = (
+	argNode: unknown,
+	variableTypes: Map<string, string>,
+	scopedVars: Set<string>,
+): CallArgument | undefined => {
 	if (!isAstNode(argNode) || argNode.op !== "call") {
 		return undefined;
 	}
@@ -90,7 +111,11 @@ const collectScalarArgument = (argNode: unknown): CallArgument | undefined => {
 		return { type: "literal", value: inner.args };
 	}
 
-	if (inner.op === "id" && typeof inner.args === "string") {
+	if (
+		inner.op === "id" &&
+		!scopedVars.has(inner.args) &&
+		isResolvableScalarWrapperVar(fnName, variableTypes.get(inner.args))
+	) {
 		return { type: "variable", variableName: inner.args };
 	}
 
@@ -129,6 +154,21 @@ const getRCallArgs = (
 	return { method: methodNode, receiverName, args: argNodes };
 };
 
+/** Optional inputs for {@link collectCalls}. */
+export interface CollectCallsOptions {
+	/** Declared variable types, used to decide whether scalar-wrapped variables can be batched. */
+	variableTypes?: Map<string, string>;
+
+	/** Whether the builtin `block` identifier is active (not shadowed by the schema). */
+	builtinBlock?: boolean;
+
+	/** Filled with the builtin `block` fields the expression references. */
+	blockFields?: Set<BuiltinBlockField>;
+}
+
+/** Context key under which the pinned block number is passed to the executors. */
+export const BLOCK_NUMBER_VARIABLE = "block.number";
+
 /**
  * Collects contract calls from a CEL AST by traversing the tree.
  *
@@ -137,21 +177,62 @@ const getRCallArgs = (
  * references, or results of other contract calls (creating dependency edges).
  * Skips `cel.bind()` calls while still collecting any nested contract calls.
  *
+ * When the builtin `block` is active, `block.timestamp` (or a bare `block`)
+ * adds one synthetic Multicall3 timestamp call, and `block.number` arguments
+ * resolve from the pinned block number.
+ *
  * @param ast The root AST node from a parsed CEL expression
  * @param registry Contract lookup to validate receiver names against
+ * @param options Variable types, builtin `block` availability, and an optional
+ *   set that receives the referenced `block` fields
  * @returns Array of collected calls with dependency information
  */
 export const collectCalls = (
 	ast: ASTNode,
 	registry: ContractLookup,
+	options?: CollectCallsOptions,
 ): CollectedCall[] => {
 	const calls: CollectedCall[] = [];
+	const variableTypes = options?.variableTypes ?? new Map<string, string>();
+	const builtinBlock = options?.builtinBlock ?? false;
 
 	/** Variable names that are scoped (comprehension iteration vars, cel.bind vars) — NOT user context */
 	const scopedVars = new Set<string>();
 
 	/** rcall AST nodes skipped because they have unresolvable args */
 	const deferredNodes = new WeakSet<ASTNode>();
+
+	/** Runs `fn` with `name` scoped, keeping an outer binding of the same name. */
+	const withScopedVar = (name: string, fn: () => void): void => {
+		const outer = scopedVars.has(name);
+		scopedVars.add(name);
+		fn();
+		if (!outer) {
+			scopedVars.delete(name);
+		}
+	};
+
+	/** Adds the synthetic block timestamp call once. */
+	const collectBlockTimestamp = (node: ASTNode): void => {
+		options?.blockFields?.add("timestamp");
+		if (calls.some((c) => c.id === BLOCK_TIMESTAMP_CALL_ID)) {
+			return;
+		}
+
+		calls.push({
+			id: BLOCK_TIMESTAMP_CALL_ID,
+			contract: BLOCK_TIMESTAMP_CALL.contract,
+			method: BLOCK_TIMESTAMP_CALL.method,
+			args: [],
+			astNode: node,
+		});
+		debug("found builtin block timestamp (id=%s)", BLOCK_TIMESTAMP_CALL_ID);
+	};
+
+	const isBareBlock = (node: ASTNode): boolean =>
+		node.op === "id" &&
+		node.args === BUILTIN_BLOCK_NAME &&
+		!scopedVars.has(node.args);
 
 	const traverse = (node: unknown): void => {
 		if (Array.isArray(node)) {
@@ -172,6 +253,28 @@ export const collectCalls = (
 			return;
 		}
 
+		if (builtinBlock) {
+			const blockField = getBuiltinBlockField(node, scopedVars);
+			if (blockField === "number") {
+				options?.blockFields?.add("number");
+
+				return;
+			}
+
+			if (blockField === "timestamp") {
+				collectBlockTimestamp(node);
+
+				return;
+			}
+
+			if (isBareBlock(node)) {
+				options?.blockFields?.add("number");
+				collectBlockTimestamp(node);
+
+				return;
+			}
+		}
+
 		traverse(node.args);
 	};
 
@@ -188,9 +291,9 @@ export const collectCalls = (
 				typeof nameNode.args === "string"
 			) {
 				traverse(args[1]);
-				scopedVars.add(nameNode.args);
-				traverse(args[2]);
-				scopedVars.delete(nameNode.args);
+				withScopedVar(nameNode.args, () => {
+					traverse(args[2]);
+				});
 
 				return;
 			}
@@ -224,12 +327,11 @@ export const collectCalls = (
 				iterVarNode.op === "id" &&
 				typeof iterVarNode.args === "string"
 			) {
-				scopedVars.add(iterVarNode.args);
-				for (let i = 1; i < args.length; i++) {
-					traverse(args[i]);
-				}
-
-				scopedVars.delete(iterVarNode.args);
+				withScopedVar(iterVarNode.args, () => {
+					for (let i = 1; i < args.length; i++) {
+						traverse(args[i]);
+					}
+				});
 
 				return;
 			}
@@ -248,9 +350,43 @@ export const collectCalls = (
 	const classifyArg = (
 		argNode: unknown,
 	): { arg: CallArgument | undefined; traversed: boolean } => {
-		const scalarArg = collectScalarArgument(argNode);
+		const scalarArg = collectScalarArgument(argNode, variableTypes, scopedVars);
 		if (scalarArg) {
 			return { arg: scalarArg, traversed: false };
+		}
+
+		const blockField = builtinBlock
+			? getBuiltinBlockField(argNode, scopedVars)
+			: undefined;
+		if (blockField === "number") {
+			options?.blockFields?.add("number");
+
+			return {
+				arg: { type: "variable", variableName: BLOCK_NUMBER_VARIABLE },
+				traversed: true,
+			};
+		}
+
+		if (blockField === "timestamp" && isAstNode(argNode)) {
+			collectBlockTimestamp(argNode);
+
+			return {
+				arg: { type: "call_result", dependsOnCallId: BLOCK_TIMESTAMP_CALL_ID },
+				traversed: true,
+			};
+		}
+
+		const addressOf = getContractAddressSelect(
+			argNode,
+			scopedVars,
+			(name) => registry.get(name) !== undefined,
+		);
+		const contract = addressOf ? registry.get(addressOf) : undefined;
+		if (contract) {
+			return {
+				arg: { type: "literal", value: contract.address },
+				traversed: true,
+			};
 		}
 
 		if (isAstNode(argNode) && argNode.op === "value") {
@@ -265,7 +401,11 @@ export const collectCalls = (
 			argNode.op === "id" &&
 			typeof argNode.args === "string"
 		) {
-			if (scopedVars.has(argNode.args)) {
+			// A bare builtin `block` is bound at evaluation time
+			if (
+				scopedVars.has(argNode.args) ||
+				(builtinBlock && isBareBlock(argNode))
+			) {
 				return { arg: undefined, traversed: false };
 			}
 

@@ -4,18 +4,33 @@ import {
 	COMPREHENSION_MACROS,
 	SCALAR_WRAPPER_FUNCTIONS,
 } from "../../constants.js";
+import {
+	getBuiltinBlockField,
+	getContractAddressSelect,
+	isBuiltinBlockActive,
+	isResolvableScalarWrapperVar,
+} from "../../predicates.js";
 import { walkAST } from "../../utils/index.js";
 
 import type { SELDiagnostic } from "../../checker/checker.js";
 import type { RuleContext, SELRule } from "../types.js";
 import type { ASTNode } from "@marcbachmann/cel-js";
 
+/** Schema facts needed to decide whether an argument is resolvable. */
+interface ResolveContext {
+	contractNames: Set<string>;
+	variableTypes: Map<string, string>;
+	builtinBlock: boolean;
+	scopedVars: Set<string>;
+}
+
 /**
  * Checks whether a scalar wrapper inner value (inside solInt/solAddress) is resolvable.
  */
 const isScalarInnerResolvable = (
+	fnName: string,
 	inner: unknown,
-	scopedVars: Set<string>,
+	ctx: ResolveContext,
 ): boolean => {
 	if (!isAstNode(inner)) {
 		return false;
@@ -27,8 +42,8 @@ const isScalarInnerResolvable = (
 
 	return (
 		inner.op === "id" &&
-		typeof inner.args === "string" &&
-		!scopedVars.has(inner.args)
+		!ctx.scopedVars.has(inner.args) &&
+		isResolvableScalarWrapperVar(fnName, ctx.variableTypes.get(inner.args))
 	);
 };
 
@@ -37,7 +52,7 @@ const isScalarInnerResolvable = (
  */
 const isResolvableScalarWrapper = (
 	node: ASTNode,
-	scopedVars: Set<string>,
+	ctx: ResolveContext,
 ): boolean => {
 	const nodeArgs = node.args as unknown[];
 	const fnName = nodeArgs[0];
@@ -52,25 +67,22 @@ const isResolvableScalarWrapper = (
 		return false;
 	}
 
-	return isScalarInnerResolvable(fnArgs[0], scopedVars);
+	return isScalarInnerResolvable(fnName, fnArgs[0], ctx);
 };
 
 /**
  * Checks whether a single argument node is statically resolvable
- * (literal, context variable, or nested contract call result).
+ * (literal, context variable, builtin block field, contract address,
+ * or nested contract call result).
  */
-const isResolvableArg = (
-	argNode: unknown,
-	contractNames: Set<string>,
-	scopedVars: Set<string>,
-): boolean => {
+const isResolvableArg = (argNode: unknown, ctx: ResolveContext): boolean => {
 	if (!isAstNode(argNode)) {
 		return false;
 	}
 
 	// Scalar wrapper: solInt(...), solAddress(...)
 	if (argNode.op === "call") {
-		return isResolvableScalarWrapper(argNode, scopedVars);
+		return isResolvableScalarWrapper(argNode, ctx);
 	}
 
 	// Literal value
@@ -79,13 +91,24 @@ const isResolvableArg = (
 	}
 
 	// Variable reference — resolvable only if NOT scoped
-	if (argNode.op === "id" && typeof argNode.args === "string") {
-		return !scopedVars.has(argNode.args);
+	if (argNode.op === "id") {
+		return !ctx.scopedVars.has(argNode.args);
+	}
+
+	// block.number / block.timestamp and <contract>.address
+	if (argNode.op === ".") {
+		return (
+			(ctx.builtinBlock &&
+				getBuiltinBlockField(argNode, ctx.scopedVars) !== undefined) ||
+			getContractAddressSelect(argNode, ctx.scopedVars, (name) =>
+				ctx.contractNames.has(name),
+			) !== undefined
+		);
 	}
 
 	// Nested contract call result — resolvable (will be pre-executed)
 	if (argNode.op === "rcall") {
-		return isContractRCall(argNode, contractNames);
+		return isContractRCall(argNode, ctx.contractNames);
 	}
 
 	return false;
@@ -205,6 +228,14 @@ export const deferredCall: SELRule = {
 
 		const diagnostics: SELDiagnostic[] = [];
 		const scopedVars = new Set<string>();
+		const ctx: ResolveContext = {
+			contractNames,
+			variableTypes: new Map(
+				context.schema.variables.map((v) => [v.name, v.type]),
+			),
+			builtinBlock: isBuiltinBlockActive(context.schema),
+			scopedVars,
+		};
 
 		walkAST(context.ast, (node) => {
 			if (node.op !== "rcall") {
@@ -231,7 +262,7 @@ export const deferredCall: SELRule = {
 
 			// Check if any argument is unresolvable
 			const hasDeferred = callArgs.some(
-				(argNode) => !isResolvableArg(argNode, contractNames, scopedVars),
+				(argNode) => !isResolvableArg(argNode, ctx),
 			);
 
 			if (hasDeferred) {
