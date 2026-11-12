@@ -5,6 +5,8 @@ import {
 	CEL_BUILTIN_CONSTANTS,
 	CEL_BUILTIN_FUNCTIONS,
 	CEL_BUILTIN_MACROS,
+	SEL_BLOCK_CONSTANT,
+	SEL_BLOCK_TYPE,
 	SEL_NAMESPACE_TYPE,
 	SOLIDITY_PRIMITIVE_TYPES,
 } from "./builtins.js";
@@ -392,14 +394,22 @@ export const buildSchema = (config: SchemaBuilderConfig): SELSchema => {
 		}
 	}
 
+	const variables = [...contextVariables, ...featureVariables];
+	const blockShadowed =
+		contracts.some((c) => c.name === SEL_BLOCK_CONSTANT.name) ||
+		variables.some((v) => v.name === SEL_BLOCK_CONSTANT.name);
+
 	const schema: SELSchema = {
 		version: "1.0.0",
 		contracts,
-		variables: [...contextVariables, ...featureVariables],
-		constants: CEL_BUILTIN_CONSTANTS,
+		variables,
+		constants: blockShadowed
+			? CEL_BUILTIN_CONSTANTS
+			: [...CEL_BUILTIN_CONSTANTS, SEL_BLOCK_CONSTANT],
 		types: [
 			...SOLIDITY_PRIMITIVE_TYPES,
 			SEL_NAMESPACE_TYPE,
+			SEL_BLOCK_TYPE,
 			...acc.types,
 			...featureTypes,
 		],

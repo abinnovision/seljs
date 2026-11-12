@@ -7,6 +7,12 @@ import { toFunctionSelector, toFunctionSignature } from "viem";
 
 import { createCheckerEnvironment } from "../environment/hydrate.js";
 import { toCelLiteralType } from "../environment/value-wrappers.js";
+import {
+	BUILTIN_BLOCK_NAME,
+	getBuiltinBlockField,
+	getContractAddressSelect,
+	isBuiltinBlockActive,
+} from "../predicates.js";
 import { collectChildren } from "../utils/index.js";
 
 import type { ASTNode, ParseResult } from "@marcbachmann/cel-js";
@@ -142,21 +148,29 @@ export const analyzeFootprint = (
 	const contractsByType = new Map(
 		schema.contracts.map((c) => [contractTypeName(c.name), c]),
 	);
+	const contractsByName = new Map(schema.contracts.map((c) => [c.name, c]));
 	const variableNames = new Set(schema.variables.map((v) => v.name));
+	const builtinBlock = isBuiltinBlockActive(schema);
 
 	const methods = new Map<ContractSchema, Map<string, FootprintMethod>>();
 	const builtins = new Set<string>();
 	const variables = new Set<string>();
 
-	const record = (contract: ContractSchema, method: MethodSchema): void => {
-		const entry = toFootprintMethod(method);
+	const recordContract = (
+		contract: ContractSchema,
+	): Map<string, FootprintMethod> => {
 		let byContract = methods.get(contract);
 		if (!byContract) {
 			byContract = new Map();
 			methods.set(contract, byContract);
 		}
 
-		byContract.set(entry.selector, entry);
+		return byContract;
+	};
+
+	const record = (contract: ContractSchema, method: MethodSchema): void => {
+		const entry = toFootprintMethod(method);
+		recordContract(contract).set(entry.selector, entry);
 	};
 
 	const recordContractCall = (
@@ -192,6 +206,35 @@ export const analyzeFootprint = (
 			if (variableNames.has(node.args) && !bound.has(node.args)) {
 				variables.add(node.args);
 			}
+
+			if (
+				builtinBlock &&
+				node.args === BUILTIN_BLOCK_NAME &&
+				!bound.has(node.args)
+			) {
+				builtins.add("block.number").add("block.timestamp");
+			}
+
+			return;
+		}
+
+		const blockField = builtinBlock
+			? getBuiltinBlockField(node, bound)
+			: undefined;
+		if (blockField) {
+			builtins.add(`block.${blockField}`);
+
+			return;
+		}
+
+		const addressOf = getContractAddressSelect(node, bound, (name) =>
+			contractsByName.has(name),
+		);
+		const addressContract = addressOf
+			? contractsByName.get(addressOf)
+			: undefined;
+		if (addressContract) {
+			recordContract(addressContract);
 
 			return;
 		}

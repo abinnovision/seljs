@@ -11,6 +11,7 @@ import {
 	toBigInt,
 } from "@seljs/types";
 import {
+	bytesToBigInt as viemBytesToBigInt,
 	keccak256 as viemKeccak256,
 	namehash as viemNamehash,
 	toBytes as viemToBytes,
@@ -84,6 +85,10 @@ const registerAddressOperators = (env: SolidityTypeHost): void => {
 
 const toSolInt = (value: unknown): SolidityIntTypeWrapper =>
 	new SolidityIntTypeWrapper(value);
+
+/** Runtime value type backing the builtin `block` identifier. */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+class SelBlock {}
 
 const registerIntegerOperators = (env: SolidityTypeHost): void => {
 	// --- sol_int <op> sol_int arithmetic ---
@@ -311,6 +316,18 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 			env.registerFunction(sig, (value) => new Ctor(value));
 		}
 	}
+
+	// solInt(bytes): big-endian unsigned integer, at most 32 bytes
+	env.registerFunction("solInt(bytes): sol_int", (value) => {
+		const bytes = value as Uint8Array;
+		if (bytes.length > 32) {
+			throw new SELEvaluationError(
+				`solInt: expected at most 32 bytes, got ${String(bytes.length)}`,
+			);
+		}
+
+		return toSolInt(bytes.length === 0 ? 0n : viemBytesToBigInt(bytes));
+	});
 
 	// --- Standalone helper functions ---
 
@@ -559,4 +576,29 @@ export const registerSolidityTypes = (env: SolidityTypeHost): void => {
 		"SelNamespace",
 		Object.assign(new SelNamespace(), selValues),
 	);
+
+	// `block` type: the variable is registered during schema hydration
+	env.registerType("SelBlock", {
+		ctor: SelBlock,
+		fields: { number: "sol_int", timestamp: "sol_int" },
+	});
+};
+
+/**
+ * Creates a builtin `block` value. Only the provided fields are set.
+ */
+export const createBlockValue = (values: {
+	number?: bigint;
+	timestamp?: bigint;
+}): object => {
+	const block = new SelBlock();
+	if (values.number !== undefined) {
+		Object.assign(block, { number: toSolInt(values.number) });
+	}
+
+	if (values.timestamp !== undefined) {
+		Object.assign(block, { timestamp: toSolInt(values.timestamp) });
+	}
+
+	return block;
 };

@@ -105,6 +105,9 @@ Contract calls return custom CEL types (`sol_int`, `sol_address`). To compare ag
 
 // Cast string literals to sol_address
 'token.balanceOf(solAddress("0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"))';
+
+// Read bytes (at most 32) as a big-endian unsigned integer
+'solInt(keccak256("seed")) % solInt(100)';
 ```
 
 #### Unit Conversion
@@ -135,6 +138,20 @@ Contract calls return custom CEL types (`sol_int`, `sol_address`). To compare ag
 // isZeroAddress — check if an address is the zero address
 "isZeroAddress(token.ownerOf(tokenId))";
 ```
+
+#### Block Context and Contract Addresses
+
+`block.number` and `block.timestamp` expose the block the evaluation is pinned to. `block.number` costs no extra call; `block.timestamp` is read through Multicall3 in the same batch. A schema contract or context variable named `block` shadows the builtin.
+
+Every contract exposes its schema address as the `address` field. A contract with an ABI method `address()` keeps it callable as `x.address()`, while `x.address` is always the schema address.
+
+```typescript
+"vault.unlockTime(user) <= block.timestamp";
+"token.balanceOf(vault.address) > solInt(0)";
+"vault.address.balance() > parseUnits(1, 18)";
+```
+
+`block.timestamp` is the value Multicall3 reports at the pinned block. Dev nodes with automine (anvil, hardhat) may report a different timestamp than the next mined block.
 
 ### Schema Builder
 
@@ -262,6 +279,8 @@ const result = await env.evaluate("nft.ownerOf(staking.stakedTokenId(user))", {
 ```
 
 All rounds execute against the same block number, ensuring atomicity.
+
+Calls whose arguments are only known during evaluation (for example, inside `map` or `filter`) run as individual live calls. They are pinned to the same block as the batched calls and count toward `maxCalls`. `result.meta.totalCalls` includes them, and `result.meta.deferredCalls` reports how many there were.
 
 ## Examples
 

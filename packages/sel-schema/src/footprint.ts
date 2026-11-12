@@ -41,6 +41,7 @@ export interface ContractFootprint {
 
 	/**
 	 * Referenced methods, sorted by signature and deduplicated by selector.
+	 * Empty when the contract is only referenced through its `.address`.
 	 *
 	 * Each entry is the overload the checker resolved. When an argument has a
 	 * dyn type, every same-name, same-arity overload is listed, since the
@@ -64,7 +65,8 @@ export interface FootprintResult {
 	/**
 	 * Referenced chain-state builtins, sorted. Entries are named
 	 * `<receiverType>.<name>` after the schema `FunctionSchema`,
-	 * e.g. "sol_address.balance". They do not depend on any contract ABI.
+	 * e.g. "sol_address.balance", or `block.<field>` for the builtin block
+	 * context, e.g. "block.timestamp". They do not depend on any contract ABI.
 	 */
 	builtins: string[];
 

@@ -425,6 +425,35 @@ describe("src/completion/schema-completion.ts", () => {
 				expect(opts).toContain("token");
 			});
 
+			it("includes the contract address as a property", () => {
+				const checker = new SELChecker(structSchema);
+				const result = complete("pool.", 5, structSchema, false, checker);
+
+				const address = result?.options.find((o) => o.label === "address");
+				expect(address?.type).toBe("property");
+				expect(address?.detail).toBe("sol_address");
+			});
+
+			it("completes the builtin block fields", () => {
+				const blockSchema = {
+					...structSchema,
+					types: [
+						{
+							name: "SelBlock",
+							kind: "struct",
+							fields: [
+								{ name: "number", type: "sol_int" },
+								{ name: "timestamp", type: "sol_int" },
+							],
+						},
+					],
+				} as unknown as SELSchema;
+				const checker = new SELChecker(blockSchema);
+				const result = complete("block.", 6, blockSchema, false, checker);
+
+				expect(labels(result)).toEqual(["number", "timestamp"]);
+			});
+
 			it("resolves dot completions via checker.dotCompletions directly", () => {
 				const checker = new SELChecker(structSchema);
 				const result = complete("pool.", 5, structSchema, false, checker);

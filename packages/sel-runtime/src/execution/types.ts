@@ -12,7 +12,7 @@ export interface ExecutionMeta {
 	roundsExecuted: number;
 
 	/**
-	 *  Total number of contract calls executed
+	 *  Total number of contract calls executed, batched and live
 	 */
 	totalCalls: number;
 
@@ -20,6 +20,13 @@ export interface ExecutionMeta {
 	 * Block number at which calls were executed
 	 */
 	blockNumber: bigint;
+
+	/**
+	 * Live calls made during evaluation (cache misses), such as contract calls
+	 * with arguments that depend on comprehension variables. Included in
+	 * `totalCalls`.
+	 */
+	deferredCalls?: number;
 }
 
 /**
@@ -68,7 +75,8 @@ export interface EvaluateOptions {
  * Result of evaluating a SEL expression.
  *
  * Always returned by `evaluate()`. The `meta` field is present when
- * contract calls were executed, absent for pure CEL expressions.
+ * contract calls were executed or `block.number` was read, absent for pure
+ * CEL expressions.
  */
 export interface EvaluateResult<T = unknown> {
 	/**
@@ -82,7 +90,7 @@ export interface EvaluateResult<T = unknown> {
 	type?: string;
 
 	/**
-	 *  Execution metadata, present when contract calls were executed
+	 *  Execution metadata, present when chain state was read
 	 */
 	meta?: ExecutionMeta;
 

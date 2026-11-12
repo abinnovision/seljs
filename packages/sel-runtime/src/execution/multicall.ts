@@ -47,6 +47,17 @@ export const getEthBalanceAbi = {
 	outputs: [{ name: "balance", type: "uint256" }],
 } as const;
 
+/**
+ * Multicall3 getCurrentBlockTimestamp ABI. Used by the builtin `block.timestamp`.
+ */
+export const getCurrentBlockTimestampAbi = {
+	name: "getCurrentBlockTimestamp",
+	type: "function",
+	stateMutability: "view",
+	inputs: [],
+	outputs: [{ name: "timestamp", type: "uint256" }],
+} as const;
+
 export interface MulticallCall {
 	target: `0x${string}`;
 	allowFailure: boolean;

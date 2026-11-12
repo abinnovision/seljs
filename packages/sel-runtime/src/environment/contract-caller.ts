@@ -52,6 +52,10 @@ export class CallCounter {
 		this.count = initialCount;
 	}
 
+	public get total(): number {
+		return this.count;
+	}
+
 	public increment(contractName: string, methodName: string): void {
 		this.count++;
 		if (this.count > this.maxCalls) {
@@ -84,6 +88,7 @@ export const executeContractCall = async (
 		client?: SELClient;
 		codecRegistry?: CelCodecRegistry;
 		callCounter?: CallCounter;
+		resolveBlockNumber?: () => Promise<bigint>;
 	},
 	// eslint-disable-next-line max-params
 ): Promise<unknown> => {
@@ -121,6 +126,9 @@ export const executeContractCall = async (
 	// Count live RPC calls against the limit
 	options.callCounter?.increment(contract.name, method.name);
 
+	// Resolved outside the try so provider errors are not reported as call failures
+	const blockNumber = await options.resolveBlockNumber?.();
+
 	try {
 		const data = AbiFunction.encodeData(
 			[method.abi],
@@ -131,6 +139,7 @@ export const executeContractCall = async (
 		const result = await options.client.call({
 			to: contract.address,
 			data,
+			blockNumber,
 		});
 
 		if (!result.data) {

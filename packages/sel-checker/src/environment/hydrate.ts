@@ -1,7 +1,9 @@
 import { Environment } from "@marcbachmann/cel-js";
 import { contractTypeName, SELConfigError } from "@seljs/common";
+import { SolidityAddressTypeWrapper } from "@seljs/types";
 
 import { createLogger } from "../debug.js";
+import { BUILTIN_BLOCK_NAME, isBuiltinBlockActive } from "../predicates.js";
 import { CelCodecRegistry } from "./codec-registry.js";
 import { registerSolidityTypes } from "./register-types.js";
 import { toCelLiteralType } from "./value-wrappers.js";
@@ -74,10 +76,17 @@ const hydrateEnvironment = (
 
 		class ContractType {
 			public constructor(public readonly name: string) {}
+
+			public get address(): SolidityAddressTypeWrapper {
+				return new SolidityAddressTypeWrapper(contract.address);
+			}
 		}
 
 		env
-			.registerType(typeName, { ctor: ContractType, fields: {} })
+			.registerType(typeName, {
+				ctor: ContractType,
+				fields: { address: "sol_address" },
+			})
 			.registerVariable(contract.name, typeName);
 
 		contractBindings[contract.name] = new ContractType(contract.name);
@@ -165,6 +174,11 @@ const hydrateEnvironment = (
 			debug("variable %s: fallback to dyn: %O", variable.name, err);
 			env.registerVariable(variable.name, "dyn");
 		}
+	}
+
+	// Builtin `block`, shadowed by any schema contract or variable of that name
+	if (isBuiltinBlockActive(schema)) {
+		env.registerVariable(BUILTIN_BLOCK_NAME, "SelBlock");
 	}
 
 	// Register schema functions with receiverType for type-checking (and runtime dispatch)

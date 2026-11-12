@@ -238,6 +238,26 @@ describe("analyzeFootprint", () => {
 		).toEqual([]);
 	});
 
+	it("records builtin block fields", () => {
+		expect(
+			analyzeFootprint("block.timestamp > solInt(0)", SCHEMA).builtins,
+		).toEqual(["block.timestamp"]);
+		expect(
+			analyzeFootprint("cel.bind(b, block, b.number)", SCHEMA).builtins,
+		).toEqual(["block.number", "block.timestamp"]);
+	});
+
+	it("records contracts referenced only by address", () => {
+		const footprint = analyzeFootprint("erc20.address", SCHEMA);
+
+		expect(footprint.contracts).toEqual([
+			{ name: "erc20", address: SCHEMA.contracts[0]?.address, methods: [] },
+		]);
+		expect(pruneSchema(SCHEMA, footprint).contracts.map((c) => c.name)).toEqual(
+			["erc20"],
+		);
+	});
+
 	describe("pruneSchema round trip", () => {
 		const roundTrip = (expression: string) => {
 			const footprint = analyzeFootprint(expression, SCHEMA);
