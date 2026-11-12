@@ -20,6 +20,9 @@ updates:
       # Pinned via root resolutions; newer releases change the type registration API.
       - dependency-name: "@marcbachmann/cel-js"
         versions: [">=7.6.0"]
+      # 0.23 inlines dependency types into dist/node_modules; needs a config migration.
+      - dependency-name: "tsdown"
+        versions: [">=0.23.0"]
     groups:
       production-dependencies:
         dependency-type: production

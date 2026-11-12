@@ -73,11 +73,11 @@
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
 		"storybook": "^10.6.6",
-		"tsdown": "^0.23.7",
+		"tsdown": "^0.22.14",
 		"typescript": "^6.0.3",
 		"viem": "^2.57.16",
 		"vite": "^8.3.6",
-		"vitest": "^4.1.11",
+		"vitest": "^5.1.0",
 		"zod": "^4.6.7"
 	},
 	"peerDependencies": {
