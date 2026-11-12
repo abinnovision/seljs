@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.5.0](https://github.com/abinnovision/seljs/compare/editor-v1.4.0...editor-v1.5.0) (2026-11-12)
+
+
+### Bug Fixes
+
+* **deps:** bump patch/minor production dependencies ([#130](https://github.com/abinnovision/seljs/issues/130)) ([6c1e05f](https://github.com/abinnovision/seljs/commit/6c1e05f6197c1bf0063ced50b32ab26f32fc13d9))
+* **deps:** bump the production-dependencies group across 1 directory with 2 updates ([#171](https://github.com/abinnovision/seljs/issues/171)) ([90a65bc](https://github.com/abinnovision/seljs/commit/90a65bcdc68b23d641c3da3dfb4846895d64beaa))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#190](https://github.com/abinnovision/seljs/issues/190)) ([bd4463e](https://github.com/abinnovision/seljs/commit/bd4463e900192bc7f6a71b465ffe7d107a5aaf9f))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#195](https://github.com/abinnovision/seljs/issues/195)) ([8bcc186](https://github.com/abinnovision/seljs/commit/8bcc1862dd127ac1a6283098ece86081e68ea8ad))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#214](https://github.com/abinnovision/seljs/issues/214)) ([65a8a0a](https://github.com/abinnovision/seljs/commit/65a8a0a67b5385b29ddb83c20a8f136957a425ff))
+* **deps:** bump the production-dependencies group across 1 directory with 4 updates ([#221](https://github.com/abinnovision/seljs/issues/221)) ([84a49b8](https://github.com/abinnovision/seljs/commit/84a49b868c1f29ef8bf9c46cce8dbddf5ce16af3))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#149](https://github.com/abinnovision/seljs/issues/149)) ([91ad954](https://github.com/abinnovision/seljs/commit/91ad954f70e428a1a1abca3d5873f65eb2b6a80a))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#167](https://github.com/abinnovision/seljs/issues/167)) ([96bed22](https://github.com/abinnovision/seljs/commit/96bed22af0926992129ea6fb7f0deccf4a6944a9))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#179](https://github.com/abinnovision/seljs/issues/179)) ([2dd7070](https://github.com/abinnovision/seljs/commit/2dd7070888a694dc760a6a56cd584f3743cb1813))
+* **deps:** bump the production-dependencies group across 1 directory with 5 updates ([#185](https://github.com/abinnovision/seljs/issues/185)) ([6bc8648](https://github.com/abinnovision/seljs/commit/6bc8648ba337a6983dea8a0aadb112872dcec549))
+* **deps:** bump the production-dependencies group across 1 directory with 6 updates ([#201](https://github.com/abinnovision/seljs/issues/201)) ([c08f525](https://github.com/abinnovision/seljs/commit/c08f5255917f175cd2b8251305a41c9f7a7d7195))
+* **deps:** bump the production-dependencies group with 4 updates ([#136](https://github.com/abinnovision/seljs/issues/136)) ([ba202e0](https://github.com/abinnovision/seljs/commit/ba202e0f79b30310077425db74d0a4649d59a4b9))
+* **deps:** bump the production-dependencies group with 4 updates ([#217](https://github.com/abinnovision/seljs/issues/217)) ([49b2798](https://github.com/abinnovision/seljs/commit/49b27985ce2e098d4cdeaf2afe36aabe3850cea6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/cel-lezer bumped to 1.5.0
+    * @seljs/checker bumped to 1.5.0
+    * @seljs/schema bumped to 1.5.0
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/editor-v1.3.0...editor-v1.4.0) (2026-08-04)
 
 

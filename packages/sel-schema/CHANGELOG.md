@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/abinnovision/seljs/compare/schema-v1.4.0...schema-v1.5.0) (2026-11-12)
+
+
+### Features
+
+* add static footprint analysis and pruneSchema ([#228](https://github.com/abinnovision/seljs/issues/228)) ([9864b73](https://github.com/abinnovision/seljs/commit/9864b73f799e3958e1d93f9968bb128e9c15a73d))
+
+
+### Bug Fixes
+
+* **deps:** bump patch/minor production dependencies ([#130](https://github.com/abinnovision/seljs/issues/130)) ([6c1e05f](https://github.com/abinnovision/seljs/commit/6c1e05f6197c1bf0063ced50b32ab26f32fc13d9))
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/schema-v1.3.0...schema-v1.4.0) (2026-08-04)
 
 
