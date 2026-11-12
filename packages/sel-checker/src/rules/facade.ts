@@ -2,6 +2,7 @@ import {
 	deferredCall,
 	expressionComplexity,
 	noConstantCondition,
+	noInvalidSolIntLiteral,
 	noMixedOperators,
 	noRedundantBool,
 	noSelfComparison,
@@ -21,6 +22,7 @@ export const rules = {
 		noConstantCondition,
 		noMixedOperators,
 		noSelfComparison,
+		noInvalidSolIntLiteral,
 		deferredCall,
 	],
 
@@ -35,6 +37,9 @@ export const rules = {
 
 	/** Flags self-comparisons (e.g. `x == x`). */
 	noSelfComparison,
+
+	/** Flags `solInt("...")` string literals that cannot be parsed as an integer. */
+	noInvalidSolIntLiteral,
 
 	/** Flags contract calls with dynamic arguments that will execute as live RPC calls. */
 	deferredCall,

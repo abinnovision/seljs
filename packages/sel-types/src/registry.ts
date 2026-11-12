@@ -85,6 +85,10 @@ export const SOLIDITY_TYPES = [
 		solidityAliases: generateIntAliases(),
 		wrapperClass: SolidityIntTypeWrapper,
 		schema: { kind: "primitive", description: "Arbitrary-size integer" },
-		castSignatures: ["solInt(string): sol_int", "solInt(int): sol_int"],
+		castSignatures: [
+			"solInt(string): sol_int",
+			"solInt(int): sol_int",
+			"solInt(sol_int): sol_int",
+		],
 	},
 ] satisfies SolidityTypeIdentity[] as SolidityTypeIdentity[];

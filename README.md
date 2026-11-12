@@ -246,13 +246,14 @@ The `expressionComplexity` rule measures five AST metrics. Each can be configure
 
 #### Built-in Advisory Rules
 
-| Rule                    | Severity | What it catches                              |
-| ----------------------- | -------- | -------------------------------------------- |
-| `no-redundant-bool`     | warning  | `x == true` — simplify to `x`                |
-| `no-constant-condition` | warning  | `true && x` — likely a mistake               |
-| `no-self-comparison`    | warning  | `x == x` — always true                       |
-| `no-mixed-operators`    | info     | `a && b \|\| c` — add parens for clarity     |
-| `deferred-call`         | info     | Contract call can't be batched via multicall |
+| Rule                         | Severity | What it catches                              |
+| ---------------------------- | -------- | -------------------------------------------- |
+| `no-redundant-bool`          | warning  | `x == true` — simplify to `x`                |
+| `no-constant-condition`      | warning  | `true && x` — likely a mistake               |
+| `no-self-comparison`         | warning  | `x == x` — always true                       |
+| `no-invalid-sol-int-literal` | error    | `solInt("1.5")` — fails at evaluation        |
+| `no-mixed-operators`         | info     | `a && b \|\| c` — add parens for clarity     |
+| `deferred-call`              | info     | Contract call can't be batched via multicall |
 
 ### Automatic Multicall Batching
 
