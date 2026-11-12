@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/abinnovision/seljs/compare/common-v1.4.0...common-v1.5.0) (2026-11-12)
+
+
+### Bug Fixes
+
+* **deps:** align @marcbachmann/cel-js range with tested 7.5.3 ([#229](https://github.com/abinnovision/seljs/issues/229)) ([5373f5b](https://github.com/abinnovision/seljs/commit/5373f5be0b5263c1306721acaeba2ac6980e9be1))
+* **deps:** bump the production-dependencies group with 2 updates ([#133](https://github.com/abinnovision/seljs/issues/133)) ([741efa7](https://github.com/abinnovision/seljs/commit/741efa756bf43a66171c98642a3ed08f86c8c9c2))
+
 ## [1.4.0](https://github.com/abinnovision/seljs/compare/common-v1.3.0...common-v1.4.0) (2026-08-04)
 
 
