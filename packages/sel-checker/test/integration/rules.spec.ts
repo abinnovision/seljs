@@ -43,6 +43,7 @@ describe("rule system integration", () => {
 			expect(names).toContain("no-constant-condition");
 			expect(names).toContain("no-mixed-operators");
 			expect(names).toContain("no-self-comparison");
+			expect(names).toContain("no-invalid-sol-int-literal");
 		});
 	});
 
@@ -154,6 +155,32 @@ describe("rule system integration", () => {
 				d.message.includes("identical"),
 			);
 			expect(ruleDiags).toHaveLength(0);
+		});
+	});
+
+	describe("no-invalid-sol-int-literal", () => {
+		const checker = new SELChecker(schema, { rules: [...rules.builtIn] });
+		const findDiags = (expression: string) =>
+			checker
+				.check(expression)
+				.diagnostics.filter((d) => d.message.includes("Invalid solInt"));
+
+		it("flags a decimal fraction as an error", () => {
+			const ruleDiags = findDiags('solInt("1.5") > solInt(0)');
+			expect(ruleDiags).toHaveLength(1);
+			expect(ruleDiags[0]!.severity).toBe("error");
+		});
+
+		it("flags non-numeric strings", () => {
+			expect(findDiags('solInt("abc") > solInt(0)')).toHaveLength(1);
+		});
+
+		it("accepts decimal and hex strings", () => {
+			expect(findDiags('solInt("123") > solInt("0x10")')).toHaveLength(0);
+		});
+
+		it("ignores non-literal arguments", () => {
+			expect(findDiags("solInt(erc20.totalSupply()) > 0")).toHaveLength(0);
 		});
 	});
 

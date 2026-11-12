@@ -209,6 +209,8 @@ describe("src/environment/register-types.ts", () => {
 			expect(toBigInt(result42)).toBe(42n);
 			const result123 = env.evaluate('solInt("123")', {});
 			expect(toBigInt(result123)).toBe(123n);
+			const resultIdentity = env.evaluate("solInt(solInt(7))", {});
+			expect(toBigInt(resultIdentity)).toBe(7n);
 		});
 
 		it("registers parseUnits function overloads", () => {
