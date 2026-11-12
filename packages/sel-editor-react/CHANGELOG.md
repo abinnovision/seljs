@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.6.0](https://github.com/abinnovision/seljs/compare/editor-react-v1.5.0...editor-react-v1.6.0) (2026-11-12)
+
+
+### Miscellaneous Chores
+
+* **editor-react:** Synchronize sel versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/editor bumped to 1.6.0
+    * @seljs/schema bumped to 1.6.0
+  * devDependencies
+    * @seljs/checker bumped to 1.6.0
+    * @seljs/env bumped to 1.6.0
+    * @seljs/runtime bumped to 1.6.0
+
 ## [1.5.0](https://github.com/abinnovision/seljs/compare/editor-react-v1.4.0...editor-react-v1.5.0) (2026-11-12)
 
 

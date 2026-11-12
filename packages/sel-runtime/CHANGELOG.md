@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.6.0](https://github.com/abinnovision/seljs/compare/runtime-v1.5.0...runtime-v1.6.0) (2026-11-12)
+
+
+### Features
+
+* pin deferred calls and add block context, contract address and solInt(bytes) ([#232](https://github.com/abinnovision/seljs/issues/232)) ([403b0ea](https://github.com/abinnovision/seljs/commit/403b0eaabdffc113a24bae6ba3fb2e23d3a89fbb))
+
+
+### Bug Fixes
+
+* **checker:** normalize address and bytes strings when encoding replay args ([#234](https://github.com/abinnovision/seljs/issues/234)) ([c3c88af](https://github.com/abinnovision/seljs/commit/c3c88af23f7825da72641b50d22df1cb0e0cde91))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/checker bumped to 1.6.0
+    * @seljs/common bumped to 1.6.0
+    * @seljs/env bumped to 1.6.0
+    * @seljs/schema bumped to 1.6.0
+    * @seljs/types bumped to 1.6.0
+
 ## [1.5.0](https://github.com/abinnovision/seljs/compare/runtime-v1.4.0...runtime-v1.5.0) (2026-11-12)
 
 
