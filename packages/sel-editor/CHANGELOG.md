@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.6.0](https://github.com/abinnovision/seljs/compare/editor-v1.5.0...editor-v1.6.0) (2026-11-12)
+
+
+### Features
+
+* pin deferred calls and add block context, contract address and solInt(bytes) ([#232](https://github.com/abinnovision/seljs/issues/232)) ([403b0ea](https://github.com/abinnovision/seljs/commit/403b0eaabdffc113a24bae6ba3fb2e23d3a89fbb))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/cel-lezer bumped to 1.6.0
+    * @seljs/checker bumped to 1.6.0
+    * @seljs/schema bumped to 1.6.0
+
 ## [1.5.0](https://github.com/abinnovision/seljs/compare/editor-v1.4.0...editor-v1.5.0) (2026-11-12)
 
 

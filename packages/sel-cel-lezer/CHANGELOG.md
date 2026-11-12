@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/abinnovision/seljs/compare/cel-lezer-v1.5.0...cel-lezer-v1.6.0) (2026-11-12)
+
+
+### Miscellaneous Chores
+
+* **cel-lezer:** Synchronize sel versions
+
 ## [1.5.0](https://github.com/abinnovision/seljs/compare/cel-lezer-v1.4.0...cel-lezer-v1.5.0) (2026-11-12)
 
 
