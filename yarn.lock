@@ -1892,7 +1892,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.3"
     "@types/react": "npm:^19.3.0"
     eslint: "npm:^10.14.0"
-    jsdom: "npm:^31.0.0"
+    jsdom: "npm:^31.0.1"
     prettier: "npm:^3.10.1"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
@@ -1928,7 +1928,7 @@ __metadata:
     "@seljs/checker": "workspace:*"
     "@seljs/schema": "workspace:*"
     eslint: "npm:^10.14.0"
-    jsdom: "npm:^31.0.0"
+    jsdom: "npm:^31.0.1"
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
@@ -4576,9 +4576,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:^31.0.0":
-  version: 31.0.0
-  resolution: "jsdom@npm:31.0.0"
+"jsdom@npm:^31.0.1":
+  version: 31.0.1
+  resolution: "jsdom@npm:31.0.1"
   dependencies:
     "@exodus/bytes": "npm:^1.16.0"
     bcp-47: "npm:^2.1.2"
@@ -4603,7 +4603,7 @@ __metadata:
   peerDependenciesMeta:
     "@napi-rs/canvas":
       optional: true
-  checksum: 10/42c411593e28389665ced5947d2bd3fe32a22c4e9e983121128e2468e0f7107dc215b71c67ab51a18277d4b9b5bc691ab3ec119d231da8931ff0ace9d220b0ae
+  checksum: 10/7f7ced67dc65bc02fc08430b7974eee062cf822454545468b2c3a07993fc6b29ac2aa8dbc60a04c8dcbc9bc42a5162c7fc38ad81098bcb84b603b2d83bd30d30
   languageName: node
   linkType: hard
 
