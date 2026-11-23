@@ -49,6 +49,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@adraffy/ens-normalize.ts@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "@adraffy/ens-normalize.ts@npm:1.0.1"
+  checksum: 10/273303fc13dea890240e19b0614b45cd361944e394bc3f684b757a081863512c3ed8018154e9bd864d6ac957df6499ae7af36aee208efb2fae05b8b23be0f569
+  languageName: node
+  linkType: hard
+
 "@adraffy/ens-normalize@npm:^1.11.0":
   version: 1.11.1
   resolution: "@adraffy/ens-normalize@npm:1.11.1"
@@ -1777,7 +1784,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.20"
+    viem: "npm:^2.58.0"
     vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
@@ -1827,7 +1834,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.20"
+    viem: "npm:^2.58.0"
     vitest: "npm:^5.1.0"
     zod: "npm:^4.6.7"
   peerDependencies:
@@ -1867,7 +1874,7 @@ __metadata:
     eslint: "npm:^10.15.0"
     prettier: "npm:^3.10.1"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.20"
+    viem: "npm:^2.58.0"
     vitest: "npm:^5.1.0"
     zod: "npm:^4.6.7"
   languageName: unknown
@@ -1899,7 +1906,7 @@ __metadata:
     storybook: "npm:^10.6.7"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.20"
+    viem: "npm:^2.58.0"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
     zod: "npm:^4.6.7"
@@ -1951,7 +1958,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.20"
+    viem: "npm:^2.58.0"
     vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
@@ -1995,11 +2002,11 @@ __metadata:
     concurrently: "npm:^10.0.6"
     debug: "npm:^4.4.3"
     eslint: "npm:^10.15.0"
-    ox: "npm:^1.8.16"
+    ox: "npm:^1.8.18"
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.57.20"
+    viem: "npm:^2.58.0"
     vitest: "npm:^5.1.0"
     zod: "npm:^4.6.7"
   peerDependencies:
@@ -5164,11 +5171,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:^1.8.16, ox@npm:^1.8.8":
-  version: 1.8.16
-  resolution: "ox@npm:1.8.16"
+"ox@npm:^1.8.18, ox@npm:^1.8.8":
+  version: 1.8.18
+  resolution: "ox@npm:1.8.18"
   dependencies:
-    "@adraffy/ens-normalize": "npm:^1.11.0"
+    "@adraffy/ens-normalize.ts": "npm:^1.0.0"
     "@noble/ciphers": "npm:^2.2.0"
     "@noble/curves": "npm:^2.2.0"
     "@noble/hashes": "npm:^2.2.0"
@@ -5183,7 +5190,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/f11885f4567bb2babd54f1816a37cbf156691d80acd6d17455cc5468501ffc811437ec223aaa89abf8bd9dd4ad86f3b799f7b3567c71a64fb448bd22d3b34b90
+  checksum: 10/4aae888880e3383dc565506fad7383913a0f7988f29c268074ec27ba397429e25d710e5b9863f3842e931a44b90b7ebe8606fada2a87be3972597a99ac6a33e0
   languageName: node
   linkType: hard
 
@@ -6605,9 +6612,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.57.20":
-  version: 2.57.20
-  resolution: "viem@npm:2.57.20"
+"viem@npm:^2.58.0":
+  version: 2.58.0
+  resolution: "viem@npm:2.58.0"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6625,7 +6632,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10/4d2074461f90c5ef9af8966623770211fbed1bdab47d83ff913b4aaab70c1d281a7664821c20459e2841b4bec9e7d55d2d1466973fa774eb71c4c75b1a2d411b
+  checksum: 10/3fbd93b6561decf09c6c985df2438811136e73e8a3d45036be584271227e10e19d4305b63e817d31618330314efd71163b1afec1897600d0c40921eeb943bd21
   languageName: node
   linkType: hard
 
