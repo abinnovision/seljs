@@ -1784,7 +1784,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.58.0"
+    viem: "npm:^2.58.1"
     vitest: "npm:^5.1.1"
   languageName: unknown
   linkType: soft
@@ -1834,7 +1834,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.58.0"
+    viem: "npm:^2.58.1"
     vitest: "npm:^5.1.1"
     zod: "npm:^4.6.7"
   peerDependencies:
@@ -1874,7 +1874,7 @@ __metadata:
     eslint: "npm:^10.15.0"
     prettier: "npm:^3.10.1"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.58.0"
+    viem: "npm:^2.58.1"
     vitest: "npm:^5.1.1"
     zod: "npm:^4.6.7"
   languageName: unknown
@@ -1906,7 +1906,7 @@ __metadata:
     storybook: "npm:^10.6.7"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.58.0"
+    viem: "npm:^2.58.1"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.1"
     zod: "npm:^4.6.7"
@@ -1958,7 +1958,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.58.0"
+    viem: "npm:^2.58.1"
     vitest: "npm:^5.1.1"
   languageName: unknown
   linkType: soft
@@ -2006,7 +2006,7 @@ __metadata:
     prettier: "npm:^3.10.1"
     tsdown: "npm:^0.22.14"
     typescript: "npm:^6.0.3"
-    viem: "npm:^2.58.0"
+    viem: "npm:^2.58.1"
     vitest: "npm:^5.1.1"
     zod: "npm:^4.6.7"
   peerDependencies:
@@ -6612,9 +6612,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.58.0":
-  version: 2.58.0
-  resolution: "viem@npm:2.58.0"
+"viem@npm:^2.58.1":
+  version: 2.58.1
+  resolution: "viem@npm:2.58.1"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -6632,7 +6632,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10/3fbd93b6561decf09c6c985df2438811136e73e8a3d45036be584271227e10e19d4305b63e817d31618330314efd71163b1afec1897600d0c40921eeb943bd21
+  checksum: 10/23dd58c4fccb3c245e01bb818589a5a6d8298168b18ce02a987059b91495c48849cd67dd0cbe99c4ee5f733aeb0b6843fa0f1eb1faac02e93c57858b31213c4a
   languageName: node
   linkType: hard
 
