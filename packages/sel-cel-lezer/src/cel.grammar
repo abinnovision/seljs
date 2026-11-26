@@ -74,21 +74,21 @@ expression {
   Identifier |
   Number |
   String |
-  BooleanLiteral |
-  NullLiteral |
+  @specialize[@name=BooleanLiteral]<Identifier, "true" | "false"> |
+  @specialize[@name=NullLiteral]<Identifier, "null"> |
   ListLiteral |
   MapLiteral
 }
 
-ArgList { "(" commaSep<expression> ")" }
+ArgList { "(" commaSepTrailing<expression> ")" }
 
-ListLiteral { "[" commaSep<expression> "]" }
+ListLiteral { "[" commaSepTrailing<expression> "]" }
 
-MapLiteral { "{" commaSep<mapEntry> "}" }
+MapLiteral { "{" commaSepTrailing<mapEntry> "}" }
 
 mapEntry { expression ":" expression }
 
-commaSep<content> { "" | content ("," content)* }
+commaSepTrailing<content> { "" | content ("," content)* ","? }
 
 // -------------------------------------------------------------------------
 // Tokens
@@ -116,13 +116,20 @@ commaSep<content> { "" | content ("," content)* }
     @digit+ $[uU]?
   }
 
+  // Raw and bytes prefixes share escape handling with plain strings to match cel-js
   String {
+    $[rRbB]? (quotedString | tripleQuotedString)
+  }
+
+  quotedString {
     '"' (!["\\] | "\\" _)* '"' |
     "'" (!['\\] | "\\" _)* "'"
   }
 
-  BooleanLiteral { "true" | "false" }
-  NullLiteral { "null" }
+  tripleQuotedString {
+    '"""' (!["\\] | "\\" _ | '"' (!["\\] | "\\" _) | '""' (!["\\] | "\\" _))* '"""' |
+    "'''" (!['\\] | "\\" _ | "'" (!['\\] | "\\" _) | "''" (!['\\] | "\\" _))* "'''"
+  }
 
   LogicOp { "&&" | "||" }
   CompareOp { "==" | "!=" | "<=" | ">=" | "<" | ">" }
@@ -137,9 +144,8 @@ commaSep<content> { "" | content ("," content)* }
   @precedence { LineComment, MulOp }
   // Ensure float "3.14" is not split at "." for member access
   @precedence { Number, "." }
-  // Keywords before Identifier
-  @precedence { BooleanLiteral, Identifier }
-  @precedence { NullLiteral, Identifier }
+  // String prefixes (r, b) before Identifier
+  @precedence { String, Identifier }
   // ".?" must win over standalone "."
   @precedence { dotOptional, "." }
 }
