@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.1](https://github.com/abinnovision/seljs/compare/types-v1.6.0...types-v1.6.1) (2026-11-26)
+
+
+### Miscellaneous Chores
+
+* **types:** Synchronize sel versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/common bumped to 1.6.1
+
 ## [1.6.0](https://github.com/abinnovision/seljs/compare/types-v1.5.0...types-v1.6.0) (2026-11-12)
 
 

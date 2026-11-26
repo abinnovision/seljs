@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/abinnovision/seljs/compare/cel-lezer-v1.6.0...cel-lezer-v1.6.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **cel-lezer:** align grammar with cel-js for keywords, string literals and trailing commas [236] ([#251](https://github.com/abinnovision/seljs/issues/251)) ([894a41f](https://github.com/abinnovision/seljs/commit/894a41f8573a2d1dac40949807a5b8f56a9f0ebe))
+
 ## [1.6.0](https://github.com/abinnovision/seljs/compare/cel-lezer-v1.5.0...cel-lezer-v1.6.0) (2026-11-12)
 
 
