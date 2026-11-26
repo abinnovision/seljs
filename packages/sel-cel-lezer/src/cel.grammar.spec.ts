@@ -81,6 +81,35 @@ describe("src/cel.grammar", () => {
 		it("parses null", () => {
 			expect(nodeTypes("null")).toContain("NullLiteral");
 		});
+
+		it.each([
+			String.raw`r"C:\temp"`,
+			String.raw`r"a\"b"`,
+			String.raw`r'a\'b'`,
+			String.raw`r'''a\''''`,
+			String.raw`b"\x61bc"`,
+			'R"x"',
+			'B"x"',
+			"'''multi\nline'''",
+			'"""multi\nline"""',
+			"'''it's'''",
+			String.raw`'''a\''''`,
+			'b"""bytes"""',
+			"r'''raw'''",
+			'""',
+			'""""""',
+		])("parses prefixed or triple-quoted string %s", (expr) => {
+			expect(nodeTypes(expr)).toContain("String");
+			expect(hasErrors(expr)).toBe(false);
+		});
+
+		// Mirrors cel-js: backslash escapes the closing quote, no combined prefixes
+		it.each([String.raw`r"C:\"`, "'''a''''", 'rb"x"', 'BR"x"'])(
+			"rejects invalid string %s",
+			(expr) => {
+				expect(hasErrors(expr)).toBe(true);
+			},
+		);
 	});
 
 	/*
@@ -100,6 +129,24 @@ describe("src/cel.grammar", () => {
 
 		it("parses identifier with digits (erc20)", () => {
 			expect(nodeTypes("erc20")).toContain("Identifier");
+		});
+
+		it.each([
+			"nullable",
+			"trueCount > 0",
+			"x.nullifier",
+			"falsey",
+			"rate",
+			"b",
+			"r",
+			"rb",
+			"br",
+		])("parses identifier with keyword or string prefix %s", (expr) => {
+			const types = nodeTypes(expr);
+			expect(types).toContain("Identifier");
+			expect(types).not.toContain("BooleanLiteral");
+			expect(types).not.toContain("NullLiteral");
+			expect(hasErrors(expr)).toBe(false);
 		});
 	});
 
@@ -269,6 +316,34 @@ describe("src/cel.grammar", () => {
 
 		it("parses map with entries", () => {
 			expect(nodeTypes('{"key": "value"}')).toContain("MapLiteral");
+		});
+
+		it("parses list with trailing comma", () => {
+			expect(nodeTypes("[1, 2,][0]")).toContain("ListLiteral");
+			expect(hasErrors("[1, 2,][0]")).toBe(false);
+		});
+
+		it("parses map with trailing comma", () => {
+			expect(nodeTypes('{"a": 1,}.a')).toContain("MapLiteral");
+			expect(hasErrors('{"a": 1,}.a')).toBe(false);
+		});
+
+		it("rejects lone comma in list", () => {
+			expect(hasErrors("[,]")).toBe(true);
+		});
+
+		it("parses call arguments with trailing comma", () => {
+			expect(hasErrors("size([1,2,],)")).toBe(false);
+			expect(hasErrors("f(1,)")).toBe(false);
+		});
+
+		it("rejects lone comma in call arguments", () => {
+			expect(hasErrors("f(,)")).toBe(true);
+		});
+
+		// Mirrors cel-js, which rejects reserved words as member names
+		it.each(["x.null", "x.true"])("rejects reserved member name %s", (expr) => {
+			expect(hasErrors(expr)).toBe(true);
 		});
 
 		it("parses nested collections", () => {
