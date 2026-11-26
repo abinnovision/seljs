@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.6.1](https://github.com/abinnovision/seljs/compare/checker-v1.6.0...checker-v1.6.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 2 updates ([#237](https://github.com/abinnovision/seljs/issues/237)) ([2b951c8](https://github.com/abinnovision/seljs/commit/2b951c806c8106977e452b9ea1d066e4a5357162))
+* **deps:** bump the production-dependencies group with 2 updates ([#245](https://github.com/abinnovision/seljs/issues/245)) ([5c35ae0](https://github.com/abinnovision/seljs/commit/5c35ae02ff1907885eb701516b3d53c9df9161b9))
+* **deps:** bump the production-dependencies group with 2 updates ([#248](https://github.com/abinnovision/seljs/issues/248)) ([30ded8b](https://github.com/abinnovision/seljs/commit/30ded8b937fa009f73dedf15394daeee93013738))
+* **deps:** bump the production-dependencies group with 2 updates ([#250](https://github.com/abinnovision/seljs/issues/250)) ([792ecd2](https://github.com/abinnovision/seljs/commit/792ecd2cac28515088e5c013471f862ec04d2c5c))
+* **deps:** bump viem from 2.57.18 to 2.57.19 in the production-dependencies group ([#239](https://github.com/abinnovision/seljs/issues/239)) ([f4b77e1](https://github.com/abinnovision/seljs/commit/f4b77e13f90d97df245794a15b6a2108160f2ab8))
+* **deps:** bump viem from 2.57.19 to 2.57.20 in the production-dependencies group ([#244](https://github.com/abinnovision/seljs/issues/244)) ([d0baa12](https://github.com/abinnovision/seljs/commit/d0baa1284c20c45f2bf0f995cbf0c3203e4483e6))
+* **deps:** bump viem from 2.58.0 to 2.58.1 in the production-dependencies group across 1 directory ([#247](https://github.com/abinnovision/seljs/issues/247)) ([8f639bc](https://github.com/abinnovision/seljs/commit/8f639bc8df36072c94e6fca1ec3ff2dc16cdd090))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/common bumped to 1.6.1
+    * @seljs/schema bumped to 1.6.1
+    * @seljs/types bumped to 1.6.1
+
 ## [1.6.0](https://github.com/abinnovision/seljs/compare/checker-v1.5.0...checker-v1.6.0) (2026-11-12)
 
 

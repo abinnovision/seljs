@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.6.1](https://github.com/abinnovision/seljs/compare/editor-v1.6.0...editor-v1.6.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* **deps:** bump @codemirror/lint from 6.9.7 to 6.9.8 in the production-dependencies group ([#241](https://github.com/abinnovision/seljs/issues/241)) ([73503c9](https://github.com/abinnovision/seljs/commit/73503c922ad25a2c45a6c49c658f2ea58e42261d))
+* **deps:** bump the production-dependencies group with 2 updates ([#248](https://github.com/abinnovision/seljs/issues/248)) ([30ded8b](https://github.com/abinnovision/seljs/commit/30ded8b937fa009f73dedf15394daeee93013738))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @seljs/cel-lezer bumped to 1.6.1
+    * @seljs/checker bumped to 1.6.1
+    * @seljs/schema bumped to 1.6.1
+
 ## [1.6.0](https://github.com/abinnovision/seljs/compare/editor-v1.5.0...editor-v1.6.0) (2026-11-12)
 
 
